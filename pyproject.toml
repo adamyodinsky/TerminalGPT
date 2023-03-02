@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "terminalgpt"
-version = "0.1.0"
+version = "0.1.7"
 description = "AI chat asistent in your terminal powered by OpenAI GPT-3.5"
 authors = ["Adam Yodinsky <27074934+adamyodinsky@users.noreply.github.com>"]
 keywords=["ai", "chat", "terminal", "openai", "gpt3", "chatGPT", "assistant", "gpt3.5", "terminalGPT"]
@@ -11,6 +11,9 @@ python = "^3.9"
 openai = "^0.27.0"
 tiktoken = "^0.2.0"
 colorama = "^0.4.6"
+
+[tool.poetry.scripts]
+terminalgpt = "terminalgpt.main:main"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
