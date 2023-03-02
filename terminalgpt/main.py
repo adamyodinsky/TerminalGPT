@@ -35,7 +35,7 @@ def main():
       while total_usage + usage >= LOCAL_TOKEN_LIMIT:
           while total_usage + usage >= LOCAL_TOKEN_LIMIT / 2:
             popped_message = messages.pop(0)
-            total_usage =- num_tokens_from_string(popped_message['content'])
+            total_usage -= num_tokens_from_string(popped_message['content'])
           
           if total_usage + usage < LOCAL_TOKEN_LIMIT:
               messages.insert(0, INIT_SYSTEM_MESSAGE)
