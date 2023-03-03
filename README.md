@@ -30,6 +30,6 @@ Note: When not using the inject_token.sh script, you will need to export the OPE
 
 ## Usage
 
-![Alt Text](./ezgif.com-video-to-gif.gif)
+![Alt Text](./ezgif.com-video-to-gif%20(1).gif)
 
 
