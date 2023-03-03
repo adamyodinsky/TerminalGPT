@@ -3,6 +3,7 @@ from colorama import Fore, Back, Style
 import platform
 import tiktoken
 import openai
+import time
 
 API_TOKEN_LIMIT = 4096
 LOCAL_TOKEN_LIMIT = API_TOKEN_LIMIT / 2
@@ -32,33 +33,35 @@ def main():
       user_input=input(Style.BRIGHT + "\nUser: " + Style.RESET_ALL)
       usage = num_tokens_from_string(user_input)
 
+      # Prevent reaching tokens limit
       while total_usage + usage >= LOCAL_TOKEN_LIMIT:
+          # When reaching the limit, remove half of the oldest messages from the context
           while total_usage + usage >= LOCAL_TOKEN_LIMIT / 2:
             popped_message = messages.pop(0)
             total_usage -= num_tokens_from_string(popped_message['content'])
-          
+
           if total_usage + usage < LOCAL_TOKEN_LIMIT:
               messages.insert(0, INIT_SYSTEM_MESSAGE)
               
 
-      # append to messages and send to ChatGPT
+      # Append to messages and send to ChatGPT
       messages.append({"role": "user", "content": user_input})
 
-      # get answer
+      # Get answer
       answer = get_answer(messages)
 
-      # parse usage and message from answer
+      # Parse usage and message from answer
       total_usage = answer['usage']['total_tokens']
       message = answer['choices'][0]['message']['content']
 
-      # append to messages list for next iteration keeping context
+      # Append to messages list for next iteration keeping context
       messages.append({"role": "assistant", "content": message})
 
-      # print answer message
+      # Print answer message
       print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-      print(Fore.YELLOW + message + Style.RESET_ALL)
+      print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
       
-      # print usage
+      # Print usage
       if (os.getenv("DEBUG") == "True"):  
         print(Back.LIGHTBLUE_EX + "Total Usage: " + str(total_usage) + " tokens" + Style.RESET_ALL)
       
@@ -76,3 +79,8 @@ def get_answer(messages):
     )
     return answer
 
+def print_slowly(text, delay=0.02):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()
