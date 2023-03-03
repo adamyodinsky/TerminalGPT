@@ -25,9 +25,6 @@ cd TerminalGPT
 ./inject_token.sh
 ```
 
-Note: When not using the inject_token.sh script, you will need to export the OPENAI_API_KEY environment variable with your open AI API key every time you open a new terminal.
-
-
 ## Usage
 
 ![Alt Text](./usage.gif)
