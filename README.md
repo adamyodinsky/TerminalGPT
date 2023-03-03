@@ -16,10 +16,10 @@ Thank you for using TerminalGPT, and we hope you find the terminal-based app to 
 pip install terminalgpt -U
 ```
 
-2. (Optional) Inject the token to the executable script on your local machine so you don't have to export it every time you open a new terminal. (replace `<YOUR_OPEN_AI_KEY>`  with your OpenAI API key).
+2. (Optional) Inject the token to the executable script on your local machine so you don't have to export it every time you open a new terminal. (replace `<YOUR_OPENAI_KEY>`  with your OpenAI API key).
 
 ```sh
-export OPENAI_API_KEY=<YOUR_OPEN_AI_KEY>
+export OPENAI_API_KEY=<YOUR_OPENAI_KEY>
 git clone https://github.com/adamyodinsky/TerminalGPT.git
 cd TerminalGPT
 ./inject_token.sh
