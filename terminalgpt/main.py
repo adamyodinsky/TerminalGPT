@@ -84,3 +84,4 @@ def print_slowly(text, delay=0.02):
         print(char, end='', flush=True)
         time.sleep(delay)
     print()
+    
