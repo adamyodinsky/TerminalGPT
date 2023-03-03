@@ -8,7 +8,7 @@ Whether you need help with a quick question or want to explore a complex topic, 
 
 Thank you for using TerminalGPT, and we hope you find the terminal-based app to be a valuable resource for your day-to-day needs!
 
-# Installation and Usage
+# Installation
 
 1. Install the package with pip install.
 
@@ -16,19 +16,20 @@ Thank you for using TerminalGPT, and we hope you find the terminal-based app to 
 pip install terminalgpt -U
 ```
 
-2. (Optional) Inject the token to the executable script on your local machine so you don't have to export it every time you open a new terminal
+2. (Optional) Inject the token to the executable script on your local machine so you don't have to export it every time you open a new terminal. (replace `<YOUR_OPEN_AI_KEY>`  with your OpenAI API key).
 
 ```sh
+export OPENAI_API_KEY=<YOUR_OPEN_AI_KEY>
 git clone https://github.com/adamyodinsky/TerminalGPT.git
 cd TerminalGPT
-export OPENAI_API_KEY=<YOUR_OPEN_AI_KEY>
 ./inject_token.sh
 ```
 
-Note: When not using the inject_token.sh script, you will need to export the OPENAI_API_KEY environment variable with your open AI token every time you open a new terminal.
+Note: When not using the inject_token.sh script, you will need to export the OPENAI_API_KEY environment variable with your open AI API key every time you open a new terminal.
+
 
 ## Usage
 
-```sh
-terminalgpt
-```
+![Alt Text](./ezgif.com-video-to-gif.gif)
+
+
