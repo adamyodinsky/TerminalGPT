@@ -1,8 +1,8 @@
 # TerminalGPT
 
-Welcome to the terminal-based ChatGPT personal assistant app! With the terminalGPT command, you can easily interact with ChatGPT and receive short, easy-to-read answers on your terminal.
+Welcome to terminalGPT, the terminal-based ChatGPT personal assistant app! With terminalGPT, you can easily interact with ChatGPT and receive short, easy-to-read answers on your terminal.
 
-ChatGPT is specifically optimized for your machine's operating system, distribution, and chipset architecture, so you can be sure that the information and assistance you receive are tailored to your specific setup.
+terminalGPT is specifically optimized for your machine's operating system, distribution, and chipset architecture, so you can be sure that the information and assistance you receive are tailored to your specific setup.
 
 Whether you need help with a quick question or want to explore a complex topic, TerminalGPT is here to assist you. Simply enter your query and TerminalGPT will provide you with the best answer possible based on its extensive knowledge base.
 
