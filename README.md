@@ -8,6 +8,11 @@ Whether you need help with a quick question or want to explore a complex topic, 
 
 Thank you for using TerminalGPT, and we hope you find the terminal-based app to be a valuable resource for your day-to-day needs!
 
+# Pre-requisites
+
+1. Python 3.9 or higher
+2. [An OpenAI Account and API key](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0) that you can get for free with a limited quota.
+
 # Installation
 
 1. Install the package with pip install.
@@ -16,7 +21,7 @@ Thank you for using TerminalGPT, and we hope you find the terminal-based app to 
 pip install terminalgpt -U
 ```
 
-2. Replace `<YOUR_OPENAI_KEY>` below with [your OpenAI API key.](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
+1. Replace `<YOUR_OPENAI_KEY>` below with your OpenAI API key. You can get one [here](https://beta.openai.com/account/api-keys).
 
 ```sh
 export OPENAI_API_KEY=<YOUR_OPENAI_KEY>
