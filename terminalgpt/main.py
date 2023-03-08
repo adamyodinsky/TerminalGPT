@@ -4,6 +4,7 @@ import platform
 import tiktoken
 import openai
 import time
+import readline
 
 API_TOKEN_LIMIT = 4096
 LOCAL_TOKEN_LIMIT = API_TOKEN_LIMIT / 2
