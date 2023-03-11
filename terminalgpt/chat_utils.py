@@ -24,8 +24,8 @@ def chat_loop(debug: bool, api_key: str):
     prompt_style = PromptStyle.from_dict({"prompt": "bold"})
     session = PromptSession(style=prompt_style)
 
-    welcome_message  = get_answer(messages + [INIT_WELCOME_MESSAGE])
     print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+    welcome_message  = get_answer(messages + [INIT_WELCOME_MESSAGE])
     print_slowly(Fore.YELLOW + welcome_message["choices"][0]["message"]["content"] + Style.RESET_ALL)
 
     while True:
@@ -57,7 +57,7 @@ def chat_loop(debug: bool, api_key: str):
         messages.append({"role": "assistant", "content": message})
 
         # Print answer message
-        # print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+        print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
         print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
 
         # Print usage
