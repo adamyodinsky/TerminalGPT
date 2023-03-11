@@ -6,6 +6,8 @@ authors = ["Adam Yodinsky <27074934+adamyodinsky@users.noreply.github.com>"]
 keywords=["ai", "chat", "terminal", "openai", "gpt3", "chatGPT", "assistant", "gpt3.5", "terminalGPT"]
 readme = "README.md"
 
+
+
 [tool.poetry.dependencies]
 python = "^3.9"
 openai = "^0.27.0"

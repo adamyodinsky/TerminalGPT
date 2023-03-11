@@ -4,7 +4,12 @@ import time
 import openai
 import tiktoken
 from colorama import Back, Fore, Style
-from config import *
+from terminalgpt.config import (
+    ENCODING_MODEL,
+    INIT_SYSTEM_MESSAGE,
+    LOCAL_TOKEN_LIMIT,
+    MODEL,
+)
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 

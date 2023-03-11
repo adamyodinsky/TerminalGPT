@@ -1,7 +1,7 @@
 import os
 
 from colorama import Fore, Style
-from config import APP_NAME, SECRET_PATH
+from terminalgpt.config import APP_NAME, SECRET_PATH
 from cryptography.fernet import Fernet
 
 

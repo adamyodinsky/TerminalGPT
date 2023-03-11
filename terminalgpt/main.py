@@ -2,10 +2,10 @@ import getpass
 import os
 
 import click
-from chat_utils import chat_loop
 from colorama import Style, Fore
-from config import KEY_PATH, SECRET_PATH
-from encryption import check_api_key, decrypt, encrypt, get_encryption_key
+from terminalgpt.chat_utils import chat_loop
+from terminalgpt.config import KEY_PATH, SECRET_PATH
+from terminalgpt.encryption import check_api_key, decrypt, encrypt, get_encryption_key
 
 
 @click.group()
