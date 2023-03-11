@@ -18,22 +18,23 @@ Thank you for using TerminalGPT, and we hope you find the terminal-based app to 
 1. Install the package with pip install.
 
 ```sh
-pip install terminalgpt -U
+terminalgpt install
 ```
 
-2. Replace `<YOUR_OPENAI_KEY>` below with your OpenAI API key. You can get one [here](https://beta.openai.com/account/api-keys).
+2. Enter your OpenAI API key when prompted and press enter
 
-```sh
-export OPENAI_API_KEY=<YOUR_OPENAI_KEY>
-git clone https://github.com/adamyodinsky/TerminalGPT.git /tmp/TerminalGPT
-/tmp/TerminalGPT/inject_token.sh
-rm -rf /tmp/TerminalGPT
-```
-
-*This step is optional but very recommended as it saves you the trouble of exporting your OpenAI API key every time you open a new terminal session.*
+That's it! You're ready to use TerminalGPT!
 
 ---
 
 ## Usage
+
+1. Run the program with the following command:
+
+```sh
+terminalgpt
+```
+
+## Illustration
 
 ![Alt Text](./usage.gif)
