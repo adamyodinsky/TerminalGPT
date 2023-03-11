@@ -11,7 +11,7 @@ from terminalgpt.config import (ENCODING_MODEL, INIT_SYSTEM_MESSAGE,
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
-
+# TODO async waiting... and progress bar, +  style everything with prompt_toolkit
 def chat_loop(debug: bool, api_key: str):
     """Main chat loop."""
 
@@ -25,7 +25,7 @@ def chat_loop(debug: bool, api_key: str):
     session = PromptSession(style=prompt_style)
 
     welcome_message  = get_answer(messages + [INIT_WELCOME_MESSAGE])
-    # print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
     print_slowly(Fore.YELLOW + welcome_message["choices"][0]["message"]["content"] + Style.RESET_ALL)
 
     while True:
