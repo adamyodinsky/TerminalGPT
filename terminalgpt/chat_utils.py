@@ -6,10 +6,16 @@ from colorama import Back, Fore, Style
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style as PromptStyle
 
-from terminalgpt.config import (ENCODING_MODEL, INIT_SYSTEM_MESSAGE,
-                                INIT_WELCOME_MESSAGE, LOCAL_TOKEN_LIMIT, MODEL)
+from terminalgpt.config import (
+    ENCODING_MODEL,
+    INIT_SYSTEM_MESSAGE,
+    INIT_WELCOME_MESSAGE,
+    LOCAL_TOKEN_LIMIT,
+    MODEL,
+)
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
+
 
 # TODO async waiting... and progress bar, +  style everything with prompt_toolkit
 def chat_loop(debug: bool, api_key: str):
@@ -20,13 +26,17 @@ def chat_loop(debug: bool, api_key: str):
     messages = [
         INIT_SYSTEM_MESSAGE,
     ]
-  
+
     prompt_style = PromptStyle.from_dict({"prompt": "bold"})
     session = PromptSession(style=prompt_style)
 
     print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-    welcome_message  = get_answer(messages + [INIT_WELCOME_MESSAGE])
-    print_slowly(Fore.YELLOW + welcome_message["choices"][0]["message"]["content"] + Style.RESET_ALL)
+    welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
+    print_slowly(
+        Fore.YELLOW
+        + welcome_message["choices"][0]["message"]["content"]
+        + Style.RESET_ALL
+    )
 
     while True:
         # Get user input
@@ -85,4 +95,3 @@ def print_slowly(text, delay=0.02):
         print(char, end="", flush=True)
         time.sleep(delay)
     print()
-
