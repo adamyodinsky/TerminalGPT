@@ -1,29 +1,36 @@
-import readline
 import time
 
 import openai
 import tiktoken
 from colorama import Back, Fore, Style
-from terminalgpt.config import (
-    ENCODING_MODEL,
-    INIT_SYSTEM_MESSAGE,
-    LOCAL_TOKEN_LIMIT,
-    MODEL,
-)
+from prompt_toolkit import PromptSession
+from prompt_toolkit.styles import Style as PromptStyle
+
+from terminalgpt.config import (ENCODING_MODEL, INIT_SYSTEM_MESSAGE,
+                                INIT_WELCOME_MESSAGE, LOCAL_TOKEN_LIMIT, MODEL)
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
+
 def chat_loop(debug: bool, api_key: str):
+    """Main chat loop."""
+
     total_usage = 0
     openai.api_key = api_key
     messages = [
         INIT_SYSTEM_MESSAGE,
     ]
+  
+    prompt_style = PromptStyle.from_dict({"prompt": "bold"})
+    session = PromptSession(style=prompt_style)
+
+    welcome_message  = get_answer(messages + [INIT_WELCOME_MESSAGE])
+    # print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+    print_slowly(Fore.YELLOW + welcome_message["choices"][0]["message"]["content"] + Style.RESET_ALL)
 
     while True:
         # Get user input
-        user_input = input(Style.BRIGHT + "\nUser: " + Style.RESET_ALL)
-        readline.add_history(user_input)
+        user_input = session.prompt("\nUser: ")
         usage = num_tokens_from_string(user_input)
 
         # Prevent reaching tokens limit
@@ -50,7 +57,7 @@ def chat_loop(debug: bool, api_key: str):
         messages.append({"role": "assistant", "content": message})
 
         # Print answer message
-        print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+        # print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
         print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
 
         # Print usage

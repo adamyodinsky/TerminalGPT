@@ -17,7 +17,16 @@ ENCODING_MODEL = "gpt2"
 INIT_SYSTEM_MESSAGE = {
     "role": "system",
     "content": f"""
-You are a helpful terminal assistant for a programer on a {platform.platform()} machine.
+You are a helpful personal assistant called "TerminalGPT" for a programer on a {platform.platform()} machine.
 Please note that your answers will be displayed on the terminal.
 So keep them short as possible (7 new lines max) and use a suitable format for printing on terminal.""",
+}
+
+INIT_WELCOME_MESSAGE = {
+    "role": "user",
+    "content": """
+Please start with a random and short greeting message starts with 'Welcome to terminalGPT' and some hint of humor.
+Keep it short as possible, one line.
+"""
+
 }
