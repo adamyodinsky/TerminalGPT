@@ -11,9 +11,11 @@ python = "^3.9"
 openai = "^0.27.0"
 tiktoken = "^0.2.0"
 colorama = "^0.4.6"
+cryptography = "^39.0.2"
+click = "^8.1.3"
 
 [tool.poetry.scripts]
-terminalgpt = "terminalgpt.main:main"
+terminalgpt = "terminalgpt.main:cli"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

@@ -9,3 +9,4 @@ echo "export OPENAI_API_KEY=${OPENAI_API_KEY}" >> "$(which terminalgpt)"
 cat /tmp/terminalgpt_exec_script >> "$(which terminalgpt)"
 
 rm /tmp/terminalgpt_exec_script
+
