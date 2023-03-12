@@ -15,13 +15,20 @@ Thank you for using TerminalGPT, and we hope you find the terminal-based app to 
 
 ## Installation
 
-1. Install the package with pip install.
+1. Install the latest TerminalGPT with pip install.
+
+```sh
+pip install terminalgpt -U
+```
+
+2. Now you have `terminalgpt` command available in your terminal. Run the following command to configure the app.
 
 ```sh
 terminalgpt install
 ```
 
-2. Enter your OpenAI API key when prompted and press enter
+3. Enter your OpenAI API key when prompted and press enter
+
 
 That's it! You're ready to use TerminalGPT!
 
