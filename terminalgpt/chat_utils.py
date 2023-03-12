@@ -8,7 +8,6 @@ from prompt_toolkit.styles import Style as PromptStyle
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-
 from terminalgpt.config import (
     ENCODING_MODEL,
     INIT_SYSTEM_MESSAGE,
