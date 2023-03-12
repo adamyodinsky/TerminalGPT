@@ -39,7 +39,7 @@ That's it! You're ready to use TerminalGPT!
 1. Run the program with the following command:
 
 ```sh
-terminalgpt
+terminalgpt chat
 ```
 
 ## Illustration
