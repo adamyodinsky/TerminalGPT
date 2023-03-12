@@ -5,6 +5,9 @@ import tiktoken
 from colorama import Back, Fore, Style
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style as PromptStyle
+from yaspin import yaspin
+from yaspin.spinners import Spinners
+
 
 from terminalgpt.config import (
     ENCODING_MODEL,
@@ -18,7 +21,7 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
 
 # TODO: async await with progress bar (waiting...) while waiting for answer from OpenAI api
-# TODO: multiline input with editing capabilities 
+# TODO: multiline input with editing capabilities
 def chat_loop(debug: bool, api_key: str):
     """Main chat loop."""
 
@@ -31,8 +34,10 @@ def chat_loop(debug: bool, api_key: str):
     prompt_style = PromptStyle.from_dict({"prompt": "bold"})
     session = PromptSession(style=prompt_style)
 
-    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+    print()
     welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
+
+    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
     print_slowly(
         Fore.YELLOW
         + welcome_message["choices"][0]["message"]["content"]
@@ -42,6 +47,7 @@ def chat_loop(debug: bool, api_key: str):
     while True:
         # Get user input
         user_input = session.prompt("\nUser: ")
+        print()
         usage = num_tokens_from_string(user_input)
 
         # Prevent reaching tokens limit
@@ -68,7 +74,7 @@ def chat_loop(debug: bool, api_key: str):
         messages.append({"role": "assistant", "content": message})
 
         # Print answer message
-        print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+        print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
         print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
 
         # Print usage
@@ -90,8 +96,16 @@ def num_tokens_from_string(string: str) -> int:
 
 
 def get_answer(messages):
-    answer = openai.ChatCompletion.create(model=MODEL, messages=messages)
-    return answer
+    """Returns the answer from OpenAI API."""
+
+    with yaspin(
+        Spinners.earth,
+        text=Style.BRIGHT + "Assistant:" + Style.RESET_ALL,
+        color="blue",
+        side="right",
+    ):
+        answer = openai.ChatCompletion.create(model=MODEL, messages=messages)
+        return answer
 
 
 def print_slowly(text, delay=0.02):

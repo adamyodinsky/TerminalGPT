@@ -34,7 +34,8 @@ def install():
         file.write(encrypted_secret)
 
     print(
-        Style.BRIGHT + Fore.GREEN
+        Style.BRIGHT
+        + Fore.GREEN
         + f"OpenAI API Key Encrypted and saved at {os.path.dirname(SECRET_PATH)}"
         + Style.RESET_ALL
     )
