@@ -17,7 +17,8 @@ from terminalgpt.config import (
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
 
-# TODO async waiting... and progress bar, +  style everything with prompt_toolkit
+# TODO: async await with progress bar (waiting...) while waiting for answer from OpenAI api
+# TODO: multiline input with editing capabilities 
 def chat_loop(debug: bool, api_key: str):
     """Main chat loop."""
 
@@ -77,6 +78,9 @@ def chat_loop(debug: bool, api_key: str):
                 + f"\nTotal Usage: {str(total_usage)} tokens"
                 + Style.RESET_ALL
             )
+
+        if user_input == "exit":
+            exit(0)
 
 
 def num_tokens_from_string(string: str) -> int:
