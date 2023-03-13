@@ -8,6 +8,16 @@ Whether you need help with a quick question or want to explore a complex topic, 
 
 Thank you for using TerminalGPT, and we hope you find the terminal-based app to be a valuable resource for your day-to-day needs!
 
+## Why?
+
+Some advantages of using TerminalGPT over the chatGPT browser-based app:
+
+1. It's completely FREE (as for now).
+2. It doesn't disconnect like the browser-based app, so you can leave it running in a terminal session on the side without losing context.
+3. It's highly available and can be used whenever you need it.
+4. You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
+5. TerminalGPT's answers are tailored to your machine's operating system, distribution, and chipset architecture.
+
 ## Pre-requisites
 
 1. Python 3.6 or higher
@@ -27,7 +37,7 @@ pip install terminalgpt -U
 terminalgpt install
 ```
 
-3. Enter your OpenAI API key when prompted and press enter
+3. Enter your OpenAI API key when prompted and press enter.
 
 
 That's it! You're ready to use TerminalGPT!
