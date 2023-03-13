@@ -11,7 +11,7 @@ Thank you for using TerminalGPT, and we hope you find the terminal-based app to 
 ## Pre-requisites
 
 1. Python 3.9 or higher
-2. [An OpenAI Account and API key](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0) that you can get for free with a limited quota.
+2. [An OpenAI Account and API key](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0) that you can get for **FREE** with a limited quota (which you'll never get to with personal use).
 
 ## Installation
 
