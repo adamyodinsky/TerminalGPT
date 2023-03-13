@@ -14,8 +14,9 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 
 1. It doesn't disconnect like the browser-based app, so you can leave it running in a terminal session on the side without losing context.
 2. It's highly available and can be used whenever you need it.
-3. You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
-4. TerminalGPT's answers are tailored to your machine's operating system, distribution, and chipset architecture.
+3. It's faster with replies than the browser-based app.
+4. You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
+5. TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip set architecture.
 
 ## Pre-requisites
 
