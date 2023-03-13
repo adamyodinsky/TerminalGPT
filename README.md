@@ -1,12 +1,12 @@
 # TerminalGPT
 
-Welcome to terminalGPT, the terminal-based ChatGPT personal assistant app! With terminalGPT, you can easily interact with ChatGPT and receive short, easy-to-read answers on your terminal.
-
-terminalGPT is specifically optimized for your machine's operating system, distribution, and chipset architecture, so you can be sure that the information and assistance you receive are tailored to your specific setup.
+Welcome to terminalGPT, the terminal-based ChatGPT personal assistant app! With terminalGPT, you can easily interact with OpenAI ChatGPT and receive optimized, easy-to-read and tailored answers on your terminal.
 
 Whether you need help with a quick question or want to explore a complex topic, TerminalGPT is here to assist you. Simply enter your query and TerminalGPT will provide you with the best answer possible based on its extensive knowledge base.
 
-Thank you for using TerminalGPT, and we hope you find the terminal-based app to be a valuable resource for your day-to-day needs!
+
+![Alt Text](./usage.gif)
+
 
 ## Why?
 
@@ -51,7 +51,3 @@ That's it! You're ready to use TerminalGPT!
 ```sh
 terminalgpt chat
 ```
-
-## Illustration
-
-![Alt Text](./usage.gif)
