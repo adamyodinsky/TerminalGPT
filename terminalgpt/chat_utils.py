@@ -8,14 +8,11 @@ from prompt_toolkit.styles import Style as PromptStyle
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-from terminalgpt.config import (
-    ENCODING_MODEL,
-    INIT_SYSTEM_MESSAGE,
-    INIT_WELCOME_MESSAGE,
-    MODEL,
-)
+from terminalgpt.config import (ENCODING_MODEL, INIT_SYSTEM_MESSAGE,
+                                INIT_WELCOME_MESSAGE, MODEL)
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
+
 
 # TODO: multiline input with editing capabilities
 def chat_loop(debug: bool, api_key: str, token_limit: int):
@@ -120,7 +117,7 @@ def validate_token_limit(ctx, param, limit: int):
 
 def exceeding_token_limit(total_usage: int, token_limit: int):
     """Returns True if the total_usage is greater than the token limit with some safe buffer."""
-    
+
     return total_usage >= token_limit
 
 
@@ -137,17 +134,17 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
             reduce_amount -= 1
             tokenized_message.pop(0)
 
-    message['content'] = TIKTOKEN_ENCODER.decode(tokenized_message)
+    message["content"] = TIKTOKEN_ENCODER.decode(tokenized_message)
     messages.insert(1, message)
     return messages, total_usage
 
 
 def count_all_tokens(messages, encoder):
     """Returns the total number of tokens in a list of messages."""
-    
+
     total_tokens = 0
     for message in messages:
         total_tokens += len(encoder.encode("content: " + message["content"]))
         total_tokens += len(encoder.encode("role: " + message["role"]))
-        
+
     return total_tokens - 1
