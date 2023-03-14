@@ -3,8 +3,8 @@ import os
 
 import click
 from colorama import Style, Fore
-from terminalgpt.chat_utils import chat_loop
-from terminalgpt.config import KEY_PATH, SECRET_PATH
+from terminalgpt.chat_utils import chat_loop, validate_token_limit
+from terminalgpt.config import KEY_PATH, SECRET_PATH, API_TOKEN_LIMIT
 from terminalgpt.encryption import check_api_key, decrypt, encrypt, get_encryption_key
 
 
@@ -51,11 +51,18 @@ def install():
     type=bool,
     default=False,
 )
-def chat(debug):
+@click.option(
+    "--token-limit",
+    help="Set the token limit between 1024 and 4096.",
+    type=int,
+    default=API_TOKEN_LIMIT,
+    callback=validate_token_limit,
+)
+def chat(debug, token_limit):
     check_api_key()
     key = get_encryption_key(KEY_PATH)
     api_key = decrypt(SECRET_PATH, key)
-    chat_loop(debug, api_key)
+    chat_loop(debug, api_key, token_limit)
 
 
 cli.add_command(install)

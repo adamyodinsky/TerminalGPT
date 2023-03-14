@@ -12,30 +12,27 @@ from terminalgpt.config import (
     ENCODING_MODEL,
     INIT_SYSTEM_MESSAGE,
     INIT_WELCOME_MESSAGE,
-    LOCAL_TOKEN_LIMIT,
     MODEL,
 )
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
-
-# TODO: async await with progress bar (waiting...) while waiting for answer from OpenAI api
 # TODO: multiline input with editing capabilities
-def chat_loop(debug: bool, api_key: str):
+def chat_loop(debug: bool, api_key: str, token_limit: int):
     """Main chat loop."""
 
-    total_usage = 0
     openai.api_key = api_key
     messages = [
         INIT_SYSTEM_MESSAGE,
     ]
 
+    # Prompt toolkit style
     prompt_style = PromptStyle.from_dict({"prompt": "bold"})
     session = PromptSession(style=prompt_style)
 
+    # Print welcome message
     print()
     welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
-
     print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
     print_slowly(
         Fore.YELLOW
@@ -47,25 +44,23 @@ def chat_loop(debug: bool, api_key: str):
         # Get user input
         user_input = session.prompt("\nUser: ")
         print()
-        usage = num_tokens_from_string(user_input)
-
-        # Prevent reaching tokens limit
-        while total_usage + usage >= LOCAL_TOKEN_LIMIT:
-            # When reaching the limit, remove half of the oldest messages from the context
-            while total_usage + usage >= LOCAL_TOKEN_LIMIT / 2:
-                popped_message = messages.pop(0)
-                total_usage -= num_tokens_from_string(popped_message["content"])
-
-            if total_usage + usage < LOCAL_TOKEN_LIMIT:
-                messages.insert(0, INIT_SYSTEM_MESSAGE)
 
         # Append to messages and send to ChatGPT
         messages.append({"role": "user", "content": user_input})
+        total_usage = count_all_tokens(messages, TIKTOKEN_ENCODER)
+
+        # Prevent reaching tokens limit
+        if exceeding_token_limit(total_usage, token_limit):
+            messages, total_usage = reduce_tokens(
+                messages=messages,
+                total_usage=total_usage,
+                token_limit=token_limit,
+            )
 
         # Get answer
         answer = get_answer(messages)
 
-        # Parse usage and message from answer
+        # Parse curr_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
         message = answer["choices"][0]["message"]["content"]
 
@@ -80,18 +75,17 @@ def chat_loop(debug: bool, api_key: str):
         if debug:
             print(
                 Back.LIGHTBLUE_EX
-                + f"\nTotal Usage: {str(total_usage)} tokens"
+                + f"\nAPI Total Usage: {str(total_usage)} tokens"
+                + Style.RESET_ALL
+            )
+            print(
+                Back.LIGHTCYAN_EX
+                + f"\nCounter Total Usage: {str(count_all_tokens(messages, TIKTOKEN_ENCODER))} tokens"
                 + Style.RESET_ALL
             )
 
         if user_input == "exit":
             exit(0)
-
-
-def num_tokens_from_string(string: str) -> int:
-    """Returns the number of tokens in a text string."""
-    num_tokens = len(TIKTOKEN_ENCODER.encode(string))
-    return num_tokens
 
 
 def get_answer(messages):
@@ -107,8 +101,53 @@ def get_answer(messages):
         return answer
 
 
-def print_slowly(text, delay=0.02):
+def print_slowly(text, delay=0.01):
+    """Prints text slowly."""
+
     for char in text:
         print(char, end="", flush=True)
         time.sleep(delay)
     print()
+
+
+def validate_token_limit(ctx, param, limit: int):
+    """Validates the token limit."""
+
+    if limit < 1024 and limit > 4096:
+        raise ValueError("Token limit must be between 1024 and 4096")
+    return limit
+
+
+def exceeding_token_limit(total_usage: int, token_limit: int):
+    """Returns True if the total_usage is greater than the token limit with some safe buffer."""
+    
+    return total_usage >= token_limit
+
+
+def reduce_tokens(messages: list, token_limit: int, total_usage: int):
+    """Reduce tokens in messages until exceeding_token_limit is False."""
+
+    while exceeding_token_limit(total_usage, token_limit):
+        reduce_amount = total_usage - token_limit + 100
+        message = messages.pop(1)
+        tokenized_message = TIKTOKEN_ENCODER.encode(message["content"])
+
+        while reduce_amount > 0 and len(tokenized_message) > 0:
+            total_usage -= 1
+            reduce_amount -= 1
+            tokenized_message.pop(0)
+
+    message['content'] = TIKTOKEN_ENCODER.decode(tokenized_message)
+    messages.insert(1, message)
+    return messages, total_usage
+
+
+def count_all_tokens(messages, encoder):
+    """Returns the total number of tokens in a list of messages."""
+    
+    total_tokens = 0
+    for message in messages:
+        total_tokens += len(encoder.encode("content: " + message["content"]))
+        total_tokens += len(encoder.encode("role: " + message["role"]))
+        
+    return total_tokens - 1
