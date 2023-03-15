@@ -8,8 +8,12 @@ from prompt_toolkit.styles import Style as PromptStyle
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-from terminalgpt.config import (ENCODING_MODEL, INIT_SYSTEM_MESSAGE,
-                                INIT_WELCOME_MESSAGE, MODEL)
+from terminalgpt.config import (
+    ENCODING_MODEL,
+    INIT_SYSTEM_MESSAGE,
+    INIT_WELCOME_MESSAGE,
+    MODEL,
+)
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
@@ -55,7 +59,11 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             )
 
         # Get answer
-        answer = get_answer(messages)
+        try:
+            answer = get_answer(messages)
+        except openai.error.RateLimitError as e:
+            print_slowly(Back.RED + Style.BRIGHT + e.message + Style.RESET_ALL)
+            continue
 
         # Parse curr_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
