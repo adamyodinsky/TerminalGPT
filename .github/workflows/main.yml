@@ -1,12 +1,10 @@
 name: Continuous Integration
 run-name: ${{ github.actor }} CI 🚀
-
 on:
   push:
     branches:
       - main
       - 'releases/**'
-
 jobs:
   ci:
     uses: ./.github/workflows/ci.yml

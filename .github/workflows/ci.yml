@@ -1,5 +1,4 @@
 name: Continuous Integration
-
 on: 
   workflow_call:
     inputs:
