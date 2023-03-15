@@ -1,4 +1,5 @@
 import unittest
+
 from terminalgpt import chat_utils
 
 class TestEncryption(unittest.TestCase):
