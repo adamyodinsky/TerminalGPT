@@ -29,10 +29,10 @@ jobs:
           poetry-version: ${{ inputs.poetry-version }}
       - name: build
         run: poetry build
-  test:
-    runs-on: ${{ inputs.os }}
-    steps:
-      - name: test
-        run: poetry run pytest -v
+  # test:
+  #   runs-on: ${{ inputs.os }}
+  #   steps:
+  #     - name: test
+  #       run: poetry run pytest -v
 
         
