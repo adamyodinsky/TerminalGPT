@@ -1,5 +1,5 @@
 name: Continuous Integration
-run-name: ${{ github.actor }} CI on ${{ github.ref }}  🚀
+run-name: ${{ github.actor }} CI on ${{GITHUB_REF#refs/heads/}}  🚀
 
 on:
   pull_request:
