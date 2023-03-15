@@ -8,8 +8,12 @@ from prompt_toolkit.styles import Style as PromptStyle
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-from terminalgpt.config import (ENCODING_MODEL, INIT_SYSTEM_MESSAGE,
-                                INIT_WELCOME_MESSAGE, MODEL)
+from terminalgpt.config import (
+    ENCODING_MODEL,
+    INIT_SYSTEM_MESSAGE,
+    INIT_WELCOME_MESSAGE,
+    MODEL,
+)
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 
@@ -17,7 +21,7 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 # TODO: multiline input with editing capabilities
 def chat_loop(debug: bool, api_key: str, token_limit: int):
     """Main chat loop."""
-
+    
     openai.api_key = api_key
     messages = [
         INIT_SYSTEM_MESSAGE,
@@ -29,13 +33,21 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
     # Print welcome message
     print()
-    welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
-    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-    print_slowly(
-        Fore.YELLOW
-        + welcome_message["choices"][0]["message"]["content"]
-        + Style.RESET_ALL
-    )
+    welcome = False
+    while not welcome:
+        try:
+            welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
+            print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+            print_slowly(
+                Fore.YELLOW
+                + welcome_message["choices"][0]["message"]["content"]
+                + Style.RESET_ALL
+            )
+            welcome = True
+        except openai.error.RateLimitError as e:
+            print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL, 0.02)
+            waiting_before_trying_again()
+            
 
     while True:
         # Get user input
@@ -44,7 +56,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
         # Append to messages and send to ChatGPT
         messages.append({"role": "user", "content": user_input})
-        total_usage = count_all_tokens(messages, TIKTOKEN_ENCODER)
+        total_usage = count_all_tokens(messages)
 
         # Prevent reaching tokens limit
         if exceeding_token_limit(total_usage, token_limit):
@@ -55,7 +67,11 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             )
 
         # Get answer
-        answer = get_answer(messages)
+        try:
+            answer = get_answer(messages)
+        except openai.error.RateLimitError as e:
+            print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
+            continue
 
         # Parse curr_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
@@ -84,7 +100,6 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
         if user_input == "exit":
             exit(0)
 
-
 def get_answer(messages):
     """Returns the answer from OpenAI API."""
 
@@ -110,22 +125,24 @@ def print_slowly(text, delay=0.01):
 def validate_token_limit(ctx, param, limit: int):
     """Validates the token limit."""
 
-    if limit < 1024 and limit > 4096:
-        raise ValueError("Token limit must be between 1024 and 4096")
+    arr = [2**i for i in range(2, 13)]
+
+    if limit not in arr:
+        raise ValueError("Token limit must be between 1024 and 4096 and a power of 2.")
     return limit
 
 
 def exceeding_token_limit(total_usage: int, token_limit: int):
     """Returns True if the total_usage is greater than the token limit with some safe buffer."""
 
-    return total_usage >= token_limit
+    return total_usage > token_limit
 
 
 def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     """Reduce tokens in messages context."""
-
+    
     while exceeding_token_limit(total_usage, token_limit):
-        reduce_amount = total_usage - token_limit + 100
+        reduce_amount = total_usage - token_limit
         message = messages.pop(1)
         tokenized_message = TIKTOKEN_ENCODER.encode(message["content"])
 
@@ -139,7 +156,7 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     return messages, total_usage
 
 
-def count_all_tokens(messages, encoder):
+def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
     """Returns the total number of tokens in a list of messages."""
 
     total_tokens = 0
@@ -148,3 +165,12 @@ def count_all_tokens(messages, encoder):
         total_tokens += len(encoder.encode("role: " + message["role"]))
 
     return total_tokens - 1
+
+
+def waiting_before_trying_again(wait_time: int = 10):
+    with yaspin() as spinner:
+        for i in range (wait_time):
+            spinner.text = Style.BRIGHT + f"Trying again in {wait_time - i}" + Style.RESET_ALL
+            spinner.color = "red"
+            time.sleep(1)
+        

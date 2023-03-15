@@ -1,0 +1,13 @@
+name: Continuous Integration
+run-name: ${{ github.actor }} CI 🚀
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    with:
+      python-version: 3.9
+      poetry-version: 1.4.0
+      os: ubuntu-latest

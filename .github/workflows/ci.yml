@@ -1,0 +1,43 @@
+name: Continuous Integration
+on: 
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version'
+        required: true
+        type: string
+      poetry-version:
+        description: 'Poetry version'
+        required: true
+        type: string
+      os:
+        description: 'OS'
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ inputs.poetry-version }}
+      - name: install
+        run: poetry install
+      - name: build
+        run: poetry build
+      - name: test
+        run: |
+          filename=$(date +"%Y-%m-%d")"_test_result.xml"
+          poetry run pytest -v --junitxml=${filename}
+      # TODOLATER: publish test results
+      # - name: Publish Test Results
+      #   uses: EnricoMi/publish-unit-test-result-action@v2
+      #   with:
+      #     files: |
+      #       test-results/**/*.xml
+              
