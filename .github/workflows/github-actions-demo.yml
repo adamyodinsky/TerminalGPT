@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9"]
-        poetry-version: ["1.4.0"]
+        poetry-version: ["1.0"]
         os: [ubuntu-18.04]
     runs-on: ${{ matrix.os }}
     container: python:3.9
