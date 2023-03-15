@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - 'releases/**'
+      - "*"
 jobs:
   ci:
     uses: ./.github/workflows/ci.yml
