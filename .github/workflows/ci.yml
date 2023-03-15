@@ -16,7 +16,7 @@ on:
         required: true
         type: string
 jobs:
-  build:
+  build-and-test:
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
@@ -29,18 +29,8 @@ jobs:
           poetry-version: ${{ inputs.poetry-version }}
       - name: build
         run: poetry build
-  test:
-    runs-on: ${{ inputs.os }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ inputs.python-version }}
-      - name: Run image
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: ${{ inputs.poetry-version }}
       - name: test
         run: poetry run pytest -v
+
 
         
