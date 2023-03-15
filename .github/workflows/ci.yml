@@ -27,10 +27,11 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ inputs.poetry-version }}
-      - name: install
-        run: poetry install
       - name: build
         run: poetry build
+  test:
+    runs-on: ${{ inputs.os }}
+    steps:
       - name: test
         run: poetry run pytest -v
 
