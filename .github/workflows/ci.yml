@@ -1,5 +1,5 @@
 name: Continuous Integration
-run-name: ${{ github.actor }} Continuous Integration 🚀
+
 on: 
   workflow_call:
     inputs:

@@ -1,4 +1,5 @@
 name: Continuous Integration
+run-name: ${{ github.actor }} CI 🚀
 
 on:
   pull_request:
