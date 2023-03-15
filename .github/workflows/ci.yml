@@ -1,0 +1,34 @@
+name: Continuous Integration
+run-name: ${{ github.actor }} Continuous Integration 🚀
+on: 
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version'
+        required: true
+        type: string
+      poetry-version:
+        description: 'Poetry version'
+        required: true
+        type: string
+      os:
+        description: 'OS'
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ inputs.poetry-version }}
+      - name: install
+        run: poetry install
+      - name: build
+        run: poetry build
+        
