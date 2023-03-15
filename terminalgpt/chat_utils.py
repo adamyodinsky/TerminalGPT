@@ -122,7 +122,7 @@ def exceeding_token_limit(total_usage: int, token_limit: int):
 
 
 def reduce_tokens(messages: list, token_limit: int, total_usage: int):
-    """Reduce tokens in messages until exceeding_token_limit is False."""
+    """Reduce tokens in messages context."""
 
     while exceeding_token_limit(total_usage, token_limit):
         reduce_amount = total_usage - token_limit + 100
