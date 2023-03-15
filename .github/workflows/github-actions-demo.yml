@@ -7,6 +7,11 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+
+      - name: Set up dependencies
+        run: |
+            apt-get install make -y
+            apt-get install poetry -y
       - name: Build
         run: make build
       
