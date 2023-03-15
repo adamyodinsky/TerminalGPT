@@ -56,7 +56,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
         # Append to messages and send to ChatGPT
         messages.append({"role": "user", "content": user_input})
-        total_usage = count_all_tokens(messages, TIKTOKEN_ENCODER)
+        total_usage = count_all_tokens(messages)
 
         # Prevent reaching tokens limit
         if exceeding_token_limit(total_usage, token_limit):
@@ -125,22 +125,24 @@ def print_slowly(text, delay=0.01):
 def validate_token_limit(ctx, param, limit: int):
     """Validates the token limit."""
 
-    if limit < 1024 and limit > 4096:
-        raise ValueError("Token limit must be between 1024 and 4096")
+    arr = [2**i for i in range(2, 13)]
+
+    if limit not in arr:
+        raise ValueError("Token limit must be between 1024 and 4096 and a power of 2.")
     return limit
 
 
 def exceeding_token_limit(total_usage: int, token_limit: int):
     """Returns True if the total_usage is greater than the token limit with some safe buffer."""
 
-    return total_usage >= token_limit
+    return total_usage > token_limit
 
 
 def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     """Reduce tokens in messages context."""
-
+    
     while exceeding_token_limit(total_usage, token_limit):
-        reduce_amount = total_usage - token_limit + 100
+        reduce_amount = total_usage - token_limit
         message = messages.pop(1)
         tokenized_message = TIKTOKEN_ENCODER.encode(message["content"])
 
@@ -154,7 +156,7 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     return messages, total_usage
 
 
-def count_all_tokens(messages, encoder):
+def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
     """Returns the total number of tokens in a list of messages."""
 
     total_tokens = 0
