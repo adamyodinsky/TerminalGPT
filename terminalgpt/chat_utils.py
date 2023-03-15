@@ -21,7 +21,7 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 # TODO: multiline input with editing capabilities
 def chat_loop(debug: bool, api_key: str, token_limit: int):
     """Main chat loop."""
-
+    
     openai.api_key = api_key
     messages = [
         INIT_SYSTEM_MESSAGE,
@@ -33,13 +33,21 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
     # Print welcome message
     print()
-    welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
-    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-    print_slowly(
-        Fore.YELLOW
-        + welcome_message["choices"][0]["message"]["content"]
-        + Style.RESET_ALL
-    )
+    welcome = False
+    while not welcome:
+        try:
+            welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
+            print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+            print_slowly(
+                Fore.YELLOW
+                + welcome_message["choices"][0]["message"]["content"]
+                + Style.RESET_ALL
+            )
+            welcome = True
+        except openai.error.RateLimitError as e:
+            print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL, 0.02)
+            waiting_before_trying_again()
+            
 
     while True:
         # Get user input
@@ -62,7 +70,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
         try:
             answer = get_answer(messages)
         except openai.error.RateLimitError as e:
-            print_slowly(Back.RED + Style.BRIGHT + e.message + Style.RESET_ALL)
+            print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
             continue
 
         # Parse curr_usage and message from answer
@@ -91,7 +99,6 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
         if user_input == "exit":
             exit(0)
-
 
 def get_answer(messages):
     """Returns the answer from OpenAI API."""
@@ -156,3 +163,12 @@ def count_all_tokens(messages, encoder):
         total_tokens += len(encoder.encode("role: " + message["role"]))
 
     return total_tokens - 1
+
+
+def waiting_before_trying_again(wait_time: int = 10):
+    with yaspin() as spinner:
+        for i in range (wait_time):
+            spinner.text = Style.BRIGHT + f"Trying again in {wait_time - i}" + Style.RESET_ALL
+            spinner.color = "red"
+            time.sleep(1)
+        

@@ -4,6 +4,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: python:3.9
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -13,6 +14,8 @@ jobs:
             apt-get install make -y
             apt-get install poetry -y
       - name: Build
-        run: make build
+        with:
+
+          
       
       
