@@ -22,6 +22,9 @@ class TestEncryption(unittest.TestCase):
         self.assertEqual(chat_utils.validate_token_limit(None, None, 4096), 4096)
 
         with self.assertRaises(ValueError):
+            chat_utils.validate_token_limit(None, None, 512)
+
+        with self.assertRaises(ValueError):
             chat_utils.validate_token_limit(None, None, 8192)
 
         with self.assertRaises(ValueError):

@@ -73,7 +73,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
             continue
 
-        # Parse curr_usage and message from answer
+        # Parse total_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
         message = answer["choices"][0]["message"]["content"]
 
@@ -127,7 +127,7 @@ def validate_token_limit(ctx, param, limit: int):
 
     arr = [2**i for i in range(2, 13)]
 
-    if limit not in arr:
+    if limit not in arr or limit < 1024:
         raise ValueError("Token limit must be between 1024 and 4096 and a power of 2.")
     return limit
 
