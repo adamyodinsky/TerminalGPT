@@ -6,10 +6,10 @@ install:
 build: install
 	poetry build
 
-test: install
+test: build
 	poetry run pytest -v 
 
-publish: build
+publish: test
 	poetry publish
 
 run:
