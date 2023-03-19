@@ -33,7 +33,7 @@ class TestEncryption(unittest.TestCase):
     def test_count_all_tokens(self):
         messages = self.set_test()
         total_usage = chat_utils.count_all_tokens(messages)
-        self.assertEqual(total_usage, 25)
+        self.assertEqual(total_usage, 26)
 
     def test_reduce_tokens(self):
         token_limit = 24
@@ -49,7 +49,7 @@ class TestEncryption(unittest.TestCase):
         self.assertEqual(messages[0]["role"], "system")
         self.assertEqual(messages[0]["content"], "Hello user")
         self.assertEqual(messages[1]["role"], "user")
-        self.assertEqual(messages[1]["content"], " system")
+        self.assertEqual(messages[1]["content"], "")
 
         token_limit = 21
         messages = self.set_test()
@@ -60,11 +60,11 @@ class TestEncryption(unittest.TestCase):
         )
 
         self.assertEqual(total_usage, token_limit)
-        self.assertEqual(len(messages), 3)
+        self.assertEqual(len(messages), 2)
         self.assertEqual(messages[0]["role"], "system")
         self.assertEqual(messages[0]["content"], "Hello user")
-        self.assertEqual(messages[1]["role"], "assistant")
-        self.assertEqual(messages[1]["content"], "")
+        self.assertEqual(messages[1]["role"], "user")
+        self.assertEqual(messages[1]["content"], " assistant")
         
 
 

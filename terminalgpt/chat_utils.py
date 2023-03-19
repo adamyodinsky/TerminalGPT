@@ -159,7 +159,7 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
 def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
     """Returns the total number of tokens in a list of messages."""
 
-    total_tokens = -3
+    total_tokens = -2
     for message in messages:
         total_tokens += len(encoder.encode("content: " + message["content"]))
         total_tokens += len(encoder.encode("role: " + message["role"]))
