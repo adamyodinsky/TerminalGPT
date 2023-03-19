@@ -93,7 +93,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             )
             print(
                 Fore.LIGHTCYAN_EX
-                + f"\nCounter Total Usage: {str(count_all_tokens(messages, TIKTOKEN_ENCODER))} tokens"
+                + f"Counter Total Usage: {str(count_all_tokens(messages, TIKTOKEN_ENCODER))} tokens"
                 + Style.RESET_ALL
             )
 
