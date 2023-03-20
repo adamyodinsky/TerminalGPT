@@ -111,10 +111,6 @@ def get_answer(messages, timeout=15):
                 )
                 return answer
             except (openai.error.RateLimitError) as e:
-                # if isinstance(e, KeyboardInterrupt):
-                #     print()
-                #     break
-                # else:
                 print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
                 waiting_before_trying_again()
 
