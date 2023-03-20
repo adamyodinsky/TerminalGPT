@@ -60,8 +60,13 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             )
 
         # Get answer
-        answer = get_answer(messages)
-
+        try:
+            answer = get_answer(messages)
+        except KeyboardInterrupt:
+            print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
+            print_slowly(Fore.YELLOW + "Ok i stopped, waiting for you command." + Style.RESET_ALL)
+            continue       
+        
         # Parse total_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
         message = answer["choices"][0]["message"]["content"]
@@ -90,7 +95,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             exit(0)
 
 
-def get_answer(messages, timeout=10):
+def get_answer(messages, timeout=15):
     """Returns the answer from OpenAI API."""
 
     while True:
@@ -113,10 +118,14 @@ def get_answer(messages, timeout=10):
 def print_slowly(text, delay=0.01):
     """Prints text slowly."""
 
-    for char in text:
-        print(char, end="", flush=True)
-        time.sleep(delay)
-    print()
+    try:
+        for char in text:
+            print(char, end="", flush=True)
+            time.sleep(delay)
+    except KeyboardInterrupt:
+        print()
+    finally:
+        print()
 
 
 def validate_token_limit(ctx, param, limit: int):
