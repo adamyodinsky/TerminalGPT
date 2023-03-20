@@ -21,7 +21,7 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
 # TODO: multiline input with editing capabilities
 def chat_loop(debug: bool, api_key: str, token_limit: int):
     """Main chat loop."""
-    
+
     openai.api_key = api_key
     messages = [
         INIT_SYSTEM_MESSAGE,
@@ -33,22 +33,15 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
     # Print welcome message
     print()
-    welcome = False
-    while not welcome:
-        try:
-            welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
-            print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-            print_slowly(
-                Fore.YELLOW
-                + welcome_message["choices"][0]["message"]["content"]
-                + Style.RESET_ALL
-            )
-            welcome = True
-        except openai.error.RateLimitError as e:
-            print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL, 0.02)
-            waiting_before_trying_again()
-            
+    welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
+    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+    print_slowly(
+        Fore.YELLOW
+        + welcome_message["choices"][0]["message"]["content"]
+        + Style.RESET_ALL
+    )
 
+    # Main chat loop
     while True:
         # Get user input
         user_input = session.prompt("\nUser: ")
@@ -67,11 +60,7 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             )
 
         # Get answer
-        try:
-            answer = get_answer(messages)
-        except openai.error.RateLimitError as e:
-            print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
-            continue
+        answer = get_answer(messages)
 
         # Parse total_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
@@ -100,17 +89,25 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
         if user_input == "exit":
             exit(0)
 
-def get_answer(messages):
+
+def get_answer(messages, timeout=10):
     """Returns the answer from OpenAI API."""
 
-    with yaspin(
-        Spinners.earth,
-        text=Style.BRIGHT + "Assistant:" + Style.RESET_ALL,
-        color="blue",
-        side="right",
-    ):
-        answer = openai.ChatCompletion.create(model=MODEL, messages=messages)
-        return answer
+    while True:
+        with yaspin(
+            Spinners.earth,
+            text=Style.BRIGHT + "Assistant:" + Style.RESET_ALL,
+            color="blue",
+            side="right",
+        ):
+            try:
+                answer = openai.ChatCompletion.create(
+                    model=MODEL, messages=messages, timeout=timeout
+                )
+                return answer
+            except (openai.error.RateLimitError) as e:
+                print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
+                waiting_before_trying_again()
 
 
 def print_slowly(text, delay=0.01):
@@ -140,7 +137,7 @@ def exceeding_token_limit(total_usage: int, token_limit: int):
 
 def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     """Reduce tokens in messages context."""
-    
+
     while exceeding_token_limit(total_usage, token_limit):
         reduce_amount = total_usage - token_limit
         message = messages.pop(1)
@@ -169,8 +166,9 @@ def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
 
 def waiting_before_trying_again(wait_time: int = 10):
     with yaspin() as spinner:
-        for i in range (wait_time):
-            spinner.text = Style.BRIGHT + f"Trying again in {wait_time - i}" + Style.RESET_ALL
+        for i in range(wait_time):
+            spinner.text = (
+                Style.BRIGHT + f"Trying again in {wait_time - i}" + Style.RESET_ALL
+            )
             spinner.color = "red"
             time.sleep(1)
-        
