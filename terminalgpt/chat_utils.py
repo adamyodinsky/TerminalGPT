@@ -115,7 +115,9 @@ def get_user_answer(messages):
                 )
                 return answer
             except openai.error.RateLimitError as error:
-                print_utils.print_slowly(Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL)
+                print_utils.print_slowly(
+                    Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
+                )
                 waiting_before_trying_again()
 
 
@@ -175,6 +177,7 @@ def waiting_before_trying_again(wait_time: int = 10):
             )
             spinner.color = "red"
             time.sleep(1)
+
 
 # pylint: disable=W0102, W0621
 def welcome_message(messages: list, init_message: str = config.INIT_WELCOME_MESSAGE):
