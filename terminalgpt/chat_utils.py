@@ -57,7 +57,7 @@ def chat_loop(debug: bool, token_limit: int, session: PromptSession, messages: l
         messages.append({"role": "assistant", "content": message})
 
         # Save context wait for some context
-        if not conversation_name and total_usage > token_limit / 8:
+        if not conversation_name and total_usage > token_limit / 10:
             # conversation_name = conversations.create_conversation_name(messages=messages)
             if not t_flag:
                 with concurrent.futures.ThreadPoolExecutor() as executor:
