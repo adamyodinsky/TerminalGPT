@@ -15,9 +15,16 @@ from terminalgpt import conversations
 TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
 BINDINGS = KeyBindings()
 
-def chat_loop(debug: bool, token_limit: int, session: PromptSession, messages: list, conversation_name: str = None):
+
+def chat_loop(
+    debug: bool,
+    token_limit: int,
+    session: PromptSession,
+    messages: list,
+    conversation_name: str = None,
+):
     """Main chat loop."""
-    
+
     t_flag = False
     # Main chat loop
     while True:
@@ -61,7 +68,9 @@ def chat_loop(debug: bool, token_limit: int, session: PromptSession, messages: l
             # conversation_name = conversations.create_conversation_name(messages=messages)
             if not t_flag:
                 with concurrent.futures.ThreadPoolExecutor() as executor:
-                    future = executor.submit(conversations.create_conversation_name, messages)
+                    future = executor.submit(
+                        conversations.create_conversation_name, messages
+                    )
                     conversation_name = future.result()
                 t_flag = True
         elif conversation_name:
@@ -169,7 +178,7 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
 def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
     """Returns the total number of tokens in a list of messages."""
 
-    total_tokens = -2 # there is an offset of 2 in the count, this is a workaround
+    total_tokens = -2  # there is an offset of 2 in the count, this is a workaround
     for message in messages:
         total_tokens += len(encoder.encode("content: " + message["content"]))
         total_tokens += len(encoder.encode("role: " + message["role"]))
@@ -197,8 +206,9 @@ def welcome_message(messages: list, init_message: str = config.INIT_WELCOME_MESS
         + Style.RESET_ALL
     )
 
+
 # Keeping this for future versions
-@BINDINGS.add('enter')
+@BINDINGS.add("enter")
 def _(event):
     """Handle enter key."""
     event.current_buffer.validate_and_handle()

@@ -130,8 +130,13 @@ def load(ctx):
     chat_utils.print_slowly(
         Style.BRIGHT
         + Fore.LIGHTBLUE_EX
-        + "\n** Conversation " + Fore.WHITE + conversation + Fore.LIGHTBLUE_EX + " Loaded! **\n"
-        + "- - - - - - - - - - - - - - - - - - - - - - - - -" + Style.RESET_ALL
+        + "\n** Conversation "
+        + Fore.WHITE
+        + conversation
+        + Fore.LIGHTBLUE_EX
+        + " Loaded! **\n"
+        + "- - - - - - - - - - - - - - - - - - - - - - - - -"
+        + Style.RESET_ALL
     )
 
     chat_utils.welcome_message(
@@ -183,7 +188,7 @@ def delete():
                 + "\n** Conversation not found! **"
                 + Style.RESET_ALL
             )
-        
+
         if conversations_list == []:
             chat_utils.print_slowly(
                 Style.BRIGHT

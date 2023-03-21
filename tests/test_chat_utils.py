@@ -2,13 +2,14 @@ import unittest
 
 from terminalgpt import chat_utils
 
+
 class TestEncryption(unittest.TestCase):
     def set_test(self):
         messages = [
-          {"role": "system", "content": "Hello user"},
-          {"role": "user", "content": "Hello system"},
-          {"role": "assistant", "content": "Hello user"},
-          {"role": "user", "content": "Hello assistant"},
+            {"role": "system", "content": "Hello user"},
+            {"role": "user", "content": "Hello system"},
+            {"role": "assistant", "content": "Hello user"},
+            {"role": "user", "content": "Hello assistant"},
         ]
         return messages
 
@@ -65,7 +66,6 @@ class TestEncryption(unittest.TestCase):
         self.assertEqual(messages[0]["content"], "Hello user")
         self.assertEqual(messages[1]["role"], "user")
         self.assertEqual(messages[1]["content"], " assistant")
-        
 
 
 if __name__ == "__main__":

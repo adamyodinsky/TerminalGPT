@@ -28,20 +28,24 @@ def save_conversation(
     with open(f"{path}/{file_name}", "w") as f:
         json.dump(messages, f)
 
+
 def delete_conversation(conversation, path: str = config.CONVERSATIONS_PATH):
     """Deletes a conversation from a file."""
 
     os.remove(f"{path}/{conversation}")
-    
+
+
 def load_conversation(file_name: str, path=config.CONVERSATIONS_PATH) -> list:
     """Loads a conversation from a file. returns a list of messages."""
 
-    try: 
-      with open(f"{path}/{file_name}", "r") as f:
-          messages = json.load(f)
-    except:        
-      error_message = f"Failed loading conversation {file_name} from {path}."
-      chat_utils.print_slowly(Back.RED + Style.BRIGHT + error_message + Style.RESET_ALL)
+    try:
+        with open(f"{path}/{file_name}", "r") as f:
+            messages = json.load(f)
+    except:
+        error_message = f"Failed loading conversation {file_name} from {path}."
+        chat_utils.print_slowly(
+            Back.RED + Style.BRIGHT + error_message + Style.RESET_ALL
+        )
 
     return messages
 
