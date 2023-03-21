@@ -5,11 +5,12 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "pip"
+    directory: "/"
     schedule:
       interval: "weekly"
-    assignees:
+    reviewers:
       - "adamyodinsky"
-      
-
+    labels:
+      - "dependabot"
+      - "dependencies"
