@@ -16,6 +16,7 @@ Please note that you need to have an OpenAI account to use TerminalGPT and an AP
 If you don't have an OpenAI account, please create one at https://beta.openai.com/signup.
 If you don't have an API key, please create one at https://beta.openai.com/account/api-keys.
 """
+    + Style.RESET_ALL
     + Style.BRIGHT
     + Fore.LIGHTBLUE_EX
     + """
