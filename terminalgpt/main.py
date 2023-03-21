@@ -32,7 +32,7 @@ from terminalgpt import encryption
 )
 @click.pass_context
 def cli(ctx, debug, token_limit):
-    """Main CLI function."""
+    """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
     ctx.ensure_object(dict)
 
@@ -164,7 +164,7 @@ def load(ctx):
 
 @click.command(help="Choose a previous conversation to load.")
 def delete():
-    """Delete a previous conversation."""
+    """Delete previous conversations."""
 
     # get conversations list
     conversations_list = conv.get_conversations()
