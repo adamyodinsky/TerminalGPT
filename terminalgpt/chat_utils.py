@@ -54,9 +54,7 @@ def chat_loop(
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
             stopped_message = print_utils.choose_random_message()
-            print_utils.print_slowly(
-                Fore.YELLOW + stopped_message + Style.RESET_ALL
-            )
+            print_utils.print_slowly(Fore.YELLOW + stopped_message + Style.RESET_ALL)
             continue
 
         # Parse total_usage and message from answer
