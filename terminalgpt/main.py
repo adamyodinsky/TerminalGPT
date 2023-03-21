@@ -58,7 +58,7 @@ def install():
     """Install the terminalgpt openai api key and create app directories."""
 
     # Get API key from user
-    print_utils.print_slowly(config.INSTALL_WELCOME_MESSAGE, 0.005)
+    print_utils.print_slowly(print_utils.INSTALL_WELCOME_MESSAGE, 0.005)
     api_key = getpass.getpass(
         prompt=Style.BRIGHT
         + Fore.LIGHTBLUE_EX
@@ -80,9 +80,9 @@ def install():
     with open(config.SECRET_PATH, "wb") as file:
         file.write(encrypted_secret)
 
-    print_utils.print_slowly(config.INSTALL_SUCCESS_MESSAGE, 0.005)
-    print_utils.print_slowly(config.INSTALL_ART, 0.002)
-    print_utils.print_slowly(config.INSTALL_SMALL_PRINTS, 0.007)
+    print_utils.print_slowly(print_utils.INSTALL_SUCCESS_MESSAGE, 0.005)
+    print_utils.print_slowly(print_utils.INSTALL_ART, 0.002)
+    print_utils.print_slowly(print_utils.INSTALL_SMALL_PRINTS, 0.007)
 
 
 @cli.command(help="Start a new conversation.")
@@ -112,7 +112,7 @@ def load(ctx):
     # get conversations list
     conversations_list = conv.get_conversations()
     completer = WordCompleter(conversations_list)
-    print_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
+    print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
     for conversation in conversations_list:
@@ -169,7 +169,7 @@ def delete():
     # get conversations list
     conversations_list = conv.get_conversations()
     completer = WordCompleter(conversations_list)
-    print_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
+    print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
     for conversation in conversations_list:
