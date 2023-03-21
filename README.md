@@ -1,7 +1,5 @@
 # TerminalGPT
 
-<img src="./logo.png" width="500" height="200" />
-
 ![logo](logo.png)
 
 ![PyPI](https://img.shields.io/pypi/v/terminalgpt) ![PyPI - Downloads](https://img.shields.io/pypi/dm/terminalgpt) ![GitHub last commit](https://img.shields.io/github/last-commit/adamyodinsky/terminalgpt) ![GitHub Repo stars](https://img.shields.io/github/stars/adamyodinsky/terminalgpt?style=social) 
@@ -11,7 +9,11 @@ With terminalGPT, you can easily interact with the OpenAI GPT 3.5 language model
 
 Whether you need help with a quick question or want to explore a complex topic, TerminalGPT is here to assist you. Simply enter your query and TerminalGPT will provide you with the best answer possible based on its extensive knowledge base.
 
+---
+
 ![Alt Text](./usage.gif)
+
+---
 
 ## Why?
 
