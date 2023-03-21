@@ -59,7 +59,7 @@ def get_conversations(path=config.CONVERSATIONS_PATH):
 
     if not os.path.exists(path):
         os.makedirs(path)
-        
+
     files = os.listdir(path)
     files.sort(key=lambda x: os.path.getmtime(os.path.join(path, x)), reverse=True)
 
