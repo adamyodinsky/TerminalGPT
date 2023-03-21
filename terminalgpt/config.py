@@ -1,3 +1,5 @@
+"""TerminalGPT configuration file."""
+
 import platform
 from os import path
 from colorama import Style, Fore
@@ -80,7 +82,7 @@ If you don't have an API key, please create one at https://beta.openai.com/accou
 Let's install the OpenAI API key, so you can use TerminalGPT.
 """
 )
-
+# pylint: disable=W1401
 INSTALL_ART = (
     Style.BRIGHT
     + Fore.GREEN
@@ -112,7 +114,7 @@ Let's get our programming on!
 
 INSTALL_SMALL_PRINTS = (
     Style.DIM
-    + f"""
+    + """
 Just a reminder that TerminalGPT is a free and open source project.
 So if you ever feel like contributing or checking out the inner workings of the program,
 feel free to head on over to https://github.com/adamyodinsky/TerminalGPT

@@ -1,10 +1,16 @@
+"""Tests for chat_utils.py."""
+
 import unittest
 
 from terminalgpt import chat_utils
 
 
-class TestEncryption(unittest.TestCase):
+class TestChatUtils(unittest.TestCase):
+    """Tests for chat_utils.py."""
+
     def set_test(self):
+        """Sets a test."""
+
         messages = [
             {"role": "system", "content": "Hello user"},
             {"role": "user", "content": "Hello system"},
@@ -14,10 +20,14 @@ class TestEncryption(unittest.TestCase):
         return messages
 
     def test_exceeding_token_limit(self):
+        """Tests exceeding_token_limit function."""
+
         self.assertTrue(chat_utils.exceeding_token_limit(1025, 1024))
         self.assertFalse(chat_utils.exceeding_token_limit(1000, 1023))
 
     def test_validate_token_limit(self):
+        """Tests validate_token_limit function."""
+
         self.assertEqual(chat_utils.validate_token_limit(None, None, 1024), 1024)
         self.assertEqual(chat_utils.validate_token_limit(None, None, 2048), 2048)
         self.assertEqual(chat_utils.validate_token_limit(None, None, 4096), 4096)
@@ -32,11 +42,15 @@ class TestEncryption(unittest.TestCase):
             chat_utils.validate_token_limit(None, None, 1023)
 
     def test_count_all_tokens(self):
+        """Tests count_all_tokens function."""
+
         messages = self.set_test()
         total_usage = chat_utils.count_all_tokens(messages)
         self.assertEqual(total_usage, 26)
 
     def test_reduce_tokens(self):
+        """Tests reduce_tokens function."""
+
         token_limit = 24
         messages = self.set_test()
         total_usage = chat_utils.count_all_tokens(messages)

@@ -1,17 +1,18 @@
+"""Main module for the terminalgpt package."""
+
 import getpass
 import os
 
 import click
-from colorama import Style, Fore
 import openai
-from terminalgpt import chat_utils
-from terminalgpt import config
-from terminalgpt import encryption
-from terminalgpt import conversations as conv
-from prompt_toolkit import PromptSession
-from prompt_toolkit.styles import Style as PromptStyle
+from colorama import Fore, Style
+from prompt_toolkit import PromptSession, prompt
 from prompt_toolkit.completion import WordCompleter
-from prompt_toolkit import prompt
+from prompt_toolkit.styles import Style as PromptStyle
+
+from terminalgpt import chat_utils, config, print_utils
+from terminalgpt import conversations as conv
+from terminalgpt import encryption
 
 
 @click.group()
@@ -31,6 +32,8 @@ from prompt_toolkit import prompt
 )
 @click.pass_context
 def cli(ctx, debug, token_limit):
+    """Main CLI function."""
+
     ctx.ensure_object(dict)
 
     ctx.obj["DEBUG"] = debug
@@ -48,11 +51,14 @@ def cli(ctx, debug, token_limit):
 
 
 @click.command(
-    help="Creating a secret api key for the chatbot. You will be asked to enter your OpenAI API key."
+    help="Creating a secret api key for the chatbot."
+    + " You will be asked to enter your OpenAI API key."
 )
 def install():
+    """Install the terminalgpt openai api key and create app directories."""
+
     # Get API key from user
-    chat_utils.print_slowly(config.INSTALL_WELCOME_MESSAGE, 0.005)
+    print_utils.print_slowly(config.INSTALL_WELCOME_MESSAGE, 0.005)
     api_key = getpass.getpass(
         prompt=Style.BRIGHT
         + Fore.LIGHTBLUE_EX
@@ -74,14 +80,16 @@ def install():
     with open(config.SECRET_PATH, "wb") as file:
         file.write(encrypted_secret)
 
-    chat_utils.print_slowly(config.INSTALL_SUCCESS_MESSAGE, 0.005)
-    chat_utils.print_slowly(config.INSTALL_ART, 0.002)
-    chat_utils.print_slowly(config.INSTALL_SMALL_PRINTS, 0.007)
+    print_utils.print_slowly(config.INSTALL_SUCCESS_MESSAGE, 0.005)
+    print_utils.print_slowly(config.INSTALL_ART, 0.002)
+    print_utils.print_slowly(config.INSTALL_SMALL_PRINTS, 0.007)
 
 
 @cli.command(help="Start a new conversation.")
 @click.pass_context
 def new(ctx):
+    """Start a new conversation."""
+
     messages = [
         config.INIT_SYSTEM_MESSAGE,
     ]
@@ -99,14 +107,16 @@ def new(ctx):
 @cli.command(help="Choose a previous conversation to load.")
 @click.pass_context
 def load(ctx):
+    """Load a previous conversation."""
+
     # get conversations list
     conversations_list = conv.get_conversations()
     completer = WordCompleter(conversations_list)
-    chat_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
+    print_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
     for conversation in conversations_list:
-        chat_utils.print_slowly(Style.BRIGHT + "- " + conversation)
+        print_utils.print_slowly(Style.BRIGHT + "- " + conversation)
 
     # prompt user to choose a conversation and load it into messages
     conversation = prompt(
@@ -117,7 +127,7 @@ def load(ctx):
 
     # if conversation not found, return
     if conversation not in conversations_list:
-        chat_utils.print_slowly(
+        print_utils.print_slowly(
             Style.BRIGHT
             + Fore.RED
             + "\n** Conversation not found! **"
@@ -127,7 +137,7 @@ def load(ctx):
 
     # load conversation
     messages = conv.load_conversation(conversation)
-    chat_utils.print_slowly(
+    print_utils.print_slowly(
         Style.BRIGHT
         + Fore.LIGHTBLUE_EX
         + "\n** Conversation "
@@ -154,14 +164,16 @@ def load(ctx):
 
 @click.command(help="Choose a previous conversation to load.")
 def delete():
+    """Delete a previous conversation."""
+
     # get conversations list
     conversations_list = conv.get_conversations()
     completer = WordCompleter(conversations_list)
-    chat_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
+    print_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
     for conversation in conversations_list:
-        chat_utils.print_slowly("- " + conversation)
+        print_utils.print_slowly("- " + conversation)
 
     # prompt user to choose a conversation and delete it
     while True:
@@ -173,7 +185,7 @@ def delete():
         # delete file conversation
         if conversation in conversations_list:
             conv.delete_conversation(conversation)
-            chat_utils.print_slowly(
+            print_utils.print_slowly(
                 Style.BRIGHT
                 + Fore.LIGHTBLUE_EX
                 + f"\n** Conversation: '{conversation}' deleted! **"
@@ -182,7 +194,7 @@ def delete():
             conversations_list = conv.get_conversations()
             completer = WordCompleter(conversations_list)
         else:
-            chat_utils.print_slowly(
+            print_utils.print_slowly(
                 Style.BRIGHT
                 + Fore.RED
                 + "\n** Conversation not found! **"
@@ -190,10 +202,10 @@ def delete():
             )
 
         if conversations_list == []:
-            chat_utils.print_slowly(
+            print_utils.print_slowly(
                 Style.BRIGHT
                 + Fore.LIGHTBLUE_EX
-                + f"\n** No more conversations to delete! **"
+                + "\n** No more conversations to delete! **"
                 + Style.RESET_ALL
             )
             return
@@ -204,5 +216,6 @@ cli.add_command(new)
 cli.add_command(load)
 cli.add_command(delete)
 
+# pylint: disable=no-value-for-parameter
 if __name__ == "__main__":
     cli()

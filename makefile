@@ -1,4 +1,10 @@
-.PHONY: install build publish run
+.PHONY: install build publish run format lint
+
+format:
+	poetry run black .
+
+lint:
+	poetry run pylint terminalgpt tests
 
 install:
 	poetry install

@@ -30,6 +30,8 @@ jobs:
         run: poetry install
       - name: build
         run: poetry build
+      - name: lint
+        run: poetry run pylint terminalgpt tests
       - name: test
         run: |
           filename=$(date +"%Y-%m-%d")"_test_result.xml"
