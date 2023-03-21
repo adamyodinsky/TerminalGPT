@@ -13,9 +13,9 @@ from terminalgpt import config, print_utils
 def create_conversation_name(messages: list):
     """Creates a context file name based on the title of the conversation."""
 
-    files_list = get_conversations()
+    files = get_conversations()
 
-    message_suffix = f"- Keep it unique amongst the next file names list: {files_list}"
+    message_suffix = f"- Keep it unique amongst the next file names list: {files}"
     title_message = {"role": "user", "content": config.TITLE_MESSAGE + message_suffix}
 
     answer = get_system_answer(messages + [title_message])
@@ -75,3 +75,12 @@ def get_system_answer(messages):
             return answer
         except openai.error.RateLimitError:
             time.sleep(10)
+
+
+def is_conversations_empty(files: list, message: str):
+    """Checks if the conversations directory is empty."""
+
+    if files == []:
+        print_utils.print_slowly(message + Style.RESET_ALL)
+        return True
+    return False
