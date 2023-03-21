@@ -110,12 +110,24 @@ def load(ctx):
     """Load a previous conversation."""
 
     # get conversations list
-    conversations_list = conv.get_conversations()
-    completer = WordCompleter(conversations_list)
+    conversations = conv.get_conversations()
+
+    msg = (
+        Style.BRIGHT
+        + Fore.RED
+        + "\n** There are no conversations to load! **"
+        + Style.RESET_ALL
+    )
+
+    if conv.is_conversations_empty(files=conversations, message=msg):
+        return
+
+    # setup file names auto-completion
+    completer = WordCompleter(conversations)
     print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
-    for conversation in conversations_list:
+    for conversation in conversations:
         print_utils.print_slowly(Style.BRIGHT + "- " + conversation)
 
     # prompt user to choose a conversation and load it into messages
@@ -126,7 +138,7 @@ def load(ctx):
     )
 
     # if conversation not found, return
-    if conversation not in conversations_list:
+    if conversation not in conversations:
         print_utils.print_slowly(
             Style.BRIGHT
             + Fore.RED
@@ -167,12 +179,24 @@ def delete():
     """Delete previous conversations."""
 
     # get conversations list
-    conversations_list = conv.get_conversations()
-    completer = WordCompleter(conversations_list)
+    conversations = conv.get_conversations()
+
+    msg = (
+        Style.BRIGHT
+        + Fore.RED
+        + "\n** There are no conversations to delete! **"
+        + Style.RESET_ALL
+    )
+
+    if conv.is_conversations_empty(files=conversations, message=msg):
+        return
+
+    # setup file names auto completion
+    completer = WordCompleter(conversations)
     print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
-    for conversation in conversations_list:
+    for conversation in conversations:
         print_utils.print_slowly("- " + conversation)
 
     # prompt user to choose a conversation and delete it
@@ -182,17 +206,25 @@ def delete():
             completer=completer,
             style=PromptStyle.from_dict({"prompt": "bold"}),
         )
-        # delete file conversation
-        if conversation in conversations_list:
+
+        # delete conversation file
+        if conversation in conversations:
             conv.delete_conversation(conversation)
+
             print_utils.print_slowly(
                 Style.BRIGHT
                 + Fore.LIGHTBLUE_EX
-                + f"\n** Conversation: '{conversation}' deleted! **"
+                + "\n** Conversation "
+                + Fore.WHITE
+                + conversation
+                + Fore.LIGHTBLUE_EX
+                + " deleted! **"
                 + Style.RESET_ALL
             )
-            conversations_list = conv.get_conversations()
-            completer = WordCompleter(conversations_list)
+
+            # update conversations list
+            conversations = conv.get_conversations()
+            completer = WordCompleter(conversations)
         else:
             print_utils.print_slowly(
                 Style.BRIGHT
@@ -201,13 +233,13 @@ def delete():
                 + Style.RESET_ALL
             )
 
-        if conversations_list == []:
-            print_utils.print_slowly(
-                Style.BRIGHT
-                + Fore.LIGHTBLUE_EX
-                + "\n** No more conversations to delete! **"
-                + Style.RESET_ALL
-            )
+        msg = (
+            Style.BRIGHT
+            + Fore.LIGHTBLUE_EX
+            + "\n** No more conversations to delete! **"
+            + Style.RESET_ALL
+        )
+        if conv.is_conversations_empty(files=conversations, message=msg):
             return
 
 
