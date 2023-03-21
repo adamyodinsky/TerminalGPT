@@ -153,6 +153,8 @@ def delete():
     conversations_list = conv.get_conversations()
     completer = WordCompleter(conversations_list)
     chat_utils.print_slowly(config.CONVERSATIONS_INIT_MESSAGE)
+
+    # print conversations list
     for conversation in conversations_list:
         chat_utils.print_slowly("- " + conversation)
 
@@ -181,7 +183,7 @@ def delete():
                 + "\n** Conversation not found! **"
                 + Style.RESET_ALL
             )
-
+        
         if conversations_list == []:
             chat_utils.print_slowly(
                 Style.BRIGHT
