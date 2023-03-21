@@ -1,11 +1,17 @@
+"""Encryption module for terminalgpt."""
+
 import os
+import sys
 
 from colorama import Fore, Style
-from terminalgpt.config import APP_NAME, SECRET_PATH
 from cryptography.fernet import Fernet
+
+from terminalgpt import config
 
 
 def get_encryption_key(key_path):
+    """Generates a key and save it into a file"""
+
     key = None
 
     if not os.path.exists(key_path):
@@ -22,6 +28,8 @@ def get_encryption_key(key_path):
 
 
 def encrypt(secret: bytes, key):
+    """Encrypts a secret using Fernet encryption."""
+
     # Create a Fernet cipher using the key
     cipher = Fernet(key)
 
@@ -30,6 +38,8 @@ def encrypt(secret: bytes, key):
 
 
 def decrypt(file_path, key):
+    """Decrypts a secret using Fernet encryption."""
+
     # Read the encrypted secret from the file
     with open(file_path, "rb") as file:
         encrypted_secret = file.read()
@@ -42,11 +52,13 @@ def decrypt(file_path, key):
 
 
 def check_api_key():
+    """Checks if the API key is installed."""
+
     message = f"""
 OpenAI API key is missing!
-Please install the chatbot api key first with '{APP_NAME} install' command.
+Please install the chatbot api key first with '{config.APP_NAME} install' command.
     """
 
-    if not os.path.exists(SECRET_PATH):
+    if not os.path.exists(config.SECRET_PATH):
         print(Style.BRIGHT + Fore.RED + message + Style.RESET_ALL)
-        exit(1)
+        sys.exit(1)

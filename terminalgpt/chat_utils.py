@@ -1,50 +1,39 @@
+""""Chat utils module for terminalgpt."""
+
+import concurrent.futures
+import sys
 import time
 
 import openai
 import tiktoken
 from colorama import Back, Fore, Style
 from prompt_toolkit import PromptSession
-from prompt_toolkit.styles import Style as PromptStyle
+from prompt_toolkit.key_binding import KeyBindings
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-from terminalgpt.config import (
-    ENCODING_MODEL,
-    INIT_SYSTEM_MESSAGE,
-    INIT_WELCOME_MESSAGE,
-    MODEL,
-)
+from terminalgpt import config, conversations, print_utils
 
-TIKTOKEN_ENCODER = tiktoken.get_encoding(ENCODING_MODEL)
+TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
+BINDINGS = KeyBindings()
 
 
-# TODO: multiline input with editing capabilities
-def chat_loop(debug: bool, api_key: str, token_limit: int):
+def chat_loop(
+    debug: bool,
+    token_limit: int,
+    session: PromptSession,
+    messages: list,
+    conversation_name: str = None,
+):
     """Main chat loop."""
 
-    openai.api_key = api_key
-    messages = [
-        INIT_SYSTEM_MESSAGE,
-    ]
-
-    # Prompt toolkit style
-    prompt_style = PromptStyle.from_dict({"prompt": "bold"})
-    session = PromptSession(style=prompt_style)
-
-    # Print welcome message
-    print()
-    welcome_message = get_answer(messages + [INIT_WELCOME_MESSAGE])
-    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-    print_slowly(
-        Fore.YELLOW
-        + welcome_message["choices"][0]["message"]["content"]
-        + Style.RESET_ALL
-    )
-
+    t_flag = False
     # Main chat loop
     while True:
         # Get user input
-        user_input = session.prompt("\nUser: ")
+
+        # user_input = click.edit() # can edit at vim
+        user_input = session.prompt()
         print()
 
         # Append to messages and send to ChatGPT
@@ -61,12 +50,14 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
 
         # Get answer
         try:
-            answer = get_answer(messages)
+            answer = get_user_answer(messages)
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-            print_slowly(Fore.YELLOW + "Ok i stopped, waiting for you command." + Style.RESET_ALL)
-            continue       
-        
+            print_utils.print_slowly(
+                Fore.YELLOW + "Ok i stopped, waiting for you command." + Style.RESET_ALL
+            )
+            continue
+
         # Parse total_usage and message from answer
         total_usage = answer["usage"]["total_tokens"]
         message = answer["choices"][0]["message"]["content"]
@@ -74,9 +65,22 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
         # Append to messages list for next iteration keeping context
         messages.append({"role": "assistant", "content": message})
 
+        # Save context wait for some context
+        if not conversation_name and total_usage > token_limit / 10:
+            # conversation_name = conversations.create_conversation_name(messages=messages)
+            if not t_flag:
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(
+                        conversations.create_conversation_name, messages
+                    )
+                    conversation_name = future.result()
+                t_flag = True
+        elif conversation_name:
+            conversations.save_conversation(messages, conversation_name)
+
         # Print answer message
         print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-        print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
+        print_utils.print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
 
         # Print usage
         if debug:
@@ -92,10 +96,10 @@ def chat_loop(debug: bool, api_key: str, token_limit: int):
             )
 
         if user_input == "exit":
-            exit(0)
+            sys.exit()
 
 
-def get_answer(messages, timeout=15):
+def get_user_answer(messages):
     """Returns the answer from OpenAI API."""
 
     while True:
@@ -107,27 +111,17 @@ def get_answer(messages, timeout=15):
         ):
             try:
                 answer = openai.ChatCompletion.create(
-                    model=MODEL, messages=messages, timeout=timeout
+                    model=config.MODEL, messages=messages
                 )
                 return answer
-            except (openai.error.RateLimitError) as e:
-                print_slowly(Back.RED + Style.BRIGHT + str(e) + Style.RESET_ALL)
+            except openai.error.RateLimitError as error:
+                print_utils.print_slowly(
+                    Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
+                )
                 waiting_before_trying_again()
 
 
-def print_slowly(text, delay=0.01):
-    """Prints text slowly."""
-
-    try:
-        for char in text:
-            print(char, end="", flush=True)
-            time.sleep(delay)
-    except KeyboardInterrupt:
-        print()
-    finally:
-        print()
-
-
+# pylint: disable=unused-argument
 def validate_token_limit(ctx, param, limit: int):
     """Validates the token limit."""
 
@@ -165,7 +159,7 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
 def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
     """Returns the total number of tokens in a list of messages."""
 
-    total_tokens = -2
+    total_tokens = -2  # there is an offset of 2 in the count, this is a workaround
     for message in messages:
         total_tokens += len(encoder.encode("content: " + message["content"]))
         total_tokens += len(encoder.encode("role: " + message["role"]))
@@ -174,6 +168,8 @@ def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
 
 
 def waiting_before_trying_again(wait_time: int = 10):
+    """Waits for a given time before trying again."""
+
     with yaspin() as spinner:
         for i in range(wait_time):
             spinner.text = (
@@ -181,3 +177,24 @@ def waiting_before_trying_again(wait_time: int = 10):
             )
             spinner.color = "red"
             time.sleep(1)
+
+
+# pylint: disable=W0102, W0621
+def welcome_message(messages: list, init_message: str = config.INIT_WELCOME_MESSAGE):
+    """Prints the welcome message."""
+
+    print()
+    welcome_message = get_user_answer(messages + [init_message])
+    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+    print_utils.print_slowly(
+        Fore.YELLOW
+        + welcome_message["choices"][0]["message"]["content"]
+        + Style.RESET_ALL
+    )
+
+
+# Keeping this for future versions
+@BINDINGS.add("enter")
+def _(event):
+    """Handle enter key."""
+    event.current_buffer.validate_and_handle()
