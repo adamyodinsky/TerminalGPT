@@ -1,5 +1,11 @@
 # TerminalGPT
 
+<img src="./logo.png" width="500" height="200" />
+
+![logo](logo.png)
+
+![PyPI](https://img.shields.io/pypi/v/terminalgpt) ![PyPI - Downloads](https://img.shields.io/pypi/dm/terminalgpt) ![GitHub last commit](https://img.shields.io/github/last-commit/adamyodinsky/terminalgpt) ![GitHub Repo stars](https://img.shields.io/github/stars/adamyodinsky/terminalgpt?style=social) 
+
 Welcome to terminalGPT, the terminal-based ChatGPT personal assistant app!
 With terminalGPT, you can easily interact with the OpenAI GPT 3.5 language model.
 
