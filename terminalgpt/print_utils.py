@@ -1,4 +1,5 @@
 """Print utilities."""
+import random
 import time
 
 from colorama import Fore, Style
@@ -75,6 +76,18 @@ Here are your previous conversations:
     + Style.RESET_ALL
 )
 
+STOPPED_MESSAGES = [
+    "OK, I stopped. Your wish is my command.",
+    "Alright, I stopped. I'm at your service.",
+    "OK, I'm all ears. Your wish is my command.",
+    "Alright, I paused. I'm at your service.",
+    "Alright, I'm waiting for the next instruction.",
+    "I've hit pause. Your wish is my command.",
+    "Sure thing. Ready and waiting for your next move.",
+    "Standing by for your command.",
+    "I'm all set, waiting for your orders.",
+    "I'm here, awaiting your direction.",
+]
 
 def print_slowly(text, delay=0.008):
     """Prints text slowly."""
@@ -87,3 +100,8 @@ def print_slowly(text, delay=0.008):
         print()
     finally:
         print()
+
+def choose_random_message(messages: list = STOPPED_MESSAGES):
+    """Choose a random message from a list of messages."""
+
+    return messages[random.randint(0, len(messages) - 1)]

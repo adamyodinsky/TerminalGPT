@@ -16,7 +16,7 @@ def create_conversation_name(messages: list):
     files = get_conversations()
 
     message_suffix = f"- Keep it unique amongst the next file names list: {files}"
-    title_message = {"role": "user", "content": config.TITLE_MESSAGE + message_suffix}
+    title_message = {"role": "system", "content": config.TITLE_MESSAGE + message_suffix}
 
     answer = get_system_answer(messages + [title_message])
     context_file_name = answer["choices"][0]["message"]["content"]

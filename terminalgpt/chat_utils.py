@@ -53,8 +53,9 @@ def chat_loop(
             answer = get_user_answer(messages)
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
+            stopped_message = print_utils.choose_random_message()
             print_utils.print_slowly(
-                Fore.YELLOW + "Ok i stopped, waiting for you command." + Style.RESET_ALL
+                Fore.YELLOW + stopped_message + Style.RESET_ALL
             )
             continue
 

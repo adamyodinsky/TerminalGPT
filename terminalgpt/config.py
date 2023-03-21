@@ -25,7 +25,7 @@ So keep them short as possible (5 new lines max) and use a suitable format for p
 
 
 INIT_WELCOME_MESSAGE = {
-    "role": "user",
+    "role": "system",
     "content": """
 Please start with a random and short greeting message starts with 'Welcome to terminalGPT'.
 Add a ton of self humor.
@@ -34,7 +34,7 @@ Keep it short as possible, one line.
 }
 
 INIT_WELCOME_BACK_MESSAGE = {
-    "role": "user",
+    "role": "system",
     "content": """
 The conversation you remember was a while ago, now we are continuing it.
 Please start the conversation with a random and short welcome back message.
