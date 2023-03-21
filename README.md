@@ -103,7 +103,6 @@ terminalgpt --token-limit 2048 --debug new
 1. Support multiline input.
 2. Support optional vim input mode.
 3. Auto-completion for all commands.
-4. Printing a summary of the loaded conversation.
-5. Open source the project.
-6. Add more models (???)
-7. encrypt the conversation data.
+4. Open source the project.
+5. Add more models (???)
+6. encrypt the conversation data.
