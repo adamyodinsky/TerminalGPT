@@ -1,7 +1,7 @@
 import os
 
 from colorama import Fore, Style
-from terminalgpt.config import APP_NAME, SECRET_PATH
+from terminalgpt import config
 from cryptography.fernet import Fernet
 
 
@@ -44,9 +44,9 @@ def decrypt(file_path, key):
 def check_api_key():
     message = f"""
 OpenAI API key is missing!
-Please install the chatbot api key first with '{APP_NAME} install' command.
+Please install the chatbot api key first with '{config.APP_NAME} install' command.
     """
 
-    if not os.path.exists(SECRET_PATH):
+    if not os.path.exists(config.SECRET_PATH):
         print(Style.BRIGHT + Fore.RED + message + Style.RESET_ALL)
         exit(1)

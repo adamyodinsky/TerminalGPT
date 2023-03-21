@@ -15,7 +15,10 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 2. It's highly available and can be used whenever you need it.
 3. It's faster with replies than the browser-based app.
 4. You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
-5. TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip set architecture.
+5. TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture.
+6. It doesn't use your conversation data for training the model (unlike the browser-based app).
+7. Your conversations are stored locally on your machine, so you can access them whenever you want. You can also delete them if you want to.
+8. You can stop the assistant at any time by pressing `Ctrl+C`.
 
 ## Pre-requisites
 
@@ -31,7 +34,7 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 pip install terminalgpt -U
 ```
 
-2. Now you have `terminalgpt` command available in your terminal. Run the following command to configure the app.
+2. Now you have `terminalgpt` command available in your terminal. Run the following install command to configure the app.
 
 ```sh
 terminalgpt install
@@ -39,15 +42,68 @@ terminalgpt install
 
 3. Enter your OpenAI API key when prompted and press enter.
 
-
 That's it! You're ready to use TerminalGPT!
 
 ---
 
 ## Usage
 
-1. Run the program with the following command:
+```sh
+Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --debug                Prints amounts of tokens used.
+  --token-limit INTEGER  Set the token limit between 1024 and 4096.
+  --help                 Show this message and exit.
+
+Commands:
+  new      Start a new conversation.
+  load     Choose a previous conversation to load.
+  delete   Choose a previous conversation to load.
+  install  Creating a secret api key for the chatbot.
+```
+
+### New
+
+Start a new conversation:
 
 ```sh
-terminalgpt chat
+terminalgpt new
 ```
+
+### Load
+
+Load previous conversations:
+
+```sh
+terminalgpt load
+```
+
+### Delete
+
+Delete previous conversations:
+
+```sh
+terminalgpt delete
+```
+
+### Using flags
+
+Using flags, you can set the token limit and debug mode. the flags should be used before the command.
+
+For example:
+
+```sh
+terminalgpt --token-limit 2048 --debug new
+```
+
+---
+
+## Future Plans
+
+1. Support multiline input.
+2. Support optional vim input mode.
+3. Auto-completion for all commands.
+4. Printing a summary of the loaded conversation.
+5. Open source the project.
+6. Add more models (???)
