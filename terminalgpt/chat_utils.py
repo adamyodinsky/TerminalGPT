@@ -18,17 +18,15 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
 BINDINGS = KeyBindings()
 
 
-def chat_loop(
-    executor: concurrent.futures.ThreadPoolExecutor,
-    debug: bool,
-    token_limit: int,
-    session: PromptSession,
-    messages: list,
-    conversation_name: str = None,
-):
-    """Main chat loop."""
-
+def chat_loop(conversation_name: str = None, **kwargs):
+    """Main chat loop."""    
+    executor: concurrent.futures.ThreadPoolExecutor = kwargs["executor"]
+    debug: bool = kwargs["debug"]
+    token_limit: int = kwargs["token_limit"]
+    session: PromptSession = kwargs["session"]
+    messages: list = kwargs["messages"]
     t_flag = False
+    
     # Main chat loop
     while True:
         # Get user input

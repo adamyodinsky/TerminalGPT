@@ -98,13 +98,15 @@ def new(ctx):
     chat_utils.welcome_message(messages)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future = executor.submit(chat_utils.chat_loop, debug=ctx.obj["DEBUG"],
-        token_limit=ctx.obj["TOKEN_LIMIT"],
-        session=ctx.obj["SESSION"],
-        messages=messages,
-        executor=executor,
+        future = executor.submit(
+            chat_utils.chat_loop,
+            debug=ctx.obj["DEBUG"],
+            token_limit=ctx.obj["TOKEN_LIMIT"],
+            session=ctx.obj["SESSION"],
+            messages=messages,
+            executor=executor,
         )
-    
+
         future.result()
 
 
