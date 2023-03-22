@@ -19,6 +19,7 @@ BINDINGS = KeyBindings()
 
 
 def chat_loop(
+    executor: concurrent.futures.ThreadPoolExecutor,
     debug: bool,
     token_limit: int,
     session: PromptSession,
@@ -66,14 +67,12 @@ def chat_loop(
 
         # Save context wait for some context
         if not conversation_name and total_usage > token_limit / 10:
-            # conversation_name = conversations.create_conversation_name(messages=messages)
             if not t_flag:
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    future = executor.submit(
-                        conversations.create_conversation_name, messages
-                    )
-                    conversation_name = future.result()
                 t_flag = True
+                future = executor.submit(
+                    conversations.create_conversation_name, messages
+                )
+                conversation_name = future.result()
         elif conversation_name:
             conversations.save_conversation(messages, conversation_name)
 
