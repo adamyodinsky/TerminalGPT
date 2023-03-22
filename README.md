@@ -1,6 +1,4 @@
-# TerminalGPT
-
-![logo](logo.png)
+# ![TerminalGPT](logo.png)
 
 [![Continuous Integration](https://github.com/adamyodinsky/TerminalGPT/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/adamyodinsky/TerminalGPT/actions/workflows/main.yml) ![PyPI](https://img.shields.io/pypi/v/terminalgpt) ![PyPI - Downloads](https://img.shields.io/pypi/dm/terminalgpt) ![commits-since](https://img.shields.io/github/commits-since/adamyodinsky/TerminalGPT/latest) ![GitHub last commit](https://img.shields.io/github/last-commit/adamyodinsky/terminalgpt)
 
@@ -113,4 +111,5 @@ terminalgpt --token-limit 2048 --debug new
 3. Auto-completion for all commands.
 4. Open source the project.
 5. Add more models (???)
-6. encrypt the conversation data.
+6. Encrypt the conversation data.
+7. Migrating to [Typer](https://typer.tiangolo.com/)
