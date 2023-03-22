@@ -26,8 +26,7 @@ def chat_loop(conversation_name: str = None, **kwargs):
     session: PromptSession = kwargs["session"]
     messages: list = kwargs["messages"]
     t_flag = False
-    
-    # Main chat loop
+
     while True:
         # Get user input
 
