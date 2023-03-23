@@ -12,7 +12,7 @@ install:
 build: install
 	poetry build
 
-test: build
+test: build lint
 	poetry run pytest -v 
 
 publish: test
