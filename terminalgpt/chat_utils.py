@@ -18,9 +18,12 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
 BINDINGS = KeyBindings()
 
 
-def chat_loop(conversation_name: str = None, **kwargs):
-    """Main chat loop."""    
-    executor: concurrent.futures.ThreadPoolExecutor = kwargs["executor"]
+def chat_loop(
+    conversation_name: str = None,
+    executor: concurrent.futures.ThreadPoolExecutor = None,
+    **kwargs,
+):
+    """Main chat loop."""
     debug: bool = kwargs["debug"]
     token_limit: int = kwargs["token_limit"]
     session: PromptSession = kwargs["session"]
