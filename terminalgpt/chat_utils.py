@@ -39,7 +39,7 @@ def chat_loop(
 
         # Append to messages and send to ChatGPT
         messages.append({"role": "user", "content": user_input})
-        total_usage = count_all_tokens(messages)
+        total_usage = num_tokens_from_messages(messages)
 
         # Prevent reaching tokens limit
         if exceeding_token_limit(total_usage, token_limit):
@@ -89,7 +89,7 @@ def chat_loop(
             )
             print(
                 Fore.LIGHTCYAN_EX
-                + f"Counter Total Usage: {str(count_all_tokens(messages, TIKTOKEN_ENCODER))} tokens"
+                + f"Counter Total Usage: {str(num_tokens_from_messages(messages))} tokens"
                 + Style.RESET_ALL
             )
 
@@ -117,6 +117,11 @@ def get_user_answer(messages):
                     Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
                 )
                 waiting_before_trying_again()
+            except openai.error.InvalidRequestError as error:
+                if "Please reduce the length of the messages" in str(error):
+                    messages.pop(1)
+                else:
+                    raise error
 
 
 # pylint: disable=unused-argument
@@ -154,15 +159,21 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     return messages, total_usage
 
 
-def count_all_tokens(messages, encoder=TIKTOKEN_ENCODER):
-    """Returns the total number of tokens in a list of messages."""
+def num_tokens_from_messages(messages) -> int:
+    """Returns the number of tokens used by a list of messages."""
 
-    total_tokens = -2  # there is an offset of 2 in the count, this is a workaround
+    encoding = tiktoken.get_encoding(config.ENCODING_MODEL)
+    num_tokens = 0
     for message in messages:
-        total_tokens += len(encoder.encode("content: " + message["content"]))
-        total_tokens += len(encoder.encode("role: " + message["role"]))
-
-    return total_tokens
+        num_tokens += (
+            4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+        )
+        for key, value in message.items():
+            num_tokens += len(encoding.encode(value))
+            if key == "name":  # if there's a name, the role is omitted
+                num_tokens += -1  # role is always required and always 1 token
+    num_tokens += 2  # every reply is primed with <im_start>assistant
+    return num_tokens
 
 
 def waiting_before_trying_again(wait_time: int = 10):
@@ -178,11 +189,11 @@ def waiting_before_trying_again(wait_time: int = 10):
 
 
 # pylint: disable=W0102, W0621
-def welcome_message(messages: list, init_message: str = config.INIT_WELCOME_MESSAGE):
+def welcome_message(messages: list):
     """Prints the welcome message."""
 
     print()
-    welcome_message = get_user_answer(messages + [init_message])
+    welcome_message = get_user_answer(messages)
     print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
     print_utils.print_slowly(
         Fore.YELLOW

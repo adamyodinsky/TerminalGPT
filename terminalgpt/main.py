@@ -167,9 +167,17 @@ def load(ctx):
         + Style.RESET_ALL
     )
 
-    chat_utils.welcome_message(
-        messages=messages, init_message=config.INIT_WELCOME_BACK_MESSAGE
-    )
+    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
+    total_usage = chat_utils.num_tokens_from_messages(messages)
+
+    if chat_utils.exceeding_token_limit(total_usage, config.API_TOKEN_LIMIT):
+        messages, total_usage = chat_utils.reduce_tokens(
+            messages=messages,
+            total_usage=total_usage,
+            token_limit=config.API_TOKEN_LIMIT,
+        )
+
+    chat_utils.welcome_message(messages=messages)
 
     chat_utils.chat_loop(
         debug=ctx.obj["DEBUG"],

@@ -18,5 +18,11 @@ test: build lint
 publish: test
 	poetry publish
 
-run:
-	poetry run terminalgpt
+run-new:
+	poetry run terminalgpt --debug new
+
+run-load:
+	poetry run terminalgpt --debug load
+
+run-delete:
+	poetry run terminalgpt delete
