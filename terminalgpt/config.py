@@ -11,7 +11,7 @@ CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
 SECRET_PATH = f"{BASE_PATH}/{APP_NAME}.encrypted"
 KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
 
-MODEL = "gpt-3.5-turbo"
+MODEL = "gpt-3.5-turbo-0301"
 ENCODING_MODEL = "cl100k_base"
 
 INIT_SYSTEM_MESSAGE = {

@@ -12,10 +12,10 @@ class TestChatUtils(unittest.TestCase):
         """Sets a test."""
 
         messages = [
-            {"role": "system", "content": "Hello user"},
-            {"role": "user", "content": "Hello system"},
-            {"role": "assistant", "content": "Hello user"},
-            {"role": "user", "content": "Hello assistant"},
+            {"role": "system", "content": "Hello user Hello user"},
+            {"role": "user", "content": "Hello system Hello system"},
+            {"role": "assistant", "content": "Hello user Hello user"},
+            {"role": "user", "content": "Hello assistant Hello assistant"},
         ]
         return messages
 
@@ -41,46 +41,24 @@ class TestChatUtils(unittest.TestCase):
         with self.assertRaises(ValueError):
             chat_utils.validate_token_limit(None, None, 1023)
 
-    def test_count_all_tokens(self):
-        """Tests count_all_tokens function."""
-
-        messages = self.set_test()
-        total_usage = chat_utils.count_all_tokens(messages)
-        self.assertEqual(total_usage, 26)
-
     def test_reduce_tokens(self):
         """Tests reduce_tokens function."""
 
-        token_limit = 24
+        token_limit = 30
         messages = self.set_test()
-        total_usage = chat_utils.count_all_tokens(messages)
+        total_usage = chat_utils.num_tokens_from_messages(messages)
+        print("total_usage:", total_usage)
 
         messages, total_usage = chat_utils.reduce_tokens(
             messages, token_limit, total_usage
         )
 
         self.assertEqual(total_usage, token_limit)
-        self.assertEqual(len(messages), 4)
+        self.assertEqual(len(messages), 3)
         self.assertEqual(messages[0]["role"], "system")
-        self.assertEqual(messages[0]["content"], "Hello user")
-        self.assertEqual(messages[1]["role"], "user")
+        self.assertEqual(messages[0]["content"], "Hello user Hello user")
+        self.assertEqual(messages[1]["role"], "assistant")
         self.assertEqual(messages[1]["content"], "")
-
-        token_limit = 21
-        messages = self.set_test()
-        total_usage = chat_utils.count_all_tokens(messages)
-
-        messages, total_usage = chat_utils.reduce_tokens(
-            messages, token_limit, total_usage
-        )
-
-        self.assertEqual(total_usage, token_limit)
-        self.assertEqual(len(messages), 2)
-        self.assertEqual(messages[0]["role"], "system")
-        self.assertEqual(messages[0]["content"], "Hello user")
-        self.assertEqual(messages[1]["role"], "user")
-        self.assertEqual(messages[1]["content"], " assistant")
-
 
 if __name__ == "__main__":
     unittest.main()

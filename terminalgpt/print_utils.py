@@ -102,6 +102,7 @@ def print_slowly(text, delay=0.008):
     finally:
         print()
 
+
 # pylint: disable=W0102
 def choose_random_message(messages: list = STOPPED_MESSAGES):
     """Choose a random message from a list of messages."""
