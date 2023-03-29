@@ -1,6 +1,5 @@
 """"Chat utils module for terminalgpt."""
 
-import concurrent.futures
 import sys
 import time
 
@@ -8,19 +7,16 @@ import openai
 import tiktoken
 from colorama import Back, Fore, Style
 from prompt_toolkit import PromptSession
-from prompt_toolkit.key_binding import KeyBindings
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
 from terminalgpt import config, conversations, print_utils
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
-BINDINGS = KeyBindings()
 
 
 def chat_loop(
     conversation_name: str = None,
-    executor: concurrent.futures.ThreadPoolExecutor = None,
     **kwargs,
 ):
     """Main chat loop."""
@@ -28,7 +24,6 @@ def chat_loop(
     token_limit: int = kwargs["token_limit"]
     session: PromptSession = kwargs["session"]
     messages: list = kwargs["messages"]
-    t_flag = False
 
     while True:
         # Get user input
@@ -67,12 +62,7 @@ def chat_loop(
 
         # Save context wait for some context
         if not conversation_name and total_usage > token_limit / 10:
-            if not t_flag:
-                t_flag = True
-                future = executor.submit(
-                    conversations.create_conversation_name, messages
-                )
-                conversation_name = future.result()
+            conversation_name = conversations.create_conversation_name(messages)
         elif conversation_name:
             conversations.save_conversation(messages, conversation_name)
 
@@ -200,10 +190,3 @@ def welcome_message(messages: list):
         + welcome_message["choices"][0]["message"]["content"]
         + Style.RESET_ALL
     )
-
-
-# Keeping this for future versions
-@BINDINGS.add("enter")
-def _(event):
-    """Handle enter key."""
-    event.current_buffer.validate_and_handle()
