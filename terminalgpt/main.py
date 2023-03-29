@@ -1,6 +1,5 @@
 """Main module for the terminalgpt package."""
 
-import concurrent.futures
 import getpass
 import os
 
@@ -41,7 +40,6 @@ def cli(ctx, debug, token_limit):
     ctx.obj["TOKEN_LIMIT"] = token_limit
 
     ctx.obj["SESSION"] = PromptSession(
-        key_bindings=chat_utils.BINDINGS,
         style=PromptStyle.from_dict({"prompt": "bold"}),
         message="\nUser: ",
     )
@@ -97,17 +95,12 @@ def new(ctx):
 
     chat_utils.welcome_message(messages)
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future = executor.submit(
-            chat_utils.chat_loop,
-            debug=ctx.obj["DEBUG"],
-            token_limit=ctx.obj["TOKEN_LIMIT"],
-            session=ctx.obj["SESSION"],
-            messages=messages,
-            executor=executor,
-        )
-
-        future.result()
+    chat_utils.chat_loop(
+        debug=ctx.obj["DEBUG"],
+        token_limit=ctx.obj["TOKEN_LIMIT"],
+        session=ctx.obj["SESSION"],
+        messages=messages,
+    )
 
 
 @cli.command(help="Choose a previous conversation to load.")
