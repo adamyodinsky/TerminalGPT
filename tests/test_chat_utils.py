@@ -31,6 +31,5 @@ class TestChatUtils(unittest.TestCase):
         messages = self.set_test()
         self.assertEqual(chat_utils.num_tokens_from_messages(messages), 34)
 
-
 if __name__ == "__main__":
     unittest.main()

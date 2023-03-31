@@ -6,19 +6,19 @@ import os
 import subprocess
 
 
-def shell_version():
-    """Get the current shell version."""
+# def shell_version():
+#     """Get the current shell version."""
 
-    shell = os.environ.get("SHELL")
-    result = None
+#     shell = os.environ.get("SHELL")
+#     result = None
 
-    if platform.system() == "Windows":
-        result = subprocess.run(["ver"], stdout=subprocess.PIPE, check=True)
-    else:
-        result = subprocess.run(
-            [shell, "--version"], stdout=subprocess.PIPE, check=True
-        )
-    return result.stdout.decode("utf-8").strip()
+#     if platform.system() == "Windows":
+#         result = subprocess.run(["ver"], stdout=subprocess.PIPE, check=True)
+#     else:
+#         result = subprocess.run(
+#             [shell, "--version"], stdout=subprocess.PIPE, check=False
+#         )
+#     return result.stdout.decode("utf-8").strip()
 
 
 def machine_info():
@@ -44,7 +44,7 @@ INIT_SYSTEM_MESSAGE = {
     "content": f"""
 - Your name is "TerminalGPT".
 - You are a helpful personal assistant for programers.
-- You are running on {shell_version()} on a {machine_info()} machine.
+- You are running on {machine_info()} machine.
 - Please note that your answers will be displayed on the terminal.
 - So keep answers short as possible and use a suitable format for printing on a terminal.
 """,
