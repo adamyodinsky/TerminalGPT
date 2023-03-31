@@ -1,5 +1,6 @@
 """"Chat utils module for terminalgpt."""
 
+import os
 import sys
 import time
 
@@ -20,7 +21,6 @@ def chat_loop(
     **kwargs,
 ):
     """Main chat loop."""
-    debug: bool = kwargs["debug"]
     token_limit: int = kwargs["token_limit"]
     session: PromptSession = kwargs["session"]
     messages: list = kwargs["messages"]
@@ -71,7 +71,7 @@ def chat_loop(
         print_utils.print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
 
         # Print usage
-        if debug:
+        if os.environ.get("LOG_LEVEL") == "DEBUG":
             print(
                 Fore.LIGHTBLUE_EX
                 + f"\nAPI Total Usage: {str(total_usage)} tokens"
@@ -114,17 +114,6 @@ def get_user_answer(messages):
                     raise error
 
 
-# pylint: disable=unused-argument
-def validate_token_limit(ctx, param, limit: int):
-    """Validates the token limit."""
-
-    arr = [2**i for i in range(2, 13)]
-
-    if limit not in arr or limit < 1024:
-        raise ValueError("Token limit must be between 1024 and 4096 and a power of 2.")
-    return limit
-
-
 def exceeding_token_limit(total_usage: int, token_limit: int):
     """Returns True if the total_usage is greater than the token limit with some safe buffer."""
 
@@ -134,8 +123,8 @@ def exceeding_token_limit(total_usage: int, token_limit: int):
 def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     """Reduce tokens in messages context."""
 
+    reduce_amount = total_usage - token_limit
     while exceeding_token_limit(total_usage, token_limit):
-        reduce_amount = total_usage - token_limit
         message = messages.pop(1)
         tokenized_message = TIKTOKEN_ENCODER.encode(message["content"])
 
@@ -144,8 +133,30 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
             reduce_amount -= 1
             tokenized_message.pop(0)
 
-    message["content"] = TIKTOKEN_ENCODER.decode(tokenized_message)
-    messages.insert(1, message)
+        if len(tokenized_message) == 0 and exceeding_token_limit(
+            total_usage, token_limit
+        ):
+            # every message follows <im_start>{role/name}\n{content}<im_end>\n
+            # thus we need to remove 4 tokens for every message that will be removed
+            # so if the message is empty
+            reduce_amount -= 4
+            total_usage -= 4
+
+            for key, _ in message.items():
+                if key == "name":  # if there's a name, the role is omitted
+                    # role is always required and always 1 token
+                    reduce_amount += 1
+                    total_usage += 1
+
+    if len(tokenized_message) > 0:
+        message["content"] = TIKTOKEN_ENCODER.decode(tokenized_message)
+        messages.insert(1, message)
+
+    if os.environ.get("LOG_LEVEL") == "DEBUG":
+        counted_tokens = num_tokens_from_messages(messages)
+        print(f"Counted usage: {total_usage}")
+        print(f"Real usage tokens: {counted_tokens}")
+
     return messages, total_usage
 
 
@@ -162,7 +173,7 @@ def num_tokens_from_messages(messages) -> int:
             num_tokens += len(encoding.encode(value))
             if key == "name":  # if there's a name, the role is omitted
                 num_tokens += -1  # role is always required and always 1 token
-    num_tokens += 2  # every reply is primed with <im_start>assistant
+    num_tokens -= 2  # every reply is primed with <im_start>assistant
     return num_tokens
 
 

@@ -5,22 +5,31 @@ from os import path
 import os
 import subprocess
 
+
 def shell_version():
-    shell = os.environ.get('SHELL')
+    """Get the current shell version."""
+
+    shell = os.environ.get("SHELL")
     result = None
-    
-    if platform.system() == 'Windows':
-        result = subprocess.run(['ver'], stdout=subprocess.PIPE)
+
+    if platform.system() == "Windows":
+        result = subprocess.run(["ver"], stdout=subprocess.PIPE, check=True)
     else:
-        result = subprocess.run([shell, '--version'], stdout=subprocess.PIPE)
-    return result.stdout.decode('utf-8').strip()
-        
+        result = subprocess.run(
+            [shell, "--version"], stdout=subprocess.PIPE, check=True
+        )
+    return result.stdout.decode("utf-8").strip()
+
+
 def machine_info():
+    """Get the current machine info."""
+
     return platform.platform()
 
 
 APP_NAME = "terminalgpt"
 API_TOKEN_LIMIT = 4096
+SAFETY_BUFFER = 1024
 
 BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
 CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"

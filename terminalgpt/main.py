@@ -16,33 +16,16 @@ from terminalgpt import encryption
 
 
 @click.group()
-@click.option(
-    "--debug",
-    is_flag=True,
-    help="Prints amounts of tokens used.",
-    type=bool,
-    default=False,
-)
-@click.option(
-    "--token-limit",
-    help="Set the token limit between 1024 and 4096.",
-    type=int,
-    default=config.API_TOKEN_LIMIT,
-    callback=chat_utils.validate_token_limit,
-)
 @click.pass_context
-def cli(ctx, debug, token_limit):
+def cli(ctx):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
     ctx.ensure_object(dict)
-
-    ctx.obj["DEBUG"] = debug
-    ctx.obj["TOKEN_LIMIT"] = token_limit
-
     ctx.obj["SESSION"] = PromptSession(
         style=PromptStyle.from_dict({"prompt": "bold"}),
         message="\nUser: ",
     )
+    ctx.obj["TOKEN_LIMIT"] = config.API_TOKEN_LIMIT - config.SAFETY_BUFFER
 
     encryption.check_api_key()
     key = encryption.get_encryption_key(config.KEY_PATH)
@@ -96,7 +79,6 @@ def new(ctx):
     chat_utils.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
 
     chat_utils.chat_loop(
-        debug=ctx.obj["DEBUG"],
         token_limit=ctx.obj["TOKEN_LIMIT"],
         session=ctx.obj["SESSION"],
         messages=messages,
@@ -163,18 +145,19 @@ def load(ctx):
     messages.append(config.INIT_WELCOME_BACK_MESSAGE)
     total_usage = chat_utils.num_tokens_from_messages(messages)
 
-    if chat_utils.exceeding_token_limit(total_usage, config.API_TOKEN_LIMIT):
+    token_limit = ctx.obj["TOKEN_LIMIT"]
+
+    if chat_utils.exceeding_token_limit(total_usage, token_limit):
         messages, total_usage = chat_utils.reduce_tokens(
             messages=messages,
             total_usage=total_usage,
-            token_limit=config.API_TOKEN_LIMIT,
+            token_limit=token_limit,
         )
 
     chat_utils.welcome_message(messages=messages)
 
     chat_utils.chat_loop(
-        debug=ctx.obj["DEBUG"],
-        token_limit=ctx.obj["TOKEN_LIMIT"],
+        token_limit=token_limit,
         session=ctx.obj["SESSION"],
         messages=messages,
         conversation_name=conversation,
@@ -229,9 +212,9 @@ def delete():
                 + Style.RESET_ALL
             )
 
-            # update conversations list
+            # delete conversation from conversations list
+            conversations.remove(conversation)
             completer = WordCompleter(conversations, ignore_case=True)
-            completer = WordCompleter(conversations)
         else:
             print_utils.print_slowly(
                 Style.BRIGHT

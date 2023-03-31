@@ -59,8 +59,6 @@ That's it! You're ready to use TerminalGPT!
 Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --debug                Prints amounts of tokens used.
-  --token-limit INTEGER  Set the token limit between 1024 and 4096.
   --help                 Show this message and exit.
 
 Commands:
@@ -92,16 +90,6 @@ Delete previous conversations:
 
 ```sh
 terminalgpt delete
-```
-
-### Using flags
-
-Using flags, you can set the token limit and debug mode. the flags should be used before the command.
-
-For example:
-
-```sh
-terminalgpt --token-limit 2048 --debug new
 ```
 
 ---
