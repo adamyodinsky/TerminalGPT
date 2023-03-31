@@ -34,7 +34,7 @@ jobs:
         run: poetry run pylint terminalgpt tests
       - name: test
         run: poetry run pytest
-      # TODOLATER: publish test results
+      # TODO: publish test results
       # - name: Publish Test Results
       #   uses: EnricoMi/publish-unit-test-result-action@v2
       #   with:
