@@ -33,9 +33,7 @@ jobs:
       - name: lint
         run: poetry run pylint terminalgpt tests
       - name: test
-        run: |
-          filename=$(date +"%Y-%m-%d")"_test_result.xml"
-          poetry run pytest -v --junitxml=${filename}
+        run: poetry run pytest
       # TODOLATER: publish test results
       # - name: Publish Test Results
       #   uses: EnricoMi/publish-unit-test-result-action@v2
