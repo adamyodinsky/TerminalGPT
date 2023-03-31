@@ -93,7 +93,7 @@ def new(ctx):
         config.INIT_SYSTEM_MESSAGE,
     ]
 
-    chat_utils.welcome_message(messages)
+    chat_utils.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
 
     chat_utils.chat_loop(
         debug=ctx.obj["DEBUG"],
@@ -122,7 +122,7 @@ def load(ctx):
         return
 
     # setup file names auto-completion
-    completer = WordCompleter(conversations)
+    completer = WordCompleter(conversations, ignore_case=True)
     print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
@@ -199,7 +199,7 @@ def delete():
         return
 
     # setup file names auto completion
-    completer = WordCompleter(conversations)
+    completer = WordCompleter(conversations, ignore_case=True)
     print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
@@ -230,7 +230,7 @@ def delete():
             )
 
             # update conversations list
-            conversations = conv.get_conversations()
+            completer = WordCompleter(conversations, ignore_case=True)
             completer = WordCompleter(conversations)
         else:
             print_utils.print_slowly(

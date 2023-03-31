@@ -17,19 +17,21 @@ Whether you need help with a quick question or want to explore a complex topic, 
 
 Some advantages of using TerminalGPT over the chatGPT browser-based app:
 
-1. It doesn't disconnect like the browser-based app, so you can leave it running in a terminal session on the side without losing context.
-2. It's highly available and can be used whenever you need it.
-3. It's faster with replies than the browser-based app.
-4. You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
-5. TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture.
-6. Doesn't use your conversation data for training the model (unlike the browser-based app).
-7. Your conversations are stored locally on your machine, so only you can access them.
+- It doesn't disconnect like the browser-based app, so you can leave it running in a terminal session on the side without losing context.
+- It's highly available and can be used whenever you need it.
+- It's faster with replies than the browser-based app.
+- You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
+- TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture
+- Doesn't use your conversation data for training the model (unlike the browser-based app).
+- Your conversations are stored locally on your machine, so only you can access them.
 
 ## Pre-requisites
 
-1. Python 3.6 or higher
-2. An OpenAI Account and API key (It's free for personal use).
-[How to create OpenAI API keys](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0)
+- Python 3.6 or higher
+- An OpenAI Account and API key (It's free for personal use).
+   1. Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
+   2. Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
+   For a more detailed guide on how to create an OpenAI API key, click [here](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0).
 
 ## Installation
 
