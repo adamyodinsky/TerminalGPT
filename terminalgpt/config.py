@@ -2,9 +2,6 @@
 
 import platform
 from os import path
-import os
-import subprocess
-
 
 # def shell_version():
 #     """Get the current shell version."""
