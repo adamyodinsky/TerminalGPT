@@ -19,10 +19,10 @@ publish: test
 	poetry publish
 
 run-new:
-	poetry run terminalgpt --debug new
+	LOG_LEVEL=DEBUG poetry run terminalgpt new
 
 run-load:
-	poetry run terminalgpt --debug load
+	LOG_LEVEL=DEBUG poetry run terminalgpt load
 
 run-delete:
-	poetry run terminalgpt delete
+	LOG_LEVEL=DEBUG poetry run terminalgpt delete

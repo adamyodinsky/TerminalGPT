@@ -3,8 +3,30 @@
 import platform
 from os import path
 
+# def shell_version():
+#     """Get the current shell version."""
+
+#     shell = os.environ.get("SHELL")
+#     result = None
+
+#     if platform.system() == "Windows":
+#         result = subprocess.run(["ver"], stdout=subprocess.PIPE, check=True)
+#     else:
+#         result = subprocess.run(
+#             [shell, "--version"], stdout=subprocess.PIPE, check=False
+#         )
+#     return result.stdout.decode("utf-8").strip()
+
+
+def machine_info():
+    """Get the current machine info."""
+
+    return platform.platform()
+
+
 APP_NAME = "terminalgpt"
 API_TOKEN_LIMIT = 4096
+SAFETY_BUFFER = 1024
 
 BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
 CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
@@ -17,9 +39,11 @@ ENCODING_MODEL = "cl100k_base"
 INIT_SYSTEM_MESSAGE = {
     "role": "system",
     "content": f"""
-You are a helpful personal assistant called "TerminalGPT" for a programer on a {platform.platform()} machine.
-Please note that your answers will be displayed on the terminal.
-So keep them short as possible (5 new lines max) and use a suitable format for printing on terminal.
+- Your name is "TerminalGPT".
+- You are a helpful personal assistant for programers.
+- You are running on {machine_info()} machine.
+- Please note that your answers will be displayed on the terminal.
+- So keep answers short as possible and use a suitable format for printing on a terminal.
 """,
 }
 
@@ -27,9 +51,9 @@ So keep them short as possible (5 new lines max) and use a suitable format for p
 INIT_WELCOME_MESSAGE = {
     "role": "system",
     "content": """
-Please start with a random and short greeting message starts with 'Welcome to terminalGPT'.
-Add a ton of self humor.
-Keep it short as possible, one line.
+- Please start the conversation with a random and short greeting message starts with 'Welcome to terminalGPT'.
+- Add a ton of self humor.
+- Keep it short as possible, one line.
 """,
 }
 
