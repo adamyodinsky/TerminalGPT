@@ -56,7 +56,7 @@ That's it! You're ready to use TerminalGPT!
 
 ## Usage
 
-```sh
+```txt
 Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
 Options:
