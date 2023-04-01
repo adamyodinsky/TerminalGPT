@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "terminalgpt"
-version = "1.0.10"
+version = "1.0.9"
 description = "AI chat asistent in your terminal powered by OpenAI GPT-3.5"
 authors = ["Adam Yodinsky <27074934+adamyodinsky@users.noreply.github.com>"]
 keywords=["ai", "chat", "terminal", "openai", "gpt3", "chatGPT", "assistant", "gpt3.5", "terminalGPT", "gpt-3.5-turbo"]
