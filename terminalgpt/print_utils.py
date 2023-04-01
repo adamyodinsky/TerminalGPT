@@ -3,8 +3,13 @@ import random
 import time
 
 from colorama import Fore, Style
+from rich.console import Console
+from rich.markdown import Markdown
 
 from terminalgpt import config
+
+CONSOLE = Console()
+PRINT_DELAY = 0.007
 
 INSTALL_WELCOME_MESSAGE = (
     Style.BRIGHT
@@ -90,7 +95,27 @@ STOPPED_MESSAGES = [
 ]
 
 
-def print_slowly(text, delay=0.008):
+def split_highlighted_string(string):
+    """Split a string into blocks of highlighted syntax text and normal text."""
+
+    result = []
+    start = 0
+    while True:
+        start_block = string.find("```", start)
+        if start_block == -1:
+            result.append(string[start:])
+            break
+        end_block = string.find("```", start_block + 3)
+        if end_block == -1:
+            result.append(string[start:])
+            break
+        result.append(string[start:start_block])
+        result.append(string[start_block : end_block + 3])
+        start = end_block + 3
+    return result
+
+
+def print_slowly(text, delay=PRINT_DELAY):
     """Prints text slowly."""
 
     try:
@@ -101,6 +126,25 @@ def print_slowly(text, delay=0.008):
         print()
     finally:
         print()
+
+
+def print_markdown_slowly(text: str, style="yellow"):
+    """Prints markdown text slowly."""
+
+    text_markdown = ""
+    txt_arr = split_highlighted_string(text)
+
+    for txt in txt_arr:
+        with CONSOLE.capture() as capture:
+            text_markdown = Markdown(txt)
+            CONSOLE.print(text_markdown, style=style)
+        text_markdown = capture.get()
+
+        if txt.startswith("```"):
+            delay = PRINT_DELAY / 10
+        else:
+            delay = PRINT_DELAY
+        print_slowly(text_markdown, delay)
 
 
 # pylint: disable=W0102
