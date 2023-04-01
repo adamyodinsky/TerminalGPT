@@ -102,4 +102,4 @@ terminalgpt delete
 4. Open source the project.
 5. Add more models (???)
 6. Encrypt the conversation data.
-7. Migrating to [Typer](https://typer.tiangolo.com/)
+
