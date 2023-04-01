@@ -56,19 +56,6 @@ That's it! You're ready to use TerminalGPT!
 
 ## Usage
 
-```txt
-Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
-
-Options:
-  --help                 Show this message and exit.
-
-Commands:
-  new      Start a new conversation.
-  load     Choose a previous conversation to load.
-  delete   Choose a previous conversation to load.
-  install  Creating a secret api key for the chatbot.
-```
-
 ### New
 
 Start a new conversation:
