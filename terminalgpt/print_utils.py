@@ -129,7 +129,7 @@ def print_slowly(text, delay=PRINT_DELAY):
 
 
 def print_markdown_slowly(text: str, style="yellow"):
-    """Prints text slowly."""
+    """Prints markdown text slowly."""
 
     text_markdown = ""
     txt_arr = split_highlighted_string(text)
