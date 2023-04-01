@@ -9,7 +9,7 @@ Whether you need help with a quick question or want to explore a complex topic, 
 
 ---
 
-![Alt Text](./usage.gif)
+<img width="910" alt="image" src="https://user-images.githubusercontent.com/27074934/229319537-f332923d-f92e-4d91-8d5e-d26d8997341e.png">
 
 ---
 
