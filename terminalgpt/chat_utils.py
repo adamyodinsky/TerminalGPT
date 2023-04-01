@@ -50,7 +50,7 @@ def chat_loop(
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
             stopped_message = print_utils.choose_random_message()
-            print_utils.print_slowly(Fore.YELLOW + stopped_message + Style.RESET_ALL)
+            print_utils.print_markdown_slowly(stopped_message)
             continue
 
         # Parse total_usage and message from answer
@@ -68,7 +68,7 @@ def chat_loop(
 
         # Print answer message
         print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-        print_utils.print_slowly(Fore.YELLOW + message + Style.RESET_ALL)
+        print_utils.print_markdown_slowly(message)
 
         # Print usage
         if os.environ.get("LOG_LEVEL") == "DEBUG":
@@ -196,8 +196,6 @@ def welcome_message(messages: list):
     print()
     welcome_message = get_user_answer(messages)
     print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-    print_utils.print_slowly(
-        Fore.YELLOW
-        + welcome_message["choices"][0]["message"]["content"]
-        + Style.RESET_ALL
+    print_utils.print_markdown_slowly(
+        welcome_message["choices"][0]["message"]["content"]
     )
