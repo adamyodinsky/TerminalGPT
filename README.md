@@ -31,7 +31,8 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 - An OpenAI Account and API key (It's free for personal use).
    1. Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
    2. Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
-   For a more detailed guide on how to create an OpenAI API key, click [here](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0).
+
+   (For a more detailed guide on how to create an OpenAI API key, click [here](https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0).)
 
 ## Installation
 
@@ -103,3 +104,4 @@ terminalgpt delete
 5. Add more models (???)
 6. Encrypt the conversation data.
 
+---
