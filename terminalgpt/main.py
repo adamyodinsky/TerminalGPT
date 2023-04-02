@@ -155,6 +155,7 @@ def load(ctx):
         )
 
     chat_utils.welcome_message(messages=messages)
+    messages.pop()
 
     chat_utils.chat_loop(
         token_limit=token_limit,
