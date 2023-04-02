@@ -16,6 +16,7 @@ from terminalgpt import encryption
 
 
 @click.group()
+@click.version_option(prog_name="TerminalGPT", message="%(prog)s %(version)s")
 @click.pass_context
 def cli(ctx):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
