@@ -1,4 +1,4 @@
-.PHONY: install build publish run format lint
+.PHONY: install build publish run format lint test run-install run-new run-load run-delete
 
 format:
 	poetry run black .
@@ -18,6 +18,9 @@ test: build lint
 publish: test
 	poetry publish
 
+run-install:
+	LOG_LEVEL=DEBUG poetry run terminalgpt install
+
 run-new:
 	LOG_LEVEL=DEBUG poetry run terminalgpt new
 
@@ -26,3 +29,6 @@ run-load:
 
 run-delete:
 	LOG_LEVEL=DEBUG poetry run terminalgpt delete
+
+run-version:
+	poetry run terminalgpt version
