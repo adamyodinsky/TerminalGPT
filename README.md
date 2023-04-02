@@ -84,11 +84,10 @@ terminalgpt delete
 
 ## Future Plans
 
-1. Support multiline input.
-2. Support optional vim input mode.
-3. Auto-completion for all commands.
-4. Open source the project.
-5. Add more models (???)
-6. Encrypt the conversation data.
+1. Support optional vim input mode.
+2. Auto-completion for all commands.
+3. Add more models
+4. Encrypt the conversation data.
+5. GPT-4 support.
 
 ---
