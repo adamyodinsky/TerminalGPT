@@ -91,27 +91,27 @@ def get_user_answer(messages):
     """Returns the answer from OpenAI API."""
 
     while True:
-        with yaspin(
-            Spinners.earth,
-            text=Style.BRIGHT + "Assistant:" + Style.RESET_ALL,
-            color="blue",
-            side="right",
-        ):
-            try:
+        try:
+            with yaspin(
+                Spinners.earth,
+                text=Style.BRIGHT + "Assistant:" + Style.RESET_ALL,
+                color="blue",
+                side="right",
+            ):
                 answer = openai.ChatCompletion.create(
                     model=config.MODEL, messages=messages
                 )
                 return answer
-            except openai.error.RateLimitError as error:
-                print_utils.print_slowly(
-                    Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
-                )
-                waiting_before_trying_again()
-            except openai.error.InvalidRequestError as error:
-                if "Please reduce the length of the messages" in str(error):
-                    messages.pop(1)
-                else:
-                    raise error
+        except openai.error.RateLimitError as error:
+            print_utils.print_slowly(
+                Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
+            )
+            waiting_before_trying_again()
+        except openai.error.InvalidRequestError as error:
+            if "Please reduce the length of the messages" in str(error):
+                messages.pop(1)
+            else:
+                raise error
 
 
 def exceeding_token_limit(total_usage: int, token_limit: int):
