@@ -39,7 +39,7 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 1. Install the latest TerminalGPT with pip install.
 
 ```sh
-pip install terminalgpt -U
+pip install terminalgpt -U --user
 ```
 
 2. Now you have `terminalgpt` command available in your terminal. Run the following install command to configure the app.
