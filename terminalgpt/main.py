@@ -28,6 +28,7 @@ def cli(ctx):
     )
     ctx.obj["TOKEN_LIMIT"] = config.API_TOKEN_LIMIT - config.SAFETY_BUFFER
 
+
 @click.command(
     help="Creating a secret api key for the chatbot."
     + " You will be asked to enter your OpenAI API key."
