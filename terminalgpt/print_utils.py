@@ -131,20 +131,21 @@ def print_slowly(text, delay=PRINT_DELAY):
 def print_markdown_slowly(text: str, style="yellow"):
     """Prints markdown text slowly."""
 
-    text_markdown = ""
     txt_arr = split_highlighted_string(text)
+    txt_result = ""
 
     for txt in txt_arr:
-        with CONSOLE.capture() as capture:
-            text_markdown = Markdown(txt)
-            CONSOLE.print(text_markdown, style=style)
-        text_markdown = capture.get()
 
         if txt.startswith("```"):
+            with CONSOLE.capture() as capture:
+                txt_result = Markdown(txt)
+                CONSOLE.print(txt_result, style=style)
+            txt_result = capture.get()
             delay = PRINT_DELAY / 10
         else:
             delay = PRINT_DELAY
-        print_slowly(text_markdown, delay)
+            txt_result = Fore.YELLOW + txt + Style.RESET_ALL
+        print_slowly(txt_result, delay)
 
 
 # pylint: disable=W0102
