@@ -32,10 +32,11 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
    1. Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
    2. Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
 
-   **Notes:** OpenAI FREE API trial expired on 01-04-2023. You can still use the API, but you will need to set up a payment method.
-      - To set up a payment method [click here](https://platform.openai.com/account/billing/payment-methods).
-      - To check your usage [click here](https://platform.openai.com/account/usage).
-      - To check pricing [click here](https://openai.com/pricing#language-models).
+**Notes:** OpenAI FREE API trial expired on 01-04-2023. You can still use the API, but you will need to set up a payment method.
+
+- To set up a payment method [click here](https://platform.openai.com/account/billing/payment-methods).
+- To check your usage [click here](https://platform.openai.com/account/usage).
+- To check pricing [click here](https://openai.com/pricing#language-models).
 
 ## Installation
 
