@@ -28,11 +28,6 @@ def cli(ctx):
     )
     ctx.obj["TOKEN_LIMIT"] = config.API_TOKEN_LIMIT - config.SAFETY_BUFFER
 
-    encryption.check_api_key()
-    key = encryption.get_encryption_key(config.KEY_PATH)
-    openai.api_key = encryption.decrypt(config.SECRET_PATH, key)
-
-
 @click.command(
     help="Creating a secret api key for the chatbot."
     + " You will be asked to enter your OpenAI API key."
@@ -73,6 +68,10 @@ def install():
 def new(ctx):
     """Start a new conversation."""
 
+    encryption.check_api_key()
+    key = encryption.get_encryption_key(config.KEY_PATH)
+    openai.api_key = encryption.decrypt(config.SECRET_PATH, key)
+
     messages = [
         config.INIT_SYSTEM_MESSAGE,
     ]
@@ -90,6 +89,10 @@ def new(ctx):
 @click.pass_context
 def load(ctx):
     """Load a previous conversation."""
+
+    encryption.check_api_key()
+    key = encryption.get_encryption_key(config.KEY_PATH)
+    openai.api_key = encryption.decrypt(config.SECRET_PATH, key)
 
     # get conversations list
     conversations = conv.get_conversations()
