@@ -97,14 +97,10 @@ STOPPED_CONTINUE_MESSAGES = [
 STOPPED_MESSAGES = [
     "OK, I stopped. Goodbye.",
     "Alright, I stopped. See you later.",
-    "OK, I'm all ears. Goodbye.",
     "Alright, I paused. Goodbye.",
     "Alright, Goodbye.",
     "I've hit pause. See you later.",
     "Sure thing. See you later.",
-    "Standing by See you later.",
-    "I'm all set, See you later.",
-    "I'm here, See you later.",
 ]
 
 

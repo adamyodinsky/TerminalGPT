@@ -48,5 +48,6 @@ class TestLoadCommandIntegration(unittest.TestCase):
             result.output,
         )
 
+
 if __name__ == "__main__":
     unittest.main()

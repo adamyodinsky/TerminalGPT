@@ -50,7 +50,7 @@ def chat_loop(
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
             stopped_message = print_utils.choose_random_message()
-            print_utils.print_slowly(stopped_message)
+            print_utils.print_slowly(Fore.YELLOW + stopped_message + Style.RESET_ALL)
             continue
         except Exception as error:  # pylint: disable=broad-except
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
@@ -196,7 +196,9 @@ def welcome_message(messages: list):
         stopped_message = print_utils.choose_random_message(
             print_utils.STOPPED_MESSAGES
         )
-        print_utils.print_markdown_slowly(stopped_message)
+        print_utils.print_markdown_slowly(
+            Fore.YELLOW + stopped_message + Style.RESET_ALL
+        )
         sys.exit(0)
     except Exception as error:  # pylint: disable=W0718
         print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)

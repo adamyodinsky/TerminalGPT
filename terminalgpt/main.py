@@ -130,7 +130,7 @@ def load(ctx):
         return
 
     # load conversation
-    while messages == []:
+    while not messages:
         messages = conv.load_conversation(conversation)
 
     print_utils.print_slowly(
