@@ -4,7 +4,6 @@ import getpass
 import os
 
 import click
-import openai
 from colorama import Fore, Style
 from prompt_toolkit import PromptSession, prompt
 from prompt_toolkit.completion import WordCompleter
@@ -69,9 +68,7 @@ def install():
 def new(ctx):
     """Start a new conversation."""
 
-    encryption.check_api_key()
-    key = encryption.get_encryption_key(config.KEY_PATH)
-    openai.api_key = encryption.decrypt(config.SECRET_PATH, key)
+    chat_utils.set_api_key()
 
     messages = [
         config.INIT_SYSTEM_MESSAGE,
@@ -91,9 +88,8 @@ def new(ctx):
 def load(ctx):
     """Load a previous conversation."""
 
-    encryption.check_api_key()
-    key = encryption.get_encryption_key(config.KEY_PATH)
-    openai.api_key = encryption.decrypt(config.SECRET_PATH, key)
+    messages = []
+    chat_utils.set_api_key()
 
     # get conversations list
     conversations = conv.get_conversations()
@@ -134,7 +130,9 @@ def load(ctx):
         return
 
     # load conversation
-    messages = conv.load_conversation(conversation)
+    while messages == []:
+        messages = conv.load_conversation(conversation)
+
     print_utils.print_slowly(
         Style.BRIGHT
         + Fore.LIGHTBLUE_EX

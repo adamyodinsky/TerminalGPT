@@ -32,12 +32,14 @@ jobs:
         run: poetry build
       - name: lint
         run: poetry run pylint terminalgpt tests
-      - name: test
-        run: poetry run pytest
-      # TODO: publish test results
-      # - name: Publish Test Results
-      #   uses: EnricoMi/publish-unit-test-result-action@v2
-      #   with:
-      #     files: |
-      #       test-results/**/*.xml
-              
+      - name: version
+        run: poetry run terminalgpt --version
+      - name: test-unit
+        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit
+      - name: test-integration
+        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/integration
+      - name: test-e2e
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/e2e
+

@@ -5,3 +5,4 @@ dist
 .idea
 dummy.py
 ARCH.md
+.coverage*

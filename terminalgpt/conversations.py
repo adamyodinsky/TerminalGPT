@@ -29,6 +29,9 @@ def save_conversation(
 ):
     """Saves a conversation to a file."""
 
+    if not os.path.exists(path):
+        os.makedirs(path)
+
     with open(file=f"{path}/{file_name}", mode="w", encoding="utf-8") as conv_file:
         json.dump(messages, conv_file)
 
@@ -42,14 +45,19 @@ def delete_conversation(conversation, path: str = config.CONVERSATIONS_PATH):
 def load_conversation(file_name: str, path=config.CONVERSATIONS_PATH) -> list:
     """Loads a conversation from a file. returns a list of messages."""
 
+    messages = []
+
     try:
         with open(file=f"{path}/{file_name}", mode="r", encoding="utf-8") as conv_file:
             messages = json.load(conv_file)
-    except FileNotFoundError:
-        error_message = f"Failed loading conversation {file_name} from {path}."
+    except FileNotFoundError as error:
+        error_message = (
+            f"Failed loading conversation {file_name} from {path}.\n{str(error)}"
+        )
         print_utils.print_slowly(
             Back.RED + Style.BRIGHT + error_message + Style.RESET_ALL
         )
+        messages = []
 
     return messages
 

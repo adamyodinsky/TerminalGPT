@@ -1,4 +1,4 @@
-.PHONY: install build publish run format lint test run-install run-new run-load run-delete
+.PHONY: install build publish run format lint test test-e2e test-inte test-unit run-install run-new run-load run-delete run-version
 
 format:
 	poetry run black .
@@ -12,8 +12,17 @@ install:
 build: install
 	poetry build
 
-test: build lint
-	poetry run pytest -v 
+test: build
+	poetry run pytest -v --disable-warnings --cov=terminalgpt
+
+test-unit: build
+	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit
+
+test-inte: build
+	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/integration
+
+test-e2e: build
+	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/e2e
 
 publish: test
 	poetry publish
@@ -31,4 +40,4 @@ run-delete:
 	LOG_LEVEL=DEBUG poetry run terminalgpt delete
 
 run-version:
-	poetry run terminalgpt version
+	poetry run terminalgpt --version
