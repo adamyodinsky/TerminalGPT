@@ -11,7 +11,7 @@ from prompt_toolkit import PromptSession
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-from terminalgpt import config, conversations, print_utils
+from terminalgpt import config, conversations, encryption, print_utils
 
 TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
 
@@ -50,7 +50,13 @@ def chat_loop(
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
             stopped_message = print_utils.choose_random_message()
-            print_utils.print_markdown_slowly(stopped_message)
+            print_utils.print_slowly(Fore.YELLOW + stopped_message + Style.RESET_ALL)
+            continue
+        except Exception as error:  # pylint: disable=broad-except
+            print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
+            print_utils.print_slowly(
+                Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
+            )
             continue
 
         # Parse total_usage and message from answer
@@ -102,14 +108,10 @@ def get_user_answer(messages):
                     model=config.MODEL, messages=messages
                 )
                 return answer
-        except openai.error.RateLimitError as error:
-            print_utils.print_slowly(
-                Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
-            )
-            waiting_before_trying_again()
         except openai.error.InvalidRequestError as error:
             if "Please reduce the length of the messages" in str(error):
                 messages.pop(1)
+                time.sleep(0.5)
             else:
                 raise error
 
@@ -124,6 +126,7 @@ def reduce_tokens(messages: list, token_limit: int, total_usage: int):
     """Reduce tokens in messages context."""
 
     reduce_amount = total_usage - token_limit
+    tokenized_message = []
     while exceeding_token_limit(total_usage, token_limit):
         message = messages.pop(1)
         tokenized_message = TIKTOKEN_ENCODER.encode(message["content"])
@@ -172,21 +175,9 @@ def num_tokens_from_messages(messages) -> int:
         for key, value in message.items():
             num_tokens += len(encoding.encode(value))
             if key == "name":  # if there's a name, the role is omitted
-                num_tokens += -1  # role is always required and always 1 token
+                num_tokens -= 1  # role is always required and always 1 token
     num_tokens -= 2  # every reply is primed with <im_start>assistant
     return num_tokens
-
-
-def waiting_before_trying_again(wait_time: int = 10):
-    """Waits for a given time before trying again."""
-
-    with yaspin() as spinner:
-        for i in range(wait_time):
-            spinner.text = (
-                Style.BRIGHT + f"Trying again in {wait_time - i}" + Style.RESET_ALL
-            )
-            spinner.color = "red"
-            time.sleep(1)
 
 
 # pylint: disable=W0102, W0621
@@ -194,8 +185,33 @@ def welcome_message(messages: list):
     """Prints the welcome message."""
 
     print()
-    welcome_message = get_user_answer(messages)
-    print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
-    print_utils.print_markdown_slowly(
-        welcome_message["choices"][0]["message"]["content"]
-    )
+    try:
+        welcome_message = get_user_answer(messages)
+        print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
+        print_utils.print_markdown_slowly(
+            welcome_message["choices"][0]["message"]["content"]
+        )
+    except KeyboardInterrupt:
+        print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
+        stopped_message = print_utils.choose_random_message(
+            print_utils.STOPPED_MESSAGES
+        )
+        print_utils.print_markdown_slowly(
+            Fore.YELLOW + stopped_message + Style.RESET_ALL
+        )
+        sys.exit(0)
+    except Exception as error:  # pylint: disable=W0718
+        print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
+        print_utils.print_slowly(Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL)
+        sys.exit(1)
+
+
+def set_api_key():
+    """Sets the API key for OpenAI API."""
+
+    if os.environ.get("OPENAI_API_KEY"):
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
+    else:
+        encryption.check_api_key()
+        key = encryption.get_encryption_key(config.KEY_PATH)
+        openai.api_key = encryption.decrypt(config.SECRET_PATH, key)

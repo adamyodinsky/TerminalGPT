@@ -81,7 +81,7 @@ Here are your previous conversations:
     + Style.RESET_ALL
 )
 
-STOPPED_MESSAGES = [
+STOPPED_CONTINUE_MESSAGES = [
     "OK, I stopped. Your wish is my command.",
     "Alright, I stopped. I'm at your service.",
     "OK, I'm all ears. Your wish is my command.",
@@ -92,6 +92,15 @@ STOPPED_MESSAGES = [
     "Standing by for your command.",
     "I'm all set, waiting for your orders.",
     "I'm here, awaiting your direction.",
+]
+
+STOPPED_MESSAGES = [
+    "OK, I stopped. Goodbye.",
+    "Alright, I stopped. See you later.",
+    "Alright, I paused. Goodbye.",
+    "Alright, Goodbye.",
+    "I've hit pause. See you later.",
+    "Sure thing. See you later.",
 ]
 
 
@@ -148,7 +157,7 @@ def print_markdown_slowly(text: str, style="yellow"):
 
 
 # pylint: disable=W0102
-def choose_random_message(messages: list = STOPPED_MESSAGES):
+def choose_random_message(messages: list = STOPPED_CONTINUE_MESSAGES):
     """Choose a random message from a list of messages."""
 
     return messages[random.randint(0, len(messages) - 1)]

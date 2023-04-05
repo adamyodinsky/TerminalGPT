@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Continuous Deployment
 on: 
   workflow_call:
     inputs:
@@ -26,19 +26,8 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ inputs.poetry-version }}
-      - name: install
-        run: poetry install
-      - name: build
-        run: poetry build
-      - name: lint
-        run: poetry run pylint terminalgpt tests
-      - name: version
-        run: poetry run terminalgpt --version
-      - name: test-unit
-        env:
-          OPENAI_API_KEY: mock-key-123-456-789
-        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit
-      - name: test-integration
-        env:
-          OPENAI_API_KEY: mock-key-123-456-789
-        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/integration
+      - name: config poetry
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+      - name: publish
+        run: poetry publish --build
+

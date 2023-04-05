@@ -56,9 +56,10 @@ def check_api_key():
 
     message = f"""
 OpenAI API key is missing!
-Please install the chatbot api key first with '{config.APP_NAME} install' command.
-    """
+Please install OpenAI API key first with '{config.APP_NAME} install' command.
+Or you can set the OPENAI_API_KEY environment variable export OPENAI_API_KEY=<your_api_key>
+"""
 
-    if not os.path.exists(config.SECRET_PATH):
+    if not os.path.exists(config.SECRET_PATH) and "OPENAI_API_KEY" not in os.environ:
         print(Style.BRIGHT + Fore.RED + message + Style.RESET_ALL)
         sys.exit(1)

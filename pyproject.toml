@@ -24,6 +24,8 @@ terminalgpt = "terminalgpt.main:cli"
 black = "^23.1.0"
 pytest = "^7.2.2"
 pylint = "^2.17.0"
+pexpect = "^4.8.0"
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core"]
