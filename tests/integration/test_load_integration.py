@@ -41,12 +41,15 @@ class TestLoadCommandIntegration(unittest.TestCase):
     def test_load_conv_nothing_to_load_integration(self):
         patch("terminalgpt.conversations.get_conversations", MagicMock(return_value=[]))
 
-        result = self.runner.invoke(cli, args="load")
+        with unittest.mock.patch(
+            "terminalgpt.conversations.get_conversations", return_value=[]
+        ):
+            result = self.runner.invoke(cli, args="load")
 
-        self.assertIn(
-            "\x1b[1m\x1b[31m\n** There are no conversations to load! **\x1b[0m\x1b[0m\n",
-            result.output,
-        )
+            self.assertIn(
+                "\x1b[1m\x1b[31m\n** There are no conversations to load! **\x1b[0m\x1b[0m\n",
+                result.output,
+            )
 
 
 if __name__ == "__main__":
