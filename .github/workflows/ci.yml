@@ -38,9 +38,9 @@ jobs:
         env:
           OPENAI_API_KEY: mock-key-123-456-789
         run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit tests/integration
-      - name: publish to testpypi
-        env:
-          POETRY_HTTP_BASIC_TESTPYPI_USERNAME: __token__
-          POETRY_HTTP_BASIC_TESTPYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-          POETRY_REPOSITORIES_TESTPYPI_URL: https://test.pypi.org/legacy/
-        run: poetry publish --build -r testpypi
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.16
+        with:
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          repository_name: "testpypi"
+          repository_url: "https://test.pypi.org/legacy/"
