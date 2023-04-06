@@ -26,8 +26,7 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ inputs.poetry-version }}
-      - name: config poetry
-        run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-      - name: publish
-        run: poetry publish --build
+          args: |
+            poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+            poetry publish --build
 

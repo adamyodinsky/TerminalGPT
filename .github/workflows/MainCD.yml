@@ -3,6 +3,9 @@ run-name: ${{ github.actor }} CD 🚀
 on:
   release:
     types: [published]
+  push:
+    branches:
+      - '*'
 jobs:
   cd:
     uses: ./.github/workflows/cd.yml

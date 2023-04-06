@@ -1,14 +1,12 @@
-import unittest
-import os
 import json
+import os
+import shutil
+import unittest
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
 from terminalgpt.main import cli
-import unittest
-import shutil
-import json
 
 
 class TestLoadCommandIntegration(unittest.TestCase):

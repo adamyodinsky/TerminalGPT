@@ -2,6 +2,7 @@
 
 import os
 import unittest
+
 import pexpect
 from pexpect import TIMEOUT
 
