@@ -5,14 +5,9 @@ from unittest.mock import patch
 
 import openai
 
-from terminalgpt import config
-from terminalgpt import chat_utils
-from terminalgpt.chat_utils import (
-    exceeding_token_limit,
-    get_user_answer,
-    num_tokens_from_messages,
-    reduce_tokens,
-)
+from terminalgpt import chat_utils, config
+from terminalgpt.chat_utils import (exceeding_token_limit, get_user_answer,
+                                    num_tokens_from_messages, reduce_tokens)
 
 
 class TestChatUtils(unittest.TestCase):

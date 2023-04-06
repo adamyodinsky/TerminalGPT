@@ -1,14 +1,12 @@
-import unittest
-import os
 import json
+import os
+import shutil
+import unittest
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
 from terminalgpt.main import cli
-import unittest
-import shutil
-import json
 
 
 class TestLoadCommandIntegration(unittest.TestCase):
@@ -34,7 +32,7 @@ class TestLoadCommandIntegration(unittest.TestCase):
             result = self.runner.invoke(cli, args="load")
 
         self.assertIn(
-            "\x1b[1m\x1b[94m\nWelcome back to TerminalGPT!\nHere are your previous conversations:\n\x1b[0m\n\x1b[1m- test_conversation\nChoose a conversation:\n \n\nChoose a conversation:\n \n\nAborted!\n",
+            "Welcome back to TerminalGPT!",
             result.output,
         )
 

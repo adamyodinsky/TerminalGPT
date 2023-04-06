@@ -1,16 +1,17 @@
 """Tests the chat loop end-to-end."""
 
 import os
-import unittest
-from colorama import Back, Style
-import pexpect
-from pexpect import TIMEOUT
-from unittest.mock import patch
-from unittest.mock import MagicMock
-from io import StringIO
 import sys
-from terminalgpt import print_utils, chat_utils
+import unittest
+from io import StringIO
+from unittest.mock import MagicMock, patch
+
 import openai
+import pexpect
+from colorama import Back, Style
+from pexpect import TIMEOUT
+
+from terminalgpt import chat_utils, print_utils
 
 
 class TestNewCommandIntegration(unittest.TestCase):

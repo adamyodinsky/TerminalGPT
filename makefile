@@ -1,7 +1,10 @@
-.PHONY: install build publish run format lint test test-e2e test-inte test-unit run-install run-new run-load run-delete run-version
+.PHONY: install build publish run format lint test \
+				test-e2e test-inte test-unit run-install \
+				run-new run-load run-delete run-version
 
 format:
 	poetry run black .
+	poetry run isort .
 
 lint:
 	poetry run pylint terminalgpt tests

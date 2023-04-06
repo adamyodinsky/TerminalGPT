@@ -1,8 +1,9 @@
-import unittest
-import os
 import json
+import os
+import unittest
 from unittest.mock import MagicMock, patch
-from terminalgpt import conversations, config
+
+from terminalgpt import config, conversations
 
 
 class TestConversations(unittest.TestCase):

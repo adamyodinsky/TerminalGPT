@@ -14,9 +14,14 @@ on:
         description: 'OS'
         required: true
         type: string
+      environment:
+        description: 'Environment'
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ${{ inputs.os }}
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -34,11 +39,13 @@ jobs:
         run: poetry run pylint terminalgpt tests
       - name: version
         run: poetry run terminalgpt --version
-      - name: test-unit
+      - name: test
         env:
           OPENAI_API_KEY: mock-key-123-456-789
-        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit
-      - name: test-integration
-        env:
-          OPENAI_API_KEY: mock-key-123-456-789
-        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/integration
+        run: 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit tests/integration
+      # - name: Build and publish to pypi
+      #   uses: JRubics/poetry-publish@v1.16
+      #   with:
+      #     pypi_token: ${{ secrets.PYPI_TOKEN }}
+      #     repository_name: "testpypi"
+      #     repository_url: "https://test.pypi.org/legacy/"

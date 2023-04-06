@@ -9,9 +9,9 @@ from prompt_toolkit import PromptSession, prompt
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.styles import Style as PromptStyle
 
-from terminalgpt import chat_utils, config, print_utils
+from terminalgpt import chat_utils, config
 from terminalgpt import conversations as conv
-from terminalgpt import encryption
+from terminalgpt import encryption, print_utils
 
 
 @click.group()

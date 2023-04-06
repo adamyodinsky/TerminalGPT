@@ -14,9 +14,14 @@ on:
         description: 'OS'
         required: true
         type: string
+      environment:
+        description: 'Environment'
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ${{ inputs.os }}
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -26,8 +31,8 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ inputs.poetry-version }}
-      - name: config poetry
-        run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-      - name: publish
-        run: poetry publish --build
-
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.16
+        with:
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+        
