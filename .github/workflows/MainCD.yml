@@ -1,11 +1,14 @@
 name: Continuous Deployment
 run-name: ${{ github.actor }} CD 🚀
 on:
-  release:
-    types: [published]
+  # release:
+  #   types: [published]
   push:
     branches:
       - '*'
+  pull_request:
+    branches:
+      - 'main'
 jobs:
   cd:
     uses: ./.github/workflows/cd.yml
