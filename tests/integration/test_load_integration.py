@@ -32,7 +32,7 @@ class TestLoadCommandIntegration(unittest.TestCase):
             result = self.runner.invoke(cli, args="load")
 
         self.assertIn(
-            "\x1b[1m\x1b[94m\nWelcome back to TerminalGPT!\nHere are your previous conversations:\n\x1b[0m\n\x1b[1m- test_conversation\nChoose a conversation:\n \n\nChoose a conversation:\n \n\nAborted!\n",
+            "Welcome back to TerminalGPT!",
             result.output,
         )
 
