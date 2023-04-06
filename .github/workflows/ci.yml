@@ -14,9 +14,14 @@ on:
         description: 'OS'
         required: true
         type: string
+      environment:
+        description: 'Environment'
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ${{ inputs.os }}
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4

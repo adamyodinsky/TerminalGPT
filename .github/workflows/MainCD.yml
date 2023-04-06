@@ -10,3 +10,4 @@ jobs:
       python-version: 3.9
       poetry-version: 1.4.0
       os: ubuntu-latest
+      environment: main
