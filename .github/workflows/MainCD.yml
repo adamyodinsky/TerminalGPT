@@ -1,13 +1,13 @@
-name: Continuous Deployment
-run-name: ${{ github.actor }} CD 🚀
-on:
-  release:
-    types: [published]
-jobs:
-  cd:
-    uses: ./.github/workflows/cd.yml
-    with:
-      python-version: 3.9
-      poetry-version: 1.4.0
-      os: ubuntu-latest
-      environment: main
+# name: Continuous Deployment
+# run-name: ${{ github.actor }} CD 🚀
+# on:
+#   release:
+#     types: [published]
+# jobs:
+#   cd:
+#     uses: ./.github/workflows/cd.yml
+#     with:
+#       python-version: 3.9
+#       poetry-version: 1.4.0
+#       os: ubuntu-latest
+#       environment: main
