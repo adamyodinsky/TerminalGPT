@@ -79,9 +79,11 @@ def get_system_answer(messages):
 
     while True:
         try:
-            answer = openai.ChatCompletion.create(model=config.MODEL, messages=messages)
+            answer = openai.ChatCompletion.create(
+                model=config.DEFAULT_MODEL, messages=messages
+            )
             return answer
-        except openai.error.RateLimitError:
+        except openai.OpenAIError:
             time.sleep(10)
 
 

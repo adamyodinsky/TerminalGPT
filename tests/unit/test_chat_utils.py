@@ -6,8 +6,12 @@ from unittest.mock import patch
 import openai
 
 from terminalgpt import chat_utils, config
-from terminalgpt.chat_utils import (exceeding_token_limit, get_user_answer,
-                                    num_tokens_from_messages, reduce_tokens)
+from terminalgpt.chat_utils import (
+    exceeding_token_limit,
+    get_user_answer,
+    num_tokens_from_messages,
+    reduce_tokens,
+)
 
 
 class TestChatUtils(unittest.TestCase):
@@ -142,7 +146,7 @@ class TestGetUserAnswer(unittest.TestCase):
         }
         mock_openai_chatcompletion_create.return_value = mock_response
 
-        answer = get_user_answer(messages)
+        answer = get_user_answer(messages, config.DEFAULT_MODEL)
         self.assertEqual(answer, mock_response)
 
     @patch("openai.ChatCompletion.create")
@@ -159,7 +163,7 @@ class TestGetUserAnswer(unittest.TestCase):
         ]
 
         mock_openai_chatcompletion_create.side_effect = [
-            openai.error.InvalidRequestError(error_message, None),
+            openai.InvalidRequestError(error_message, None),
             {
                 "choices": [
                     {
@@ -175,9 +179,9 @@ class TestGetUserAnswer(unittest.TestCase):
             },
         ]
 
-        _ = get_user_answer(messages)
+        _ = get_user_answer(messages, config.DEFAULT_MODEL)
         mock_openai_chatcompletion_create.assert_called_with(
-            model=config.MODEL, messages=messages
+            model=config.DEFAULT_MODEL, messages=messages
         )
         mock_time_sleep.assert_called_with(0.5)
 

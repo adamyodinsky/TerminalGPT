@@ -16,8 +16,24 @@ from terminalgpt import encryption, print_utils
 
 @click.group()
 @click.version_option(prog_name="TerminalGPT", message="%(prog)s %(version)s")
+@click.option(
+    "--model",
+    "-m",
+    type=click.Choice(list(config.MODELS.keys())),
+    default=config.DEFAULT_MODEL,
+    show_default=True,
+    help="Choose a model to use.",
+)
+# option to choose rich text output
+@click.option(
+    "--plain",
+    "-p",
+    is_flag=True,
+    default=False,
+    help="Plain text output.",
+)
 @click.pass_context
-def cli(ctx):
+def cli(ctx, model, plain):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
     ctx.ensure_object(dict)
@@ -25,7 +41,14 @@ def cli(ctx):
         style=PromptStyle.from_dict({"prompt": "bold"}),
         message="\nUser: ",
     )
-    ctx.obj["TOKEN_LIMIT"] = config.API_TOKEN_LIMIT - config.SAFETY_BUFFER
+
+    ctx.obj["MODEL"] = model
+
+    token_limit = config.MODELS[model]
+    safety_buffer = token_limit * 0.25
+
+    ctx.obj["TOKEN_LIMIT"] = token_limit - safety_buffer
+    ctx.obj["PLAIN"] = plain
 
 
 @click.command(
@@ -80,7 +103,38 @@ def new(ctx):
         token_limit=ctx.obj["TOKEN_LIMIT"],
         session=ctx.obj["SESSION"],
         messages=messages,
+        model=ctx.obj["MODEL"],
+        plain=ctx.obj["PLAIN"],
     )
+
+
+@cli.command(help="One shot question answer.")
+# argument to ask a question
+@click.argument(
+    "question",
+    type=str,
+)
+@click.pass_context
+def one_shot(ctx, question):
+    """One shot question answer."""
+
+    chat_utils.set_api_key()
+
+    messages = [
+        config.INIT_SYSTEM_MESSAGE,
+    ]
+
+    messages.append({"role": "user", "content": question})
+
+    print()
+    answer = chat_utils.get_user_answer(
+        messages=messages,
+        model=ctx.obj["MODEL"],
+    )
+    message = answer["choices"][0]["message"]["content"]
+    print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL, end=" ", flush=True)
+
+    print_utils.print_assistance_message(message, ctx.obj["PLAIN"])
 
 
 @cli.command(help="Choose a previous conversation to load.")
@@ -165,6 +219,8 @@ def load(ctx):
         session=ctx.obj["SESSION"],
         messages=messages,
         conversation_name=conversation,
+        model=ctx.obj["MODEL"],
+        plain=ctx.obj["PLAIN"],
     )
 
 

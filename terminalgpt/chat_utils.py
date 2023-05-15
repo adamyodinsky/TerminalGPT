@@ -17,13 +17,15 @@ TIKTOKEN_ENCODER = tiktoken.get_encoding(config.ENCODING_MODEL)
 
 
 def chat_loop(
-    conversation_name: str = None,
+    conversation_name: str = "",
     **kwargs,
 ):
     """Main chat loop."""
     token_limit: int = kwargs["token_limit"]
     session: PromptSession = kwargs["session"]
     messages: list = kwargs["messages"]
+    model: str = kwargs["model"]
+    plain: bool = kwargs["plain"]
 
     while True:
         # Get user input
@@ -46,7 +48,7 @@ def chat_loop(
 
         # Get answer
         try:
-            answer = get_user_answer(messages)
+            answer = get_user_answer(messages, model)
         except KeyboardInterrupt:
             print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
             stopped_message = print_utils.choose_random_message()
@@ -70,11 +72,11 @@ def chat_loop(
         if not conversation_name and total_usage > token_limit / 10:
             conversation_name = conversations.create_conversation_name(messages)
         elif conversation_name:
-            conversations.save_conversation(messages, conversation_name)
+            conversations.save_conversation(messages, f"{conversation_name}-{model}")
 
         # Print answer message
         print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-        print_utils.print_markdown_slowly(message)
+        print_utils.print_assistance_message(message, plain)
 
         # Print usage
         if os.environ.get("LOG_LEVEL") == "DEBUG":
@@ -93,7 +95,7 @@ def chat_loop(
             sys.exit()
 
 
-def get_user_answer(messages):
+def get_user_answer(messages, model):
     """Returns the answer from OpenAI API."""
 
     while True:
@@ -104,11 +106,9 @@ def get_user_answer(messages):
                 color="blue",
                 side="right",
             ):
-                answer = openai.ChatCompletion.create(
-                    model=config.MODEL, messages=messages
-                )
+                answer = openai.ChatCompletion.create(model=model, messages=messages)
                 return answer
-        except openai.error.InvalidRequestError as error:
+        except openai.InvalidRequestError as error:
             if "Please reduce the length of the messages" in str(error):
                 messages.pop(1)
                 time.sleep(0.5)
@@ -186,7 +186,7 @@ def welcome_message(messages: list):
 
     print()
     try:
-        welcome_message = get_user_answer(messages)
+        welcome_message = get_user_answer(messages, config.DEFAULT_MODEL)
         print(Style.BRIGHT + "\nAssistant:" + Style.RESET_ALL)
         print_utils.print_markdown_slowly(
             welcome_message["choices"][0]["message"]["content"]

@@ -60,12 +60,43 @@ That's it! You're ready to use TerminalGPT!
 
 ## Usage
 
+### TL;DR
+
+```sh
+Usage: main.py [OPTIONS] COMMAND [ARGS]...
+
+  *~ TerminalGPT - Your Personal Terminal Assistant ~*
+
+Options:
+  --version                       Show the version and exit.
+  -m, --model [gpt-3.5-turbo|gpt-4]
+                                  Choose a model to use.  [default:
+                                  gpt-3.5-turbo]
+  -p, --plain                     Plain text output.
+  --help                          Show this message and exit.
+
+Commands:
+  delete    Choose a previous conversation to load.
+  install   Creating a secret api key for the chatbot.
+  load      Choose a previous conversation to load.
+  new       Start a new conversation.
+  one-shot  One shot question answer.
+```
+
 ### New
 
 Start a new conversation:
 
 ```sh
 terminalgpt new
+```
+
+### One-Shot
+
+One shot question to get a fast answer in the terminal.
+
+```sh
+terminalgpt one-shot "What is the meaning of life?"
 ```
 
 ### Load
@@ -88,10 +119,8 @@ terminalgpt delete
 
 ## Future Plans
 
-1. Support optional vim input mode.
+1. Support optional Vim input mode.
 2. Auto-completion for all commands.
-3. Add more models
-4. Encrypt the conversation data.
-5. GPT-4 support.
+3. Support local models
 
 ---
