@@ -27,7 +27,7 @@ test-inte: build
 test-e2e: build
 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/e2e
 
-publish: test
+publish: test-unit test-inte
 	poetry publish
 
 run-install:
