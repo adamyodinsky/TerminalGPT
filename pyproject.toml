@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 openai = "^0.27.6"
-tiktoken = ">=0.2,<0.4"
+tiktoken = ">=0.2,<0.5"
 colorama = "^0.4.6"
 cryptography = "^40.0.2"
 click = "^8.1.3"
