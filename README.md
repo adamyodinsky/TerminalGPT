@@ -88,7 +88,7 @@ Commands:
 Start a new conversation:
 
 ```sh
-terminalgpt [OPTIONS] new
+terminalgpt new
 ```
 
 ### One-Shot
@@ -96,7 +96,7 @@ terminalgpt [OPTIONS] new
 One shot question to get a fast answer in the terminal.
 
 ```sh
-terminalgpt [OPTIONS] new one-shot "What is the meaning of life?"
+terminalgpt one-shot "What is the meaning of life?"
 ```
 
 ### Load
@@ -104,7 +104,7 @@ terminalgpt [OPTIONS] new one-shot "What is the meaning of life?"
 Load previous conversations:
 
 ```sh
-terminalgpt [OPTIONS] load
+terminalgpt load
 ```
 
 ### Delete
