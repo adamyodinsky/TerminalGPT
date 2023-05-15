@@ -25,16 +25,17 @@ def machine_info():
 
 
 APP_NAME = "terminalgpt"
-API_TOKEN_LIMIT = 4096
-SAFETY_BUFFER = 1024
+DEFAULT_API_TOKEN_LIMIT = 4096
 
 BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
 CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
 SECRET_PATH = f"{BASE_PATH}/{APP_NAME}.encrypted"
 KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
 
-MODEL = "gpt-3.5-turbo-0301"
+DEFAULT_MODEL = "gpt-3.5-turbo"
 ENCODING_MODEL = "cl100k_base"
+
+MODELS = {"gpt-3.5-turbo": 4096, "gpt-4": 8092}
 
 INIT_SYSTEM_MESSAGE = {
     "role": "system",

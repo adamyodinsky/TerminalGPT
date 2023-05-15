@@ -156,6 +156,15 @@ def print_markdown_slowly(text: str, style="yellow"):
         print_slowly(text_markdown, delay)
 
 
+def print_assistance_message(text: str, plain_text: bool):
+    """Prints the assistance message."""
+
+    if plain_text:
+        print_slowly(Fore.YELLOW + text + Style.RESET_ALL)
+    else:
+        print_markdown_slowly(text)
+
+
 # pylint: disable=W0102
 def choose_random_message(messages: list = STOPPED_CONTINUE_MESSAGES):
     """Choose a random message from a list of messages."""
