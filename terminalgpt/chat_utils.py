@@ -3,7 +3,8 @@
 import os
 import sys
 import time
-
+import litellm
+from litellm import completion
 import openai
 import tiktoken
 from colorama import Back, Fore, Style
