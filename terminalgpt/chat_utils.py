@@ -3,7 +3,8 @@
 import os
 import sys
 import time
-
+import litellm
+from litellm import completion
 import openai
 import tiktoken
 from colorama import Back, Fore, Style
@@ -106,7 +107,7 @@ def get_user_answer(messages, model):
                 color="blue",
                 side="right",
             ):
-                answer = openai.ChatCompletion.create(model=model, messages=messages)
+                answer = completion(model=model, messages=messages)
                 return answer
         except openai.InvalidRequestError as error:
             if "Please reduce the length of the messages" in str(error):

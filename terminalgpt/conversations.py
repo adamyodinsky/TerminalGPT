@@ -5,6 +5,8 @@ import os
 import time
 
 import openai
+import litellm 
+from litellm import completion
 from colorama import Back, Style
 
 from terminalgpt import config, print_utils
@@ -79,7 +81,7 @@ def get_system_answer(messages):
 
     while True:
         try:
-            answer = openai.ChatCompletion.create(
+            answer = completion(
                 model=config.DEFAULT_MODEL, messages=messages
             )
             return answer
