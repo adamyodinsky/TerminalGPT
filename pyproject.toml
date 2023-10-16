@@ -18,7 +18,7 @@ yaspin = "^2.3.0"
 rich = "^13.3.5"
 isort = "^5.12.0"
 pytest = "^7.3.1"
-pylint = "^2.17.4"
+pylint = ">=2.17.4,<4.0.0"
 
 [tool.poetry.scripts]
 terminalgpt = "terminalgpt.main:cli"
@@ -26,7 +26,7 @@ terminalgpt = "terminalgpt.main:cli"
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
 pytest = "^7.2.2"
-pylint = "^2.17.0"
+pylint = ">=2.17,<4.0"
 pexpect = "^4.8.0"
 pytest-cov = "^4.0.0"
 
