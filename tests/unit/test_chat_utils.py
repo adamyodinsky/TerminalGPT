@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 import openai
 
-from terminalgpt import chat_utils, config
-from terminalgpt.chat_utils import (
+from terminalgpt import chat, config
+from terminalgpt.chat import (
     exceeding_token_limit,
     get_user_answer,
     num_tokens_from_messages,
@@ -83,7 +83,7 @@ class TestChatUtils(unittest.TestCase):
             {"role": "user", "content": "Bye!"},
         ]
         token_limit = 25
-        total_usage = chat_utils.num_tokens_from_messages(messages)
+        total_usage = chat.num_tokens_from_messages(messages)
 
         _, new_total_usage = reduce_tokens(messages, token_limit, total_usage)
         assert new_total_usage <= token_limit

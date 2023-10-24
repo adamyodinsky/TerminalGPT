@@ -11,7 +11,7 @@ import pexpect
 from colorama import Back, Style
 from pexpect import TIMEOUT
 
-from terminalgpt import chat_utils, print_utils
+from terminalgpt import chat, print_utils
 
 
 class TestNewCommandIntegration(unittest.TestCase):
@@ -84,7 +84,7 @@ class TestNewCommandIntegration(unittest.TestCase):
             sys.stdout = captured_output
 
             try:
-                _ = chat_utils.get_user_answer(messages)
+                _ = chat.get_user_answer(messages)
             except KeyboardInterrupt:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
                 stopped_message = print_utils.choose_random_message()
@@ -112,7 +112,7 @@ class TestNewCommandIntegration(unittest.TestCase):
             sys.stdout = captured_output
 
             try:
-                answer = chat_utils.get_user_answer(messages)
+                answer = chat.get_user_answer(messages)
             except Exception as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
                 print_utils.print_slowly(
@@ -142,7 +142,7 @@ class TestNewCommandIntegration(unittest.TestCase):
             sys.stdout = captured_output
 
             try:
-                answer = chat_utils.get_user_answer(messages)
+                answer = chat.get_user_answer(messages)
             except openai.error.APIError as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
                 print_utils.print_slowly(
@@ -162,21 +162,21 @@ class TestNewCommandIntegration(unittest.TestCase):
                 "Test InvalidRequest error", None
             )
         )
-        chat_utils.get_user_answer_mock = MagicMock()
+        chat.get_user_answer_mock = MagicMock()
 
         with unittest.mock.patch(
             "terminalgpt.chat_utils.get_user_answer", get_user_answer_mock
         ), unittest.mock.patch(
-            "terminalgpt.chat_utils.get_user_answer", chat_utils.get_user_answer_mock
+            "terminalgpt.chat_utils.get_user_answer", chat.get_user_answer_mock
         ):
             # Redirect stdout to capture printed output
             captured_output = StringIO()
             sys.stdout = captured_output
 
             try:
-                answer = chat_utils.get_user_answer(messages)
+                answer = chat.get_user_answer(messages)
             except openai.error.InvalidRequestError as error:
-                self.assertTrue(chat_utils.get_user_answer_mock.called)
+                self.assertTrue(chat.get_user_answer_mock.called)
 
             # Restore stdout
             sys.stdout = sys.__stdout__
@@ -200,7 +200,7 @@ class TestNewCommandIntegration(unittest.TestCase):
             sys.stdout = captured_output
 
             try:
-                answer = chat_utils.get_user_answer(messages)
+                answer = chat.get_user_answer(messages)
             except openai.error.OpenAIError as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
                 print_utils.print_slowly(
