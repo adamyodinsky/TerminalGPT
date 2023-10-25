@@ -31,6 +31,9 @@ class ChatManager:
         """Main chat loop."""
 
         while True:
+            # flush stdin
+            sys.stdin.flush()
+
             # Get user input
             user_input = self.session.prompt()
             print()

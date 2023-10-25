@@ -54,7 +54,7 @@ def cli(ctx, model, plain: bool):
         token_limit=token_limit - safety_buffer,
         session=ctx.obj["SESSION"],
         messages=[],
-        model=ctx.obj["MODEL"],
+        model=model,
         printer=ctx.obj["PRINTER"],
     )
 
@@ -67,7 +67,7 @@ def cli(ctx, model, plain: bool):
 def install(ctx):
     """Install the terminalgpt openai api key and create app directories."""
 
-    printer: Printer = ctx.obj["PRINTER"]
+    printer: Printer = PrinterFactory.get_printer(plain=True)
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
 
     # Get API key from user
@@ -152,7 +152,7 @@ def load(ctx):
 
     chat_manager: ChatManager = ctx.obj["CHAT"]
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
-    printer: Printer = ctx.obj["PRINTER"]
+    printer: Printer = PrinterFactory.get_printer(plain=True)
     conv_manager: ConversationManager = ctx.obj["CONV_MNGR"]
 
     messages = []
@@ -232,7 +232,7 @@ def load(ctx):
 def delete(ctx):
     """Delete previous conversations."""
 
-    printer: Printer = ctx.obj["PRINTER"]
+    printer: Printer = PrinterFactory.get_printer(plain=True)
     conv_manager: ConversationManager = ctx.obj["CONV_MNGR"]
 
     # get conversations list

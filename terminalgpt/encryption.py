@@ -1,5 +1,6 @@
 """Encryption module for terminalgpt."""
 
+import base64
 import os
 import sys
 
@@ -14,27 +15,32 @@ class EncryptionManager:
     """Manages encryption and decryption of secrets."""
 
     def __init__(self):
-        self.key_path = config.SECRET_PATH
+        self.key_path = config.KEY_PATH
 
     def get_encryption_key(self):
         """Generates a key and save it into a file"""
 
         key = None
 
-        if not os.path.exists(self.key_path):
+        if not os.path.exists(os.path.dirname(self.key_path)):
             os.makedirs(os.path.dirname(self.key_path))
 
-            key = Fernet.generate_key()
-            with open(self.key_path, "wb") as file:
-                file.write(key)
-        else:
-            with open(self.key_path, "rb") as file:
-                key = file.read()
+            if not os.path.exists(self.key_path):
+                key = Fernet.generate_key()
+
+                with open(self.key_path, "wb") as file:
+                    file.write(key)
+            else:
+                with open(self.key_path, "rb") as file:
+                    key = file.read()
 
         return key
 
     def encrypt(self, secret: bytes, key):
         """Encrypts a secret using Fernet encryption."""
+
+        # encode the key to base64
+        # encoded_key = base64.b64encode(key)
 
         # Create a Fernet cipher using the key
         cipher = Fernet(key)
