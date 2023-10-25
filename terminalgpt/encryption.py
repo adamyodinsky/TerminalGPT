@@ -16,30 +16,55 @@ class EncryptionManager:
     def __init__(self):
         self.key_path = config.KEY_PATH
 
+    def set_encryption_key(self):
+        """Sets the encryption key for OpenAI API."""
+
+        key = Fernet.generate_key()
+
+        try:
+            if not os.path.exists(os.path.dirname(self.key_path)):
+                os.makedirs(os.path.dirname(self.key_path))
+
+            with open(self.key_path, "wb") as file:
+                file.write(key)
+        except OSError:
+            print(
+                Style.BRIGHT
+                + Fore.RED
+                + f"""
+                Failed to create encryption key at {self.key_path}.
+                Please check your permissions and try again.
+                """
+                + Style.RESET_ALL
+            )
+            sys.exit(1)
+
+        return key
+
     def get_encryption_key(self):
         """Generates a key and save it into a file"""
 
-        key = None
+        key = ""
 
-        if not os.path.exists(os.path.dirname(self.key_path)):
-            os.makedirs(os.path.dirname(self.key_path))
-
-            if not os.path.exists(self.key_path):
-                key = Fernet.generate_key()
-
-                with open(self.key_path, "wb") as file:
-                    file.write(key)
-
-        with open(self.key_path, "rb") as file:
-            key = file.read()
+        try:
+            with open(self.key_path, "rb") as file:
+                key = file.read()
+        except OSError:
+            print(
+                Style.BRIGHT
+                + Fore.RED
+                + f"""
+                Failed to read encryption key from {self.key_path}.
+                Please check your permissions and try again.
+                """
+                + Style.RESET_ALL
+            )
+            sys.exit(1)
 
         return key
 
     def encrypt(self, secret: bytes, key):
         """Encrypts a secret using Fernet encryption."""
-
-        # encode the key to base64
-        # encoded_key = base64.b64encode(key)
 
         # Create a Fernet cipher using the key
         cipher = Fernet(key)
@@ -64,10 +89,9 @@ class EncryptionManager:
         """Checks if the API key is installed."""
 
         message = f"""
-OpenAI API key is missing!
-Please install OpenAI API key first with '{config.APP_NAME} install' command.
-Or you can set the OPENAI_API_KEY environment variable export OPENAI_API_KEY=<your_api_key>
-"""
+        OpenAI API key is missing!
+        Please install OpenAI API key first with '{config.APP_NAME} install' command.
+        """
 
         if (
             not os.path.exists(config.SECRET_PATH)

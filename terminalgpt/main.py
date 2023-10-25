@@ -83,8 +83,7 @@ def install(ctx):
         + Style.RESET_ALL
     )
 
-    encryption_key = enc_manager.get_encryption_key()
-    # api_key string to bytes
+    encryption_key = enc_manager.set_encryption_key()
     encrypted_secret = enc_manager.encrypt(api_key.encode(), encryption_key)
 
     if not os.path.exists(os.path.dirname(config.SECRET_PATH)):
