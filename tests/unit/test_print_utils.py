@@ -2,7 +2,7 @@
 
 import unittest
 
-from terminalgpt import print_utils
+from terminalgpt import printer
 
 
 class TestPrintUtils(unittest.TestCase):
@@ -11,13 +11,13 @@ class TestPrintUtils(unittest.TestCase):
     def test_empty_string(self):
         """Tests empty string."""
 
-        self.assertEqual(print_utils.split_highlighted_string(""), [""])
+        self.assertEqual(printer.split_highlighted_string(""), [""])
 
     def test_no_highlighted_blocks(self):
         """Tests string with no highlighted blocks."""
 
         input_str = "This is a test string without any highlighted blocks."
-        self.assertEqual(print_utils.split_highlighted_string(input_str), [input_str])
+        self.assertEqual(printer.split_highlighted_string(input_str), [input_str])
 
     def test_single_highlighted_block(self):
         """Tests string with a single highlighted block."""
@@ -28,9 +28,7 @@ class TestPrintUtils(unittest.TestCase):
             "```highlighted block```",
             " in it.",
         ]
-        self.assertEqual(
-            print_utils.split_highlighted_string(input_str), expected_output
-        )
+        self.assertEqual(printer.split_highlighted_string(input_str), expected_output)
 
     def test_multiple_highlighted_blocks(self):
         """Tests string with multiple highlighted blocks."""
@@ -45,9 +43,7 @@ class TestPrintUtils(unittest.TestCase):
             "```blocks```",
             " in it.",
         ]
-        self.assertEqual(
-            print_utils.split_highlighted_string(input_str), expected_output
-        )
+        self.assertEqual(printer.split_highlighted_string(input_str), expected_output)
 
     def test_adjacent_highlighted_blocks(self):
         """Tests string with adjacent highlighted blocks."""
@@ -62,6 +58,4 @@ class TestPrintUtils(unittest.TestCase):
             "```adjacent```",
             " highlighted blocks.",
         ]
-        self.assertEqual(
-            print_utils.split_highlighted_string(input_str), expected_output
-        )
+        self.assertEqual(printer.split_highlighted_string(input_str), expected_output)

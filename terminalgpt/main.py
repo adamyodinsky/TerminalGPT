@@ -13,7 +13,7 @@ from terminalgpt import config
 from terminalgpt.chat import ChatManager
 from terminalgpt.conversations import ConversationManager
 from terminalgpt.encryption import EncryptionManager
-from terminalgpt.print_utils import Printer, PrinterFactory, PrintUtils
+from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
 
 
 @click.group()
@@ -42,19 +42,23 @@ def cli(ctx, model, plain: bool):
     safety_buffer = token_limit * 0.25
 
     ctx.ensure_object(dict)
+
     ctx.obj["PRINTER"] = PrinterFactory.get_printer(plain)
+    ctx.obj["MODEL"] = model
     ctx.obj["ENC_MNGR"] = EncryptionManager()
-    ctx.obj["CONV_MNGR"] = ConversationManager(ctx.obj["PRINTER"])
+    ctx.obj["CONV_MANAGER"] = ConversationManager(ctx.obj["PRINTER"])
+
     ctx.obj["SESSION"] = PromptSession(
         style=PromptStyle.from_dict({"prompt": "bold"}),
         message="\nUser: ",
     )
+
     ctx.obj["CHAT"] = ChatManager(
-        conversations_manager=ctx.obj["CONV_MNGR"],
-        token_limit=token_limit - safety_buffer,
+        conversations_manager=ctx.obj["CONV_MANAGER"],
+        token_limit=int(token_limit - safety_buffer),
         session=ctx.obj["SESSION"],
         messages=[],
-        model=model,
+        model=ctx.obj["MODEL"],
         printer=ctx.obj["PRINTER"],
     )
 
@@ -150,10 +154,10 @@ def one_shot(ctx, question):
 def load(ctx):
     """Load a previous conversation."""
 
+    printer: Printer = PrinterFactory.get_printer(plain=True)
     chat_manager: ChatManager = ctx.obj["CHAT"]
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
-    printer: Printer = PrinterFactory.get_printer(plain=True)
-    conv_manager: ConversationManager = ctx.obj["CONV_MNGR"]
+    conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
 
     messages = []
     enc_manager.set_api_key()
@@ -197,8 +201,57 @@ def load(ctx):
         return
 
     # load conversation
+    chat_manager.set_conversation_name(conversation)
     while not messages:
         messages = conv_manager.load_conversation()
+
+    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
+    chat_manager.set_messages(messages)
+    total_usage = chat_manager.num_tokens_from_messages()
+
+    printer.printt(
+        Style.BRIGHT
+        + "\nConversation details and settings:"
+        + Style.RESET_ALL
+        + f"""
+    Name: {conversation}
+    Model: {ctx.obj["MODEL"]}
+    Model Token Limit: {config.MODELS[ctx.obj["MODEL"]]}
+    Current Token length: {total_usage}
+    """
+    )
+
+    if chat_manager.exceeding_token_limit(total_usage):
+        printer.printt(
+            Style.BRIGHT
+            + Fore.RED
+            + "Warning:\n"
+            + Style.RESET_ALL
+            + "The token length of this conversation is exceeding the token limit of the current model.\n"
+            "We are about to reduce the token length by removing the oldest messages from the conversation.\n"
+        )
+        user_approval = prompt(
+            "Should we continue? (y/n)  ",
+            style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+        )
+
+        if user_approval.lower() != "y":
+            printer.printt(
+                Style.BRIGHT
+                + Fore.LIGHTBLUE_EX
+                + "\n** Conversation loading aborted! **\n"
+                + Style.RESET_ALL
+            )
+            return
+        else:
+            printer.printt(
+                "\nReducing token length by removing the oldest messages from the conversation...\n"
+            )
+            chat_manager.reduce_tokens(total_usage)
+            printer.printt(
+                "Token length reduced successfully!\n"
+                f"Current token length: {chat_manager.num_tokens_from_messages()}\n"
+            )
 
     printer.printt(
         Style.BRIGHT
@@ -207,18 +260,10 @@ def load(ctx):
         + Fore.WHITE
         + conversation
         + Fore.LIGHTBLUE_EX
-        + " Loaded! **\n"
+        + "is loaded! **\n"
         + "- - - - - - - - - - - - - - - - - - - - - - - - -"
         + Style.RESET_ALL
     )
-
-    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
-    chat_manager.set_messages(messages)
-
-    total_usage = chat_manager.num_tokens_from_messages()
-
-    if chat_manager.exceeding_token_limit(total_usage):
-        chat_manager.reduce_tokens(total_usage)
 
     chat_manager.welcome_message(messages=messages)
     messages.pop()
@@ -227,37 +272,36 @@ def load(ctx):
     chat_manager.chat_loop()
 
 
-@click.command(help="Choose a previous conversation to load.")
+@click.command(help="Choose a previous conversation to delete.")
 @click.pass_context
 def delete(ctx):
     """Delete previous conversations."""
 
     printer: Printer = PrinterFactory.get_printer(plain=True)
-    conv_manager: ConversationManager = ctx.obj["CONV_MNGR"]
-
-    # get conversations list
-    conversations = conv_manager.get_conversations()
-
-    msg = (
-        Style.BRIGHT
-        + Fore.RED
-        + "\n** There are no conversations to delete! **"
-        + Style.RESET_ALL
-    )
-
-    if conv_manager.is_conversations_empty(files=conversations, message=msg):
-        return
-
-    # setup file names auto completion
-    completer = WordCompleter(conversations, ignore_case=True)
+    conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
     printer.printt(PrintUtils.CONVERSATIONS_INIT_MESSAGE)
 
-    # print conversations list
-    for conversation in conversations:
-        printer.printt("- " + conversation)
-
-    # prompt user to choose a conversation and delete it
     while True:
+        conversations = conv_manager.get_conversations()
+
+        msg = (
+            Style.BRIGHT
+            + Fore.RED
+            + "\n** There are no conversations to delete! **"
+            + Style.RESET_ALL
+        )
+
+        if conv_manager.is_conversations_empty(files=conversations, message=msg):
+            return
+
+        # setup file names auto completion
+        completer = WordCompleter(conversations, ignore_case=True)
+
+        # print conversations list
+        printer.printt(Style.BRIGHT + "Conversations list:" + Style.RESET_ALL)
+        for conversation in conversations:
+            printer.printt("- " + conversation)
+
         conversation = prompt(
             "\nChoose a conversation to delete:\n",
             completer=completer,
@@ -275,7 +319,7 @@ def delete(ctx):
                 + Fore.WHITE
                 + conversation
                 + Fore.LIGHTBLUE_EX
-                + " deleted! **"
+                + " deleted! **\n"
                 + Style.RESET_ALL
             )
 

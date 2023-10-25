@@ -11,7 +11,7 @@ import pexpect
 from colorama import Back, Style
 from pexpect import TIMEOUT
 
-from terminalgpt import chat, print_utils
+from terminalgpt import chat, printer
 
 
 class TestNewCommandIntegration(unittest.TestCase):
@@ -65,19 +65,17 @@ class TestNewCommandIntegration(unittest.TestCase):
 
         # Mock get_user_answer to raise KeyboardInterrupt
         get_user_answer_mock = MagicMock(side_effect=KeyboardInterrupt)
-        print_utils.choose_random_message_mock = MagicMock(
-            return_value="Random message."
-        )
-        print_utils.print_markdown_slowly_mock = MagicMock()
+        printer.choose_random_message_mock = MagicMock(return_value="Random message.")
+        printer.print_markdown_slowly_mock = MagicMock()
 
         with unittest.mock.patch(
             "terminalgpt.chat_utils.get_user_answer", get_user_answer_mock
         ), unittest.mock.patch(
             "terminalgpt.print_utils.choose_random_message",
-            print_utils.choose_random_message_mock,
+            printer.choose_random_message_mock,
         ), unittest.mock.patch(
             "terminalgpt.print_utils.print_markdown_slowly",
-            print_utils.print_markdown_slowly_mock,
+            printer.print_markdown_slowly_mock,
         ):
             # Redirect stdout to capture printed output
             captured_output = StringIO()
@@ -87,10 +85,10 @@ class TestNewCommandIntegration(unittest.TestCase):
                 _ = chat.get_user_answer(messages)
             except KeyboardInterrupt:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-                stopped_message = print_utils.choose_random_message()
-                print_utils.print_markdown_slowly(stopped_message)
-                self.assertTrue(print_utils.choose_random_message_mock.called)
-                self.assertTrue(print_utils.print_markdown_slowly_mock.called)
+                stopped_message = printer.choose_random_message()
+                printer.print_markdown_slowly(stopped_message)
+                self.assertTrue(printer.choose_random_message_mock.called)
+                self.assertTrue(printer.print_markdown_slowly_mock.called)
 
             # Restore stdout
             sys.stdout = sys.__stdout__
@@ -100,12 +98,12 @@ class TestNewCommandIntegration(unittest.TestCase):
 
         # Mock get_user_answer to raise a generic exception
         get_user_answer_mock = MagicMock(side_effect=Exception("Test exception"))
-        print_utils.print_slowly_mock = MagicMock()
+        printer.print_slowly_mock = MagicMock()
 
         with unittest.mock.patch(
             "terminalgpt.chat_utils.get_user_answer", get_user_answer_mock
         ), unittest.mock.patch(
-            "terminalgpt.print_utils.print_slowly", print_utils.print_slowly_mock
+            "terminalgpt.print_utils.print_slowly", printer.print_slowly_mock
         ):
             # Redirect stdout to capture printed output
             captured_output = StringIO()
@@ -115,10 +113,10 @@ class TestNewCommandIntegration(unittest.TestCase):
                 answer = chat.get_user_answer(messages)
             except Exception as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-                print_utils.print_slowly(
+                printer.print_slowly(
                     Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
                 )
-                self.assertTrue(print_utils.print_slowly_mock.called)
+                self.assertTrue(printer.print_slowly_mock.called)
 
             # Restore stdout
             sys.stdout = sys.__stdout__
@@ -130,12 +128,12 @@ class TestNewCommandIntegration(unittest.TestCase):
         get_user_answer_mock = MagicMock(
             side_effect=openai.error.APIError("Test API error")
         )
-        print_utils.print_slowly_mock = MagicMock()
+        printer.print_slowly_mock = MagicMock()
 
         with unittest.mock.patch(
             "terminalgpt.chat_utils.get_user_answer", get_user_answer_mock
         ), unittest.mock.patch(
-            "terminalgpt.print_utils.print_slowly", print_utils.print_slowly_mock
+            "terminalgpt.print_utils.print_slowly", printer.print_slowly_mock
         ):
             # Redirect stdout to capture printed output
             captured_output = StringIO()
@@ -145,10 +143,10 @@ class TestNewCommandIntegration(unittest.TestCase):
                 answer = chat.get_user_answer(messages)
             except openai.error.APIError as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-                print_utils.print_slowly(
+                printer.print_slowly(
                     Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
                 )
-                self.assertTrue(print_utils.print_slowly_mock.called)
+                self.assertTrue(printer.print_slowly_mock.called)
 
             # Restore stdout
             sys.stdout = sys.__stdout__
@@ -188,12 +186,12 @@ class TestNewCommandIntegration(unittest.TestCase):
         get_user_answer_mock = MagicMock(
             side_effect=openai.error.OpenAIError("Test OpenAI error")
         )
-        print_utils.print_slowly_mock = MagicMock()
+        printer.print_slowly_mock = MagicMock()
 
         with unittest.mock.patch(
             "terminalgpt.chat_utils.get_user_answer", get_user_answer_mock
         ), unittest.mock.patch(
-            "terminalgpt.print_utils.print_slowly", print_utils.print_slowly_mock
+            "terminalgpt.print_utils.print_slowly", printer.print_slowly_mock
         ):
             # Redirect stdout to capture printed output
             captured_output = StringIO()
@@ -203,10 +201,10 @@ class TestNewCommandIntegration(unittest.TestCase):
                 answer = chat.get_user_answer(messages)
             except openai.error.OpenAIError as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
-                print_utils.print_slowly(
+                printer.print_slowly(
                     Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL
                 )
-                self.assertTrue(print_utils.print_slowly_mock.called)
+                self.assertTrue(printer.print_slowly_mock.called)
 
             # Restore stdout
             sys.stdout = sys.__stdout__

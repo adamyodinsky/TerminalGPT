@@ -7,8 +7,8 @@ import time
 import openai
 from colorama import Back, Style
 
-from terminalgpt import config, print_utils
-from terminalgpt.print_utils import Printer
+from terminalgpt import config
+from terminalgpt.printer import Printer
 
 
 class ConversationManager:
@@ -111,6 +111,6 @@ class ConversationManager:
         """Checks if the conversations directory is empty."""
 
         if files == []:
-            self.printer.print(message + Style.RESET_ALL)
+            self.printer.printt(message + Style.RESET_ALL)
             return True
         return False

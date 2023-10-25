@@ -9,9 +9,9 @@ from prompt_toolkit import PromptSession
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
-from terminalgpt import config, conversations, encryption, print_utils
+from terminalgpt import config
 from terminalgpt.conversations import ConversationManager
-from terminalgpt.print_utils import Printer, PrintUtils
+from terminalgpt.printer import Printer, PrintUtils
 
 
 class ChatManager:
@@ -19,13 +19,16 @@ class ChatManager:
         self.tiktoken_encoder = tiktoken.get_encoding(config.ENCODING_MODEL)
         self.convers_manager = conversations_manager
         self.token_limit = kwargs["token_limit"]
-        self.session = kwargs["session"]
+        self.session: PromptSession = kwargs["session"]
         self.messages: list = kwargs["messages"]
         self.model = kwargs["model"]
         self.printer: Printer = kwargs["printer"]
 
     def set_messages(self, messages: list):
         self.messages = messages
+
+    def set_conversation_name(self, conversation_name: str):
+        self.convers_manager.conversation_name = conversation_name
 
     def chat_loop(self):
         """Main chat loop."""
@@ -156,7 +159,7 @@ class ChatManager:
         )
         print(
             Fore.LIGHTCYAN_EX
-            + f"Counter Total Usage: {str(self.num_tokens_from_messages(self.messages))} tokens"
+            + f"Counter Total Usage: {str(self.num_tokens_from_messages())} tokens"
             + Style.RESET_ALL
         )
 
@@ -166,17 +169,16 @@ class ChatManager:
         try:
             welcome_message = self.get_user_answer(messages, config.DEFAULT_MODEL)
             self.printer.print_assistant_message(
-                welcome_message["choices"][0]["message"]["content"], plain=False
+                welcome_message["choices"][0]["message"]["content"]
             )
         except KeyboardInterrupt:
             self.printer.print_assistant_message(
                 PrintUtils.choose_random_message(PrintUtils.STOPPED_MESSAGES),
-                plain=False,
                 color=Fore.YELLOW + Style.RESET_ALL,
             )
             sys.exit(0)
         except Exception as error:
             self.printer.print_assistant_message(
-                str(error), plain=False, color=Back.RED + Style.BRIGHT
+                str(error), color=Back.RED + Style.BRIGHT
             )
             sys.exit(1)

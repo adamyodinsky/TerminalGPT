@@ -1,6 +1,5 @@
 """Encryption module for terminalgpt."""
 
-import base64
 import os
 import sys
 
@@ -30,9 +29,9 @@ class EncryptionManager:
 
                 with open(self.key_path, "wb") as file:
                     file.write(key)
-            else:
-                with open(self.key_path, "rb") as file:
-                    key = file.read()
+
+        with open(self.key_path, "rb") as file:
+            key = file.read()
 
         return key
 

@@ -3,20 +3,6 @@
 import platform
 from os import path
 
-# def shell_version():
-#     """Get the current shell version."""
-
-#     shell = os.environ.get("SHELL")
-#     result = None
-
-#     if platform.system() == "Windows":
-#         result = subprocess.run(["ver"], stdout=subprocess.PIPE, check=True)
-#     else:
-#         result = subprocess.run(
-#             [shell, "--version"], stdout=subprocess.PIPE, check=False
-#         )
-#     return result.stdout.decode("utf-8").strip()
-
 
 def machine_info():
     """Get the current machine info."""
@@ -35,7 +21,12 @@ KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
 DEFAULT_MODEL = "gpt-3.5-turbo"
 ENCODING_MODEL = "cl100k_base"
 
-MODELS = {"gpt-3.5-turbo": 4096, "gpt-4": 8092}
+MODELS = {
+    "gpt-3.5-turbo": 4097,
+    "gpt-3.5-turbo-16k": 16385,
+    "gpt-4": 8192,
+    "gpt-4-32k": 8192,
+}
 
 INIT_SYSTEM_MESSAGE = {
     "role": "system",
