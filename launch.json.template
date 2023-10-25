@@ -1,0 +1,61 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "install",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["install"]
+    },
+    {
+      "name": "load",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["load"]
+    },
+    {
+      "name": "delete",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["delete"]
+    },
+    {
+      "name": "new",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["new"]
+    },
+    {
+      "name": "one-shot",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["one-shot", "hello"]
+    }
+  ]
+}
