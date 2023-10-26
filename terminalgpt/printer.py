@@ -40,15 +40,15 @@ class PlainPrinter(Printer):
 
 class MarkdownPrinter(Printer):
     def __init__(self):
-        self.console = Console()
+        self.__console = Console()
 
     def printt(self, text: str, style="yellow"):
         text_markdown = ""
         txt_arr = self._split_highlighted_string(text)
         for txt in txt_arr:
-            with self.console.capture() as capture:
+            with self.__console.capture() as capture:
                 text_markdown = Markdown(txt)
-                self.console.print(text_markdown, style=style)
+                self.__console.print(text_markdown, style=style)
             text_markdown = capture.get()
             if txt.startswith("```"):
                 delay = self.PRINT_DELAY / 10

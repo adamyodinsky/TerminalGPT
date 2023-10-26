@@ -15,19 +15,19 @@ install:
 build: install
 	poetry build
 
-test: build
+test:
 	poetry run pytest -v --disable-warnings --cov=terminalgpt
 
-test-unit: build
-	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit
+test-unit:
+	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit/test_conversations.py
 
-test-inte: build
+test-inte:
 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/integration
 
-test-e2e: build
+test-e2e:
 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/e2e
 
-publish: test-unit test-inte
+publish: build test-unit test-inte
 	poetry publish
 
 run-install:

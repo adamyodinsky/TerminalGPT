@@ -15,9 +15,17 @@ class ConversationManager:
     """Manages conversations."""
 
     def __init__(self, printer: Printer, conversation_name: str = ""):
-        self.base_path = config.CONVERSATIONS_PATH
-        self.conversation_name = conversation_name
-        self.printer = printer
+        self.__base_path = config.CONVERSATIONS_PATH
+        self.__conversation_name = conversation_name
+        self.__printer = printer
+
+    @property
+    def conversation_name(self):
+        return self.__conversation_name
+
+    @conversation_name.setter
+    def conversation_name(self, conversation_name: str):
+        self.__conversation_name = conversation_name
 
     def create_conversation_name(self, messages: list):
         """Creates a context file name based on the title of the conversation."""
@@ -45,11 +53,11 @@ class ConversationManager:
     def save_conversation(self, messages: list):
         """Saves a conversation to a file."""
 
-        if not os.path.exists(self.base_path):
-            os.makedirs(self.base_path)
+        if not os.path.exists(self.__base_path):
+            os.makedirs(self.__base_path)
 
         with open(
-            file=f"{self.base_path}/{self.conversation_name}",
+            file=f"{self.__base_path}/{self.conversation_name}",
             mode="w",
             encoding="utf-8",
         ) as conv_file:
@@ -58,7 +66,7 @@ class ConversationManager:
     def delete_conversation(self, conversation_name: str):
         """Deletes a conversation from a file."""
 
-        os.remove(f"{self.base_path}/{conversation_name}")
+        os.remove(f"{self.__base_path}/{conversation_name}")
 
     def load_conversation(self) -> list:
         """Loads a conversation from a file. returns a list of messages."""
@@ -67,14 +75,14 @@ class ConversationManager:
 
         try:
             with open(
-                file=f"{self.base_path}/{self.conversation_name}",
+                file=f"{self.__base_path}/{self.conversation_name}",
                 mode="r",
                 encoding="utf-8",
             ) as conv_file:
                 messages = json.load(conv_file)
         except FileNotFoundError as error:
             error_message = f"Failed loading conversation {self.conversation_name} from {self.base_path}.\n{str(error)}"
-            self.printer.printt(
+            self.__printer.printt(
                 Back.RED + Style.BRIGHT + error_message + Style.RESET_ALL
             )
             messages = []
@@ -84,12 +92,12 @@ class ConversationManager:
     def get_conversations(self):
         """Lists all saved conversations."""
 
-        if not os.path.exists(self.base_path):
-            os.makedirs(self.base_path)
+        if not os.path.exists(self.__base_path):
+            os.makedirs(self.__base_path)
 
-        files = os.listdir(self.base_path)
+        files = os.listdir(self.__base_path)
         files.sort(
-            key=lambda x: os.path.getmtime(os.path.join(self.base_path, x)),
+            key=lambda x: os.path.getmtime(os.path.join(self.__base_path, x)),
             reverse=True,
         )
 
@@ -111,6 +119,6 @@ class ConversationManager:
         """Checks if the conversations directory is empty."""
 
         if files == []:
-            self.printer.printt(message + Style.RESET_ALL)
+            self.__printer.printt(message + Style.RESET_ALL)
             return True
         return False

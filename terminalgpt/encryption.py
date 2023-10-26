@@ -14,7 +14,7 @@ class EncryptionManager:
     """Manages encryption and decryption of secrets."""
 
     def __init__(self):
-        self.key_path = config.KEY_PATH
+        self.__key_path = config.KEY_PATH
 
     def set_encryption_key(self):
         """Sets the encryption key for OpenAI API."""
@@ -22,17 +22,17 @@ class EncryptionManager:
         key = Fernet.generate_key()
 
         try:
-            if not os.path.exists(os.path.dirname(self.key_path)):
-                os.makedirs(os.path.dirname(self.key_path))
+            if not os.path.exists(os.path.dirname(self.__key_path)):
+                os.makedirs(os.path.dirname(self.__key_path))
 
-            with open(self.key_path, "wb") as file:
+            with open(self.__key_path, "wb") as file:
                 file.write(key)
         except OSError:
             print(
                 Style.BRIGHT
                 + Fore.RED
                 + f"""
-                Failed to create encryption key at {self.key_path}.
+                Failed to create encryption key at {self.__key_path}.
                 Please check your permissions and try again.
                 """
                 + Style.RESET_ALL
@@ -47,14 +47,14 @@ class EncryptionManager:
         key = ""
 
         try:
-            with open(self.key_path, "rb") as file:
+            with open(self.__key_path, "rb") as file:
                 key = file.read()
         except OSError:
             print(
                 Style.BRIGHT
                 + Fore.RED
                 + f"""
-                Failed to read encryption key from {self.key_path}.
+                Failed to read encryption key from {self.__key_path}.
                 Please check your permissions and try again.
                 """
                 + Style.RESET_ALL

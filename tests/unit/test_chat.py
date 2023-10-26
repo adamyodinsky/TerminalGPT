@@ -4,14 +4,13 @@ import unittest
 from unittest.mock import patch
 
 import openai
+from prompt_toolkit import PromptSession
+from prompt_toolkit.styles import Style as PromptStyle
 
-from terminalgpt import chat, config
-from terminalgpt.chat import (
-    exceeding_token_limit,
-    get_user_answer,
-    num_tokens_from_messages,
-    reduce_tokens,
-)
+from terminalgpt import config
+from terminalgpt.chat import ChatManager
+from terminalgpt.conversations import ConversationManager
+from terminalgpt.printer import PrinterFactory
 
 
 class TestChatUtils(unittest.TestCase):
@@ -26,24 +25,53 @@ class TestChatUtils(unittest.TestCase):
             {"role": "assistant", "content": "Hello user Hello user"},
             {"role": "user", "content": "Hello assistant Hello assistant"},
         ]
-        return messages
 
-    def test_exceeding_token_limit(self):
+        printer = PrinterFactory.get_printer(False)
+        conv_manager = ConversationManager(printer)
+
+        session = PromptSession(
+            style=PromptStyle.from_dict({"prompt": "bold"}),
+            message="\nUser: ",
+        )
+
+        chat_manager = ChatManager(
+            conversations_manager=conv_manager,
+            token_limit=4096,
+            session=session,
+            messages=messages,
+            model="gpt3.5-turbo",
+            printer=printer,
+        )
+
+        return chat_manager
+
+    def test_exceeding_token_limit_negative(self):
         """Tests exceeding_token_limit function."""
 
-        self.assertTrue(exceeding_token_limit(1025, 1024))
-        self.assertFalse(exceeding_token_limit(1000, 1023))
+        chat_manager = self.set_test()
+
+        self.assertFalse(chat_manager.exceeding_token_limit())
+
+    def test_exceeding_token_limit_positive(self):
+        """Tests exceeding_token_limit function."""
+
+        chat_manager = self.set_test()
+        chat_manager.total_usage = chat_manager.num_tokens_from_messages()
+        chat_manager.token_limit = 5
+
+        self.assertTrue(chat_manager.exceeding_token_limit())
 
     def test_num_tokens_from_messages(self):
         """Tests num_tokens_from_messages function."""
 
-        messages = self.set_test()
-        self.assertEqual(num_tokens_from_messages(messages), 34)
+        chat_manager = self.set_test()
+        self.assertEqual(chat_manager.num_tokens_from_messages(), 34)
 
     def test_num_tokens_from_messages_name(self):
         """Tests num_tokens_from_messages function."""
 
-        messages = [
+        chat_manager = self.set_test()
+        chat_manager.messages = [
             {"role": "assistant", "name": "Alice", "content": "Hi, I'm Alice."},
             {"role": "user", "content": "Hello Alice!"},
             {
@@ -52,28 +80,29 @@ class TestChatUtils(unittest.TestCase):
                 "content": "How can I help you today?",
             },
         ]
+
         expected_num_tokens = 29
-        actual_num_tokens = num_tokens_from_messages(messages)
+        actual_num_tokens = chat_manager.num_tokens_from_messages()
         assert actual_num_tokens == expected_num_tokens
 
     def test_reduce_tokens_enough_tokens_to_reduce(self):
         """Tests reduce_tokens function."""
-
-        messages = [
+        chat_manager = self.set_test()
+        chat_manager.token_limit = 20
+        chat_manager.messages = [
             {"role": "user", "content": "Hello"},
             {"role": "assistant", "content": "Hi, how can I help you today?"},
             {"role": "user", "content": "What's the weather like?"},
         ]
-        token_limit = 20
-        total_usage = 25
 
-        _, new_total_usage = reduce_tokens(messages, token_limit, total_usage)
-        assert new_total_usage <= token_limit
+        chat_manager.reduce_tokens()
+        assert chat_manager.total_usage <= chat_manager.token_limit
 
     def test_reduce_tokens_not_enough_tokens_to_reduce(self):
         """Tests reduce_tokens function."""
-
-        messages = [
+        chat_manager = self.set_test()
+        chat_manager.token_limit = 25
+        chat_manager.messages = [
             {"role": "user", "content": "Hello"},
             {"role": "assistant", "content": "Hi, how can I help you today?"},
             {"role": "user", "content": "What's the weather like?"},
@@ -82,54 +111,51 @@ class TestChatUtils(unittest.TestCase):
             {"role": "assistant", "content": "You're welcome!"},
             {"role": "user", "content": "Bye!"},
         ]
-        token_limit = 25
-        total_usage = chat.num_tokens_from_messages(messages)
 
-        _, new_total_usage = reduce_tokens(messages, token_limit, total_usage)
-        assert new_total_usage <= token_limit
+        chat_manager.reduce_tokens()
+        self.assertGreaterEqual(chat_manager.token_limit, chat_manager.total_usage)
+
+    def test_reduce_tokens_not_enough_tokens_to_reduce_2(self):
+        """Tests reduce_tokens function."""
+        chat_manager = self.set_test()
+        chat_manager.token_limit = 25
+        chat_manager.messages = [
+            {"role": "user", "content": "Hello"},
+            {"role": "assistant", "content": "Hi, how can I help you today?"},
+            {"role": "user", "content": "What's the weather like?"},
+            {"role": "assistant", "content": "It's sunny today!"},
+            {"role": "user", "content": "Thanks!"},
+            {"role": "assistant", "content": "You're welcome!"},
+            {"role": "user", "content": "Bye!"},
+        ]
+
+        chat_manager.__total_usage = chat_manager.num_tokens_from_messages()
+        self.assertGreaterEqual(chat_manager.token_limit, chat_manager.total_usage)
 
     def test_reduce_tokens_token_limit_greater_or_equal(self):
         """Tests reduce_tokens function."""
 
-        messages = [
+        chat_manager = self.set_test()
+        chat_manager.messages = [
             {"role": "user", "content": "Hello"},
             {"role": "assistant", "content": "Hi, how can I help you today?"},
-        ]
-        token_limit = 20
-        total_usage = 15
-
-        reduced_messages, new_total_usage = reduce_tokens(
-            messages, token_limit, total_usage
-        )
-        assert new_total_usage == total_usage
-        assert reduced_messages == messages
-
-    def test_reduce_tokens_with_name_key(self):
-        """Tests reduce_tokens function."""
-
-        messages = [
             {"role": "user", "content": "Hello"},
-            {
-                "role": "assistant",
-                "content": "Hi, how can I help you today?",
-                "name": "Assistant",
-            },
-            {"role": "user", "content": "What's the weather like?"},
+            {"role": "assistant", "content": "Hi, how can I help you today?"},
+            {"role": "user", "content": "Hello"},
         ]
-        token_limit = 20
-        total_usage = 28
+        chat_manager.token_limit = 20
 
-        _, new_total_usage = reduce_tokens(messages, token_limit, total_usage)
-        assert new_total_usage <= token_limit
+        chat_manager.total_usage = chat_manager.num_tokens_from_messages()
+        reduced = chat_manager.reduce_tokens()
 
-
-class TestGetUserAnswer(unittest.TestCase):
-    """Tests for get_user_answer function."""
+        self.assertEqual(chat_manager.total_usage, 20)
+        self.assertEqual(24, reduced)
 
     @patch("openai.ChatCompletion.create")
     def test_get_user_answer_success(self, mock_openai_chatcompletion_create):
         """Tests get_user_answer function."""
 
+        chat_manager = self.set_test()
         messages = [{"role": "user", "content": "Hello"}]
         mock_response = {
             "choices": [
@@ -146,7 +172,7 @@ class TestGetUserAnswer(unittest.TestCase):
         }
         mock_openai_chatcompletion_create.return_value = mock_response
 
-        answer = get_user_answer(messages, config.DEFAULT_MODEL)
+        answer = chat_manager.get_user_answer(messages, config.DEFAULT_MODEL)
         self.assertEqual(answer, mock_response)
 
     @patch("openai.ChatCompletion.create")
@@ -156,6 +182,7 @@ class TestGetUserAnswer(unittest.TestCase):
     ):
         """Tests get_user_answer function."""
 
+        chat_manager = self.set_test()
         error_message = "Please reduce the length of the messages"
         messages = [
             {"role": "user", "content": "Hello"},
@@ -179,7 +206,7 @@ class TestGetUserAnswer(unittest.TestCase):
             },
         ]
 
-        _ = get_user_answer(messages, config.DEFAULT_MODEL)
+        _ = chat_manager.get_user_answer(messages, config.DEFAULT_MODEL)
         mock_openai_chatcompletion_create.assert_called_with(
             model=config.DEFAULT_MODEL, messages=messages
         )

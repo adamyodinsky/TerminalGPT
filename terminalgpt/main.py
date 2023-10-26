@@ -114,7 +114,7 @@ def new(ctx):
 
     chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
 
-    chat_manager.set_messages(messages)
+    chat_manager.messages = messages
     chat_manager.chat_loop()
 
 
@@ -200,12 +200,12 @@ def load(ctx):
         return
 
     # load conversation
-    chat_manager.set_conversation_name(conversation)
+    conv_manager.conversation_name = conversation
     while not messages:
         messages = conv_manager.load_conversation()
 
     messages.append(config.INIT_WELCOME_BACK_MESSAGE)
-    chat_manager.set_messages(messages)
+    chat_manager.messages = messages
     total_usage = chat_manager.num_tokens_from_messages()
 
     printer.printt(
@@ -267,7 +267,7 @@ def load(ctx):
     chat_manager.welcome_message(messages=messages)
     messages.pop()
 
-    chat_manager.set_messages(messages)
+    chat_manager.messages = messages
     chat_manager.chat_loop()
 
 
