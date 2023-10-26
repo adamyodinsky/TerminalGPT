@@ -27,6 +27,18 @@ class ConversationManager:
     def conversation_name(self, conversation_name: str):
         self.__conversation_name = conversation_name
 
+    def get_system_answer(self, messages):
+        """Returns the answer from OpenAI API."""
+
+        while True:
+            try:
+                answer = openai.ChatCompletion.create(
+                    model=config.DEFAULT_MODEL, messages=messages
+                )
+                return answer
+            except openai.OpenAIError:
+                time.sleep(10)
+
     def create_conversation_name(self, messages: list):
         """Creates a context file name based on the title of the conversation."""
 
@@ -81,7 +93,7 @@ class ConversationManager:
             ) as conv_file:
                 messages = json.load(conv_file)
         except FileNotFoundError as error:
-            error_message = f"Failed loading conversation {self.conversation_name} from {self.base_path}.\n{str(error)}"
+            error_message = f"Failed loading conversation {self.conversation_name} from {self.__base_path}.\n{str(error)}"
             self.__printer.printt(
                 Back.RED + Style.BRIGHT + error_message + Style.RESET_ALL
             )
@@ -102,18 +114,6 @@ class ConversationManager:
         )
 
         return files
-
-    def get_system_answer(self, messages):
-        """Returns the answer from OpenAI API."""
-
-        while True:
-            try:
-                answer = openai.ChatCompletion.create(
-                    model=config.DEFAULT_MODEL, messages=messages
-                )
-                return answer
-            except openai.OpenAIError:
-                time.sleep(10)
 
     def is_conversations_empty(self, files: list, message: str):
         """Checks if the conversations directory is empty."""
