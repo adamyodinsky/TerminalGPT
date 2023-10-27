@@ -19,7 +19,7 @@ test:
 	poetry run pytest -v --disable-warnings --cov=terminalgpt
 
 test-unit:
-	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit/test_conversations.py
+	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/unit
 
 test-inte:
 	poetry run pytest -v --disable-warnings --cov=terminalgpt tests/integration

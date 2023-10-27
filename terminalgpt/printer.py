@@ -1,3 +1,5 @@
+"""This module contains the Printer class, which is responsible for printing messages to the user."""
+
 import random
 import time
 from abc import ABC, abstractmethod
