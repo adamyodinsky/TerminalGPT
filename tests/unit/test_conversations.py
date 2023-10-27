@@ -107,42 +107,49 @@ class TestConversations(unittest.TestCase):
             os.makedirs(self.test_conversation_path)
 
         messages = [{"role": "user", "content": "Test message"}]
-        file_name = "test_conversation.json"
 
         with open(
-            os.path.join(self.test_conversation_path, file_name), "w", encoding="utf-8"
+            os.path.join(self.test_conversation_path, cm.conversation_name),
+            "w",
+            encoding="utf-8",
         ) as f:
             json.dump(messages, f)
 
         loaded_messages = cm.load_conversation()
         self.assertEqual(loaded_messages, messages)
 
-    # def test_get_conversations(self):
-    #     if not os.path.exists(self.test_conversation_path):
-    #         os.makedirs(self.test_conversation_path)
+    def test_get_conversations(self):
+        cm = self.create_conversation_manager()
+        if not os.path.exists(self.test_conversation_path):
+            os.makedirs(self.test_conversation_path)
 
-    #     file_name = "test_conversation.json"
-    #     with open(os.path.join(self.test_conversation_path, file_name), "w") as f:
-    #         pass
+        with open(
+            os.path.join(self.test_conversation_path, cm.conversation_name),
+            "w",
+            encoding="utf-8",
+        ):
+            pass
 
-    #     result = conversations.get_conversations(self.test_conversation_path)
-    #     self.assertTrue(file_name in result)
+        result = cm.get_conversations()
+        self.assertTrue(cm.conversation_name in result)
 
-    # def test_get_system_answer(self):
-    #     messages = [{"role": "user", "content": "Test message"}]
+    def test_get_system_answer(self):
+        cm = self.create_conversation_manager()
+        messages = [{"role": "user", "content": "Test message"}]
 
-    #     with patch("openai.ChatCompletion.create") as mock_openai_create:
-    #         mock_openai_create.return_value = {
-    #             "choices": [{"message": {"content": "Test response"}}]
-    #         }
-    #         result = conversations.get_system_answer(messages)
-    #         self.assertEqual(
-    #             result["choices"][0]["message"]["content"], "Test response"
-    #         )
+        with patch("openai.ChatCompletion.create") as mock_openai_create:
+            mock_openai_create.return_value = {
+                "choices": [{"message": {"content": "Test response"}}]
+            }
+            result = cm.get_system_answer(messages)
+            self.assertEqual(
+                result["choices"][0]["message"]["content"], "Test response"
+            )
 
-    # def test_is_conversations_empty(self):
-    #     message = "No conversations found."
-    #     self.assertTrue(conversations.is_conversations_empty([], message))
+    def test_is_conversations_empty(self):
+        cm = self.create_conversation_manager()
+        message = "No conversations found."
+        self.assertTrue(cm.is_conversations_empty([], message))
 
 
 if __name__ == "__main__":
