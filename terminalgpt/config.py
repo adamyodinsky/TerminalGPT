@@ -1,7 +1,27 @@
 """TerminalGPT configuration file."""
 
+import json
+import logging
 import platform
 from os import path
+
+APP_NAME = "terminalgpt"
+DEFAULT_API_TOKEN_LIMIT = 4096
+
+BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
+DEFAULTS_PATH = f"{BASE_PATH}/defaults.json"
+CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
+SECRET_PATH = f"{BASE_PATH}/{APP_NAME}.encrypted"
+KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
+
+ENCODING_MODEL = "cl100k_base"
+
+MODELS = {
+    "gpt-3.5-turbo": 4097,
+    "gpt-3.5-turbo-16k": 16385,
+    "gpt-4": 8192,
+    "gpt-4-32k": 32768,
+}
 
 
 def machine_info():
@@ -10,23 +30,17 @@ def machine_info():
     return platform.platform()
 
 
-APP_NAME = "terminalgpt"
-DEFAULT_API_TOKEN_LIMIT = 4096
+def get_default_config() -> dict:
+    """Get the default configuration from the config file."""
+    try:
+        with open(DEFAULTS_PATH, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        logging.error(
+            "Couldn't find the default configuration file at %s", DEFAULTS_PATH
+        )
+        exit(1)
 
-BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
-CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
-SECRET_PATH = f"{BASE_PATH}/{APP_NAME}.encrypted"
-KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
-
-DEFAULT_MODEL = "gpt-3.5-turbo"
-ENCODING_MODEL = "cl100k_base"
-
-MODELS = {
-    "gpt-3.5-turbo": 4097,
-    "gpt-3.5-turbo-16k": 16385,
-    "gpt-4": 8192,
-    "gpt-4-32k": 8192,
-}
 
 INIT_SYSTEM_MESSAGE = {
     "role": "system",

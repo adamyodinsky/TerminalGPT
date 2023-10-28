@@ -13,10 +13,10 @@ from terminalgpt import config
 
 
 class Printer(ABC):
-    PRINT_DELAY = 0.007
+    PRINT_DELAY = 0.006
 
     @abstractmethod
-    def printt(self, text: str):
+    def printt(self, text: str = ""):
         pass
 
     def print_assistant_message(self, message, color=Fore.YELLOW):
@@ -24,7 +24,7 @@ class Printer(ABC):
 
 
 class PlainPrinter(Printer):
-    def printt(self, text: str):
+    def printt(self, text: str = ""):
         try:
             for char in text:
                 print(char, end="", flush=True)
@@ -44,7 +44,7 @@ class MarkdownPrinter(Printer):
     def __init__(self):
         self.__console = Console()
 
-    def printt(self, text: str, style="yellow"):
+    def printt(self, text: str = "", style="yellow"):
         text_markdown = ""
         txt_arr = self._split_highlighted_string(text)
         for txt in txt_arr:
@@ -139,7 +139,9 @@ Let's install the OpenAI API key, so you can use TerminalGPT.
         Style.BRIGHT
         + Fore.GREEN
         + f"""
-Great news! You're all set up to use the OpenAI API key. Your files have been saved at {config.BASE_PATH}.
+Great news! You're all set up to use TerminalGPT!
+
+Your TerminalGPT files are all saved at {config.BASE_PATH}.
 To start chatting with me, just type '{config.APP_NAME}' into your terminal and let the fun begin!
 
 Thanks for choosing TerminalGPT - the coolest personal assistant on the block.

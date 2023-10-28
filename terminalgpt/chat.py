@@ -50,6 +50,19 @@ class ChatManager:
     def total_usage(self, total_usage: int):
         self.__total_usage = total_usage
 
+    def __print_usage(self):
+        """Prints the total usage"""
+        print(
+            Fore.LIGHTBLUE_EX
+            + f"\nAPI Total Usage: {str(self.__total_usage)} tokens"
+            + Style.RESET_ALL
+        )
+        print(
+            Fore.LIGHTCYAN_EX
+            + f"Counter Total Usage: {str(self.num_tokens_from_messages())} tokens"
+            + Style.RESET_ALL
+        )
+
     def chat_loop(self):
         """Main chat loop."""
 
@@ -59,7 +72,7 @@ class ChatManager:
 
             # Get user input
             user_input = self.__session.prompt()
-            print()
+            self.__printer.printt()
 
             # Append to messages and send to ChatGPT
             self.__messages.append({"role": "user", "content": user_input})
@@ -71,7 +84,7 @@ class ChatManager:
 
             # Get answer
             try:
-                answer = self.get_user_answer(self.__messages, self.__model)
+                answer = self.get_user_answer(self.__messages)
             except KeyboardInterrupt:
                 self.__printer.print_assistant_message(
                     PrintUtils.choose_random_message(
@@ -102,12 +115,12 @@ class ChatManager:
 
             # Print usage
             if os.environ.get("LOG_LEVEL") == "DEBUG":
-                self.print_usage(self.__total_usage)
+                self.__print_usage()
 
             if user_input == "exit":
                 sys.exit()
 
-    def get_user_answer(self, messages: list, model: str):
+    def get_user_answer(self, messages: list):
         """Returns the answer from OpenAI API."""
         while True:
             try:
@@ -117,7 +130,9 @@ class ChatManager:
                     color="blue",
                     side="right",
                 ):
-                    return openai.ChatCompletion.create(model=model, messages=messages)
+                    return openai.ChatCompletion.create(
+                        model=self.__model, messages=messages
+                    )
             except openai.InvalidRequestError as error:
                 if "Please reduce the length of the messages" in str(error):
                     self.__messages.pop(1)
@@ -153,9 +168,7 @@ class ChatManager:
             message["content"] = self.__tiktoken_encoder.decode(tokenized_message)
             self.__messages.insert(1, message)
         if os.environ.get("LOG_LEVEL") == "DEBUG":
-            counted_tokens = self.num_tokens_from_messages()
-            print(f"Counted usage: {self.__total_usage}")
-            print(f"Real usage tokens: {counted_tokens}")
+            self.__print_usage()
 
         return total_reduced_amount
 
@@ -174,24 +187,11 @@ class ChatManager:
         num_tokens -= 2  # every reply is primed with <im_start>assistant
         return num_tokens
 
-    def print_usage(self, total_usage):
-        """Prints the total usage"""
-        print(
-            Fore.LIGHTBLUE_EX
-            + f"\nAPI Total Usage: {str(total_usage)} tokens"
-            + Style.RESET_ALL
-        )
-        print(
-            Fore.LIGHTCYAN_EX
-            + f"Counter Total Usage: {str(self.num_tokens_from_messages())} tokens"
-            + Style.RESET_ALL
-        )
-
     def welcome_message(self, messages: list):
         """Prints the welcome message."""
         print()
         try:
-            welcome_message = self.get_user_answer(messages, config.DEFAULT_MODEL)
+            welcome_message = self.get_user_answer(messages)
             self.__printer.print_assistant_message(
                 welcome_message["choices"][0]["message"]["content"]
             )

@@ -39,7 +39,7 @@ class TestChatUtils(unittest.TestCase):
             token_limit=4096,
             session=session,
             messages=messages,
-            model="gpt3.5-turbo",
+            model="gpt-3.5-turbo",
             printer=printer,
         )
 
@@ -172,7 +172,7 @@ class TestChatUtils(unittest.TestCase):
         }
         mock_openai_chatcompletion_create.return_value = mock_response
 
-        answer = chat_manager.get_user_answer(messages, config.DEFAULT_MODEL)
+        answer = chat_manager.get_user_answer(messages)
         self.assertEqual(answer, mock_response)
 
     @patch("openai.ChatCompletion.create")
@@ -206,9 +206,9 @@ class TestChatUtils(unittest.TestCase):
             },
         ]
 
-        _ = chat_manager.get_user_answer(messages, config.DEFAULT_MODEL)
+        _ = chat_manager.get_user_answer(messages)
         mock_openai_chatcompletion_create.assert_called_with(
-            model=config.DEFAULT_MODEL, messages=messages
+            model="gpt-3.5-turbo", messages=messages
         )
         mock_time_sleep.assert_called_with(0.5)
 

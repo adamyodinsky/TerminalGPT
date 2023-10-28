@@ -33,7 +33,7 @@ class ConversationManager:
         while True:
             try:
                 answer = openai.ChatCompletion.create(
-                    model=config.DEFAULT_MODEL, messages=messages
+                    model=config.get_default_config()["model"], messages=messages
                 )
                 return answer
             except openai.OpenAIError:
@@ -57,7 +57,7 @@ class ConversationManager:
 
     def save_context(self, messages: list, total_usage: int, token_limit: int):
         # Save context or wait for some context
-        if not self.conversation_name and total_usage > token_limit / 10:
+        if not self.conversation_name and total_usage > token_limit / 12:
             self.create_conversation_name(messages)
         elif self.conversation_name:
             self.save_conversation(messages)

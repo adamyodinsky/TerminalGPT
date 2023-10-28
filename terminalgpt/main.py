@@ -1,7 +1,9 @@
 """Main module for the terminalgpt package."""
 
 import getpass
+import json
 import os
+import time
 
 import click
 from colorama import Fore, Style
@@ -22,7 +24,7 @@ from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
     "--model",
     "-m",
     type=click.Choice(list(config.MODELS.keys())),
-    default=config.DEFAULT_MODEL,
+    default=config.get_default_config()["model"],
     show_default=True,
     help="Choose a model to use.",
 )
@@ -76,11 +78,30 @@ def install(ctx):
 
     # Get API key from user
     printer.printt(PrintUtils.INSTALL_WELCOME_MESSAGE)
-    api_key = getpass.getpass(
-        prompt=Style.BRIGHT
-        + Fore.LIGHTBLUE_EX
-        + "Please enter your OpenAI API key:\n"
-        + Style.RESET_ALL
+    printer.printt(
+        f"{Style.RESET_ALL}{Style.BRIGHT}Please enter your OpenAI API key:\n{Style.RESET_ALL}"
+    )
+    api_key = getpass.getpass()
+
+    printer.printt(f"\n\n{Style.BRIGHT}Good! Now let's choose a default model.")
+    time.sleep(0.5)
+
+    models = list(config.MODELS.keys())
+    completer = WordCompleter(models, ignore_case=True)
+    printer.printt(
+        f"{Style.BRIGHT}Please choose one of the models below to be your default model:"
+    )
+
+    for model, token_limit in config.MODELS.items():
+        printer.printt(
+            f"{Style.BRIGHT} - Model: {Style.RESET_ALL}{model}"
+            f"{Style.BRIGHT}    tokens-limit: {Style.RESET_ALL}{int(int(token_limit)/1000)}k"
+        )
+
+    model = prompt(
+        "\n\nType the desired model:\n",
+        completer=completer,
+        style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
     )
 
     encryption_key = enc_manager.set_encryption_key()
@@ -96,6 +117,10 @@ def install(ctx):
     with open(config.SECRET_PATH, "wb") as file:
         file.write(encrypted_secret)
 
+    # Save the default config to a file
+    with open(config.DEFAULTS_PATH, "w", encoding="utf-8") as file:
+        json.dump({"model": model}, file)
+
     printer.printt(PrintUtils.INSTALL_SUCCESS_MESSAGE)
     printer.printt(PrintUtils.INSTALL_ART)
     printer.printt(PrintUtils.INSTALL_SMALL_PRINTS)
@@ -108,12 +133,16 @@ def new(ctx):
 
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
     chat_manager: ChatManager = ctx.obj["CHAT"]
+    printer: Printer = ctx.obj["PRINTER"]
     enc_manager.set_api_key()
 
+    token_limit = int(config.MODELS[ctx.obj["MODEL"]] / 1000)
+    printer.printt(
+        f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']}     {Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k"
+    )
+
     messages = [config.INIT_SYSTEM_MESSAGE]
-
     chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
-
     chat_manager.messages = messages
     chat_manager.chat_loop()
 
@@ -139,10 +168,7 @@ def one_shot(ctx, question):
     messages.append({"role": "user", "content": question})
 
     printer.printt("")
-    answer = chat_manager.get_user_answer(
-        messages=messages,
-        model=ctx.obj["MODEL"],
-    )
+    answer = chat_manager.get_user_answer(messages=messages)
     message = answer["choices"][0]["message"]["content"]
 
     printer.print_assistant_message(message)
@@ -206,7 +232,7 @@ def load(ctx):
 
     messages.append(config.INIT_WELCOME_BACK_MESSAGE)
     chat_manager.messages = messages
-    total_usage = chat_manager.num_tokens_from_messages()
+    chat_manager.total_usage = chat_manager.num_tokens_from_messages()
 
     printer.printt(
         Style.BRIGHT
@@ -215,18 +241,18 @@ def load(ctx):
         + f"""
     Name: {conversation}
     Model: {ctx.obj["MODEL"]}
-    Model Token Limit: {config.MODELS[ctx.obj["MODEL"]]}
-    Current Token length: {total_usage}
+    Token Limit: {config.MODELS[ctx.obj["MODEL"]]}
+    Current Token length: {chat_manager.total_usage}
     """
     )
 
-    if chat_manager.exceeding_token_limit(total_usage):
+    if chat_manager.exceeding_token_limit():
         printer.printt(
             Style.BRIGHT
             + Fore.RED
             + "Warning:\n"
             + Style.RESET_ALL
-            + "The token length of this conversation is exceeding the token limit of the current model.\n"
+            + "The token length of this conversation is exceeding the token limit (+ some buffer) for the current model.\n"
             "We are about to reduce the token length by removing the oldest messages from the conversation.\n"
         )
         user_approval = prompt(
@@ -242,15 +268,15 @@ def load(ctx):
                 + Style.RESET_ALL
             )
             return
-        else:
-            printer.printt(
-                "\nReducing token length by removing the oldest messages from the conversation...\n"
-            )
-            chat_manager.reduce_tokens(total_usage)
-            printer.printt(
-                "Token length reduced successfully!\n"
-                f"Current token length: {chat_manager.num_tokens_from_messages()}\n"
-            )
+
+        printer.printt(
+            "\nReducing token length by removing the oldest messages from the conversation...\n"
+        )
+        chat_manager.reduce_tokens()
+        printer.printt(
+            "Token length reduced successfully!\n"
+            f"Current token length: {chat_manager.num_tokens_from_messages()}\n"
+        )
 
     printer.printt(
         Style.BRIGHT
@@ -259,7 +285,7 @@ def load(ctx):
         + Fore.WHITE
         + conversation
         + Fore.LIGHTBLUE_EX
-        + "is loaded! **\n"
+        + " is loaded! **\n"
         + "- - - - - - - - - - - - - - - - - - - - - - - - -"
         + Style.RESET_ALL
     )

@@ -19,7 +19,10 @@
       "program": "terminalgpt/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": ["install"]
+      "args": ["install"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
     },
     {
       "name": "load",
@@ -28,7 +31,10 @@
       "program": "terminalgpt/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": ["load"]
+      "args": ["load"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
     },
     {
       "name": "delete",
@@ -37,7 +43,10 @@
       "program": "terminalgpt/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": ["delete"]
+      "args": ["delete"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
     },
     {
       "name": "new",
@@ -46,7 +55,10 @@
       "program": "terminalgpt/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": ["new"]
+      "args": ["new"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
     },
     {
       "name": "one-shot",
@@ -55,7 +67,10 @@
       "program": "terminalgpt/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": ["one-shot", "hello"]
+      "args": ["one-shot", "hello"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
     }
   ]
 }
