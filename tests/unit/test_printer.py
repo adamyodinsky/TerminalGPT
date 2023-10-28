@@ -3,13 +3,8 @@
 import unittest
 from unittest.mock import patch
 
-from terminalgpt.printer import (
-    MarkdownPrinter,
-    PlainPrinter,
-    Printer,
-    PrinterFactory,
-    PrintUtils,
-)
+from terminalgpt.printer import (MarkdownPrinter, PlainPrinter, Printer,
+                                 PrinterFactory, PrintUtils)
 
 
 class TestPrintUtils_1(unittest.TestCase):
@@ -82,13 +77,8 @@ class TestPrintUtils_1(unittest.TestCase):
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from terminalgpt.printer import (
-    MarkdownPrinter,
-    PlainPrinter,
-    Printer,
-    PrinterFactory,
-    PrintUtils,
-)
+from terminalgpt.printer import (MarkdownPrinter, PlainPrinter, Printer,
+                                 PrinterFactory, PrintUtils)
 
 
 class TestPrinter(TestCase):
