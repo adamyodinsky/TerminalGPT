@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "terminalgpt"
 version = "2.0.1"
-description = "AI chat asistent in your terminal powered by OpenAI ChatGPT models."
+description = "AI chat assistant in your terminal powered by OpenAI ChatGPT models."
 authors = ["Adam Yodinsky <27074934+adamyodinsky@users.noreply.github.com>"]
 keywords = [
   "ai",
