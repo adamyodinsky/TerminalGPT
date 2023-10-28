@@ -103,7 +103,7 @@ def install():
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
     )
 
-    printer.printt(f"{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
+    printer.printt(f"\n{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
     time.sleep(0.5)
 
     printing_styles = ["markdown", "plain"]

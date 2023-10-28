@@ -10,7 +10,10 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
     },
     {
       "name": "install",

@@ -126,14 +126,12 @@ Let's install the OpenAI API key, so you can use TerminalGPT.
         Style.BRIGHT
         + Fore.GREEN
         + """
-
  _______                  _             _  _____ _____ _______ 
 |__   __|                (_)           | |/ ____|  __ \__   __|
    | | ___ _ __ _ __ ___  _ _ __   __ _| | |  __| |__) | | |   
    | |/ _ \ '__| '_ ` _ \| | '_ \ / _` | | | |_ |  ___/  | |   
    | |  __/ |  | | | | | | | | | | (_| | | |__| | |      | |   
    |_|\___|_|  |_| |_| |_|_|_| |_|\__,_|_|\_____|_|      |_|   
-
 """
         + Style.RESET_ALL
     )
@@ -148,8 +146,7 @@ Your TerminalGPT files are all saved at {config.BASE_PATH}.
 To start chatting with me, just type '{config.APP_NAME}' into your terminal and let the fun begin!
 
 Thanks for choosing TerminalGPT - the coolest personal assistant on the block.
-Let's get our programming on!
-"""
+Let's get our programming on!"""
         + Style.RESET_ALL
     )
 

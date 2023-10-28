@@ -2,6 +2,8 @@
 
 [![Continuous Integration](https://github.com/adamyodinsky/TerminalGPT/actions/workflows/MainCI.yml/badge.svg?branch=main)](https://github.com/adamyodinsky/TerminalGPT/actions/workflows/main.yml) ![PyPI](https://img.shields.io/pypi/v/terminalgpt) ![PyPI - Downloads](https://img.shields.io/pypi/dm/terminalgpt) ![commits-since](https://img.shields.io/github/commits-since/adamyodinsky/TerminalGPT/latest) ![GitHub last commit](https://img.shields.io/github/last-commit/adamyodinsky/terminalgpt)
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/adamyodinsky)
+
 Welcome to terminalGPT, the terminal-based ChatGPT personal assistant app!
 With terminalGPT, you can easily interact with the OpenAI GPT-3.5 and GPT-4 language models.
 
@@ -54,7 +56,12 @@ terminalgpt install
 
 3. Enter your OpenAI API key when prompted and press enter.
 
+4. Choose one of the models below as the default model. it can be overridden with the `-m --model` flag later.
+
+5.  Choose a printing style ('markdown' is recommended)
+
 That's it! You're ready to use TerminalGPT!
+You can now start a new conversation with `terminalgpt new` or load a previous conversation with `terminalgpt load`. Also you can reinstall with `terminalgpt install` or delete previous conversations with `terminalgpt delete`.
 
 ---
 
@@ -63,20 +70,19 @@ That's it! You're ready to use TerminalGPT!
 ### TL;DR
 
 ```sh
-Usage: main.py [OPTIONS] COMMAND [ARGS]...
+Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
   *~ TerminalGPT - Your Personal Terminal Assistant ~*
 
 Options:
   --version                       Show the version and exit.
-  -m, --model [gpt-3.5-turbo|gpt-4]
-                                  Choose a model to use.  [default:
-                                  gpt-3.5-turbo]
-  -p, --plain                     Plain text output.
+  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k]
+                                  Choose a model to use. [default:gpt-3.5-turbo]
+  -s, --style [markdown|plain]    Output style. [default: markdown]
   --help                          Show this message and exit.
 
 Commands:
-  delete    Choose a previous conversation to load.
+  delete    Choose a previous conversation to delete.
   install   Creating a secret api key for the chatbot.
   load      Choose a previous conversation to load.
   new       Start a new conversation.
@@ -117,15 +123,6 @@ terminalgpt delete
 
 ---
 
-## Future Plans
-
-1. Support optional Vim input mode.
-2. Auto-completion for all commands.
-3. Support local models
-
----
-
 [![Star History Chart](https://api.star-history.com/svg?repos=adamyodinsky/TerminalGPT&type=Date)](https://star-history.com/#bytebase/star-history&Date)
 
 ---
-
