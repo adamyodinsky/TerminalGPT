@@ -26,7 +26,7 @@ class TestChatUtils(unittest.TestCase):
             {"role": "user", "content": "Hello assistant Hello assistant"},
         ]
 
-        printer = PrinterFactory.get_printer(False)
+        printer = PrinterFactory.get_printer("markdown")
         conv_manager = ConversationManager(printer)
 
         session = PromptSession(

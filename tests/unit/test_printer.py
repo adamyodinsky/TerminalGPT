@@ -3,16 +3,21 @@
 import unittest
 from unittest.mock import patch
 
-from terminalgpt.printer import (MarkdownPrinter, PlainPrinter, Printer,
-                                 PrinterFactory, PrintUtils)
+from terminalgpt.printer import (
+    MarkdownPrinter,
+    PlainPrinter,
+    Printer,
+    PrinterFactory,
+    PrintUtils,
+)
 
 
 class TestPrintUtils_1(unittest.TestCase):
     """Tests for print_utils.py."""
 
     def set_test(self) -> tuple[Printer, Printer]:
-        plain = PrinterFactory.get_printer(True)
-        markdown = PrinterFactory.get_printer(False)
+        plain = PrinterFactory.get_printer("plain")
+        markdown = PrinterFactory.get_printer("markdown")
 
         return plain, markdown
 
@@ -77,8 +82,13 @@ class TestPrintUtils_1(unittest.TestCase):
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from terminalgpt.printer import (MarkdownPrinter, PlainPrinter, Printer,
-                                 PrinterFactory, PrintUtils)
+from terminalgpt.printer import (
+    MarkdownPrinter,
+    PlainPrinter,
+    Printer,
+    PrinterFactory,
+    PrintUtils,
+)
 
 
 class TestPrinter(TestCase):
@@ -144,8 +154,8 @@ class TestPrinterFactory(TestCase):
 
     def test_get_printer(self):
         """Tests the get_printer method."""
-        self.assertIsInstance(PrinterFactory.get_printer(True), PlainPrinter)
-        self.assertIsInstance(PrinterFactory.get_printer(False), MarkdownPrinter)
+        self.assertIsInstance(PrinterFactory.get_printer("plain"), PlainPrinter)
+        self.assertIsInstance(PrinterFactory.get_printer("markdown"), MarkdownPrinter)
 
 
 class TestPrintUtils(TestCase):
