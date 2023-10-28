@@ -36,10 +36,7 @@ def get_default_config() -> dict:
         with open(DEFAULTS_PATH, "r", encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
-        logging.error(
-            "Couldn't find the default configuration file at %s", DEFAULTS_PATH
-        )
-        exit(1)
+        return {"model": "gpt-3.5-turbo"}
 
 
 INIT_SYSTEM_MESSAGE = {

@@ -24,7 +24,7 @@ from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
     "--model",
     "-m",
     type=click.Choice(list(config.MODELS.keys())),
-    default=config.get_default_config()["model"],
+    default=config.get_default_config().get("model", "gpt-3.5-turbo"),
     show_default=True,
     help="Choose a model to use.",
 )
@@ -69,21 +69,19 @@ def cli(ctx, model, plain: bool):
     help="Creating a secret api key for the chatbot."
     + " You will be asked to enter your OpenAI API key."
 )
-@click.pass_context
-def install(ctx):
+def install():
     """Install the terminalgpt openai api key and create app directories."""
 
     printer: Printer = PrinterFactory.get_printer(plain=True)
-    enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
+    enc_manager: EncryptionManager = EncryptionManager()
 
     # Get API key from user
     printer.printt(PrintUtils.INSTALL_WELCOME_MESSAGE)
-    printer.printt(
-        f"{Style.RESET_ALL}{Style.BRIGHT}Please enter your OpenAI API key:\n{Style.RESET_ALL}"
+    api_key = getpass.getpass(
+        prompt=f"{Style.RESET_ALL}{Style.BRIGHT}Please enter your OpenAI API key:\n{Style.RESET_ALL}"
     )
-    api_key = getpass.getpass()
 
-    printer.printt(f"\n\n{Style.BRIGHT}Good! Now let's choose a default model.")
+    printer.printt(f"{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
     time.sleep(0.5)
 
     models = list(config.MODELS.keys())
@@ -99,7 +97,7 @@ def install(ctx):
         )
 
     model = prompt(
-        "\n\nType the desired model:\n",
+        "\nType the desired model:\n",
         completer=completer,
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
     )
