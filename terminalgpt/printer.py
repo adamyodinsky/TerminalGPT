@@ -96,10 +96,10 @@ class PrinterFactory:
     def get_printer(style: str) -> Printer:
         if style == "plain":
             return PlainPrinter()
-        elif style == "markdown":
+        if style == "markdown":
             return MarkdownPrinter()
-        else:
-            raise ValueError(f"Invalid style: {style}")
+
+        raise ValueError(f"Invalid style: {style}")
 
 
 class PrintUtils:
