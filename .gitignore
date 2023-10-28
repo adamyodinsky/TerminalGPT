@@ -3,6 +3,7 @@ __pycache__
 dist
 .vscode
 .idea
+.pytest_cache
 dummy.py
 ARCH.md
 .coverage*
