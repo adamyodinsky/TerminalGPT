@@ -3,12 +3,14 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from terminalgpt import config, conversations
+from terminalgpt import config
+from terminalgpt.conversations import ConversationManager
 
 
 class TestConversations(unittest.TestCase):
     def setUp(self):
         self.test_conversation_path = "test_conversations"
+        self.test_conversation_name = "test_conversation_name"
         config.CONVERSATIONS_PATH = self.test_conversation_path
 
     def tearDown(self):
@@ -17,117 +19,137 @@ class TestConversations(unittest.TestCase):
                 os.remove(os.path.join(self.test_conversation_path, filename))
             os.rmdir(self.test_conversation_path)
 
+    def create_conversation_manager(self):
+        cm = ConversationManager(
+            conversation_name=self.test_conversation_name,
+            printer=MagicMock(),
+        )
+        cm.__base_path = self.test_conversation_path
+        cm.conversation_name = self.test_conversation_name
+
+        return cm
+
     def test_create_conversation_name_empty_messages(self):
+        cm = self.create_conversation_manager()
         messages = []
 
         with patch(
-            "terminalgpt.conversations.get_system_answer"
+            "terminalgpt.conversations.ConversationManager.get_system_answer"
         ) as mock_get_system_answer:
             mock_get_system_answer.return_value = {
                 "choices": [{"message": {"content": "Test conversation name"}}]
             }
-            result = conversations.create_conversation_name(messages)
-            self.assertEqual(result, "Test conversation name")
+            cm.create_conversation_name(messages)
+            self.assertEqual(cm.conversation_name, "Test conversation name")
 
     def test_save_conversation_empty_messages(self):
         messages = []
-        file_name = "test_conversation_empty.json"
+        cm = self.create_conversation_manager()
 
-        conversations.save_conversation(
-            messages, file_name, self.test_conversation_path
-        )
+        cm.save_conversation(messages)
         self.assertTrue(
-            os.path.exists(os.path.join(self.test_conversation_path, file_name))
+            os.path.exists(
+                os.path.join(self.test_conversation_path, cm.conversation_name)
+            )
         )
 
     def test_load_conversation_non_existent(self):
-        messages = conversations.load_conversation(
-            "non_existent_file.json", self.test_conversation_path
-        )
+        cm = self.create_conversation_manager()
+        cm.conversation_name = "non_existent_file.json"
+        messages = cm.load_conversation()
         self.assertEqual(messages, [])
 
     def test_is_conversations_empty_non_empty(self):
+        cm = self.create_conversation_manager()
         message = "No conversations found."
-        self.assertFalse(
-            conversations.is_conversations_empty(["test_conversation.json"], message)
-        )
+        self.assertFalse(cm.is_conversations_empty(["test_conversation.json"], message))
 
     def test_create_conversation_name(self):
         messages = [{"role": "user", "content": "Test message"}]
 
         with patch(
-            "terminalgpt.conversations.get_system_answer"
+            "terminalgpt.conversations.ConversationManager.get_system_answer"
         ) as mock_get_system_answer:
+            cm = self.create_conversation_manager()
             mock_get_system_answer.return_value = {
                 "choices": [{"message": {"content": "Test conversation name"}}]
             }
-            result = conversations.create_conversation_name(messages)
-            self.assertEqual(result, "Test conversation name")
+            cm.create_conversation_name(messages)
+            self.assertEqual(cm.conversation_name, "Test conversation name")
 
     def test_save_conversation(self):
+        cm = self.create_conversation_manager()
         messages = [{"role": "user", "content": "Test message"}]
-        file_name = "test_conversation.json"
 
-        conversations.save_conversation(
-            messages, file_name, self.test_conversation_path
-        )
+        cm.save_conversation(messages)
         self.assertTrue(
-            os.path.exists(os.path.join(self.test_conversation_path, file_name))
+            os.path.exists(
+                os.path.join(self.test_conversation_path, cm.conversation_name)
+            )
         )
 
     def test_delete_conversation(self):
+        cm = self.create_conversation_manager()
         if not os.path.exists(self.test_conversation_path):
             os.makedirs(self.test_conversation_path)
 
-        file_name = "test_conversation.json"
-        file_path = os.path.join(self.test_conversation_path, file_name)
-        with open(file_path, "w") as f:
+        file_path = os.path.join(self.test_conversation_path, cm.conversation_name)
+
+        with open(file_path, "w", encoding="utf-8") as f:
             json.dump([{"role": "user", "content": "Test message"}], f)
 
-        conversations.delete_conversation(file_name, self.test_conversation_path)
-        self.assertFalse(os.path.exists(file_path))
+        cm.delete_conversation(self.test_conversation_name)
+        self.assertFalse(os.path.exists(self.test_conversation_name))
 
     def test_load_conversation(self):
+        cm = self.create_conversation_manager()
         if not os.path.exists(self.test_conversation_path):
             os.makedirs(self.test_conversation_path)
 
         messages = [{"role": "user", "content": "Test message"}]
-        file_name = "test_conversation.json"
 
-        with open(os.path.join(self.test_conversation_path, file_name), "w") as f:
+        with open(
+            os.path.join(self.test_conversation_path, cm.conversation_name),
+            "w",
+            encoding="utf-8",
+        ) as f:
             json.dump(messages, f)
 
-        loaded_messages = conversations.load_conversation(
-            file_name, self.test_conversation_path
-        )
+        loaded_messages = cm.load_conversation()
         self.assertEqual(loaded_messages, messages)
 
     def test_get_conversations(self):
+        cm = self.create_conversation_manager()
         if not os.path.exists(self.test_conversation_path):
             os.makedirs(self.test_conversation_path)
 
-        file_name = "test_conversation.json"
-        with open(os.path.join(self.test_conversation_path, file_name), "w") as f:
+        with open(
+            os.path.join(self.test_conversation_path, cm.conversation_name),
+            "w",
+            encoding="utf-8",
+        ):
             pass
 
-        result = conversations.get_conversations(self.test_conversation_path)
-        self.assertTrue(file_name in result)
+        result = cm.get_conversations()
+        self.assertTrue(cm.conversation_name in result)
 
     def test_get_system_answer(self):
+        cm = self.create_conversation_manager()
         messages = [{"role": "user", "content": "Test message"}]
 
         with patch("openai.ChatCompletion.create") as mock_openai_create:
             mock_openai_create.return_value = {
                 "choices": [{"message": {"content": "Test response"}}]
             }
-            result = conversations.get_system_answer(messages)
+            result = cm.get_system_answer(messages)
             self.assertEqual(
                 result["choices"][0]["message"]["content"], "Test response"
             )
 
     def test_is_conversations_empty(self):
+        cm = self.create_conversation_manager()
         message = "No conversations found."
-        self.assertTrue(conversations.is_conversations_empty([], message))
+        self.assertTrue(cm.is_conversations_empty([], message))
 
 
 if __name__ == "__main__":

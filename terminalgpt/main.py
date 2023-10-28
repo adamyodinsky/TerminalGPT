@@ -1,7 +1,9 @@
 """Main module for the terminalgpt package."""
 
 import getpass
+import json
 import os
+import time
 
 import click
 from colorama import Fore, Style
@@ -9,9 +11,11 @@ from prompt_toolkit import PromptSession, prompt
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.styles import Style as PromptStyle
 
-from terminalgpt import chat_utils, config
-from terminalgpt import conversations as conv
-from terminalgpt import encryption, print_utils
+from terminalgpt import config
+from terminalgpt.chat import ChatManager
+from terminalgpt.conversations import ConversationManager
+from terminalgpt.encryption import EncryptionManager
+from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
 
 
 @click.group()
@@ -20,35 +24,47 @@ from terminalgpt import encryption, print_utils
     "--model",
     "-m",
     type=click.Choice(list(config.MODELS.keys())),
-    default=config.DEFAULT_MODEL,
+    default=config.get_default_config().get("model", "gpt-3.5-turbo"),
     show_default=True,
     help="Choose a model to use.",
 )
 # option to choose rich text output
 @click.option(
-    "--plain",
-    "-p",
-    is_flag=True,
-    default=False,
-    help="Plain text output.",
+    "--style",
+    "-s",
+    type=click.Choice(["markdown", "plain"]),
+    default=config.get_default_config().get("style", "markdown"),
+    show_default=True,
+    help="Output style.",
 )
 @click.pass_context
-def cli(ctx, model, plain):
+def cli(ctx, model, style: str):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
+    token_limit = config.MODELS[model]
+    safety_buffer = token_limit * 0.25
+
     ctx.ensure_object(dict)
+
+    ctx.obj["STYLE"] = style
+    ctx.obj["PRINTER"] = PrinterFactory.get_printer(style)
+    ctx.obj["MODEL"] = model
+    ctx.obj["ENC_MNGR"] = EncryptionManager()
+    ctx.obj["CONV_MANAGER"] = ConversationManager(ctx.obj["PRINTER"])
+
     ctx.obj["SESSION"] = PromptSession(
         style=PromptStyle.from_dict({"prompt": "bold"}),
         message="\nUser: ",
     )
 
-    ctx.obj["MODEL"] = model
-
-    token_limit = config.MODELS[model]
-    safety_buffer = token_limit * 0.25
-
-    ctx.obj["TOKEN_LIMIT"] = token_limit - safety_buffer
-    ctx.obj["PLAIN"] = plain
+    ctx.obj["CHAT"] = ChatManager(
+        conversations_manager=ctx.obj["CONV_MANAGER"],
+        token_limit=int(token_limit - safety_buffer),
+        session=ctx.obj["SESSION"],
+        messages=[],
+        model=ctx.obj["MODEL"],
+        printer=ctx.obj["PRINTER"],
+    )
 
 
 @click.command(
@@ -58,18 +74,54 @@ def cli(ctx, model, plain):
 def install():
     """Install the terminalgpt openai api key and create app directories."""
 
+    printer: Printer = PrinterFactory.get_printer(style="plain")
+    enc_manager: EncryptionManager = EncryptionManager()
+
     # Get API key from user
-    print_utils.print_slowly(print_utils.INSTALL_WELCOME_MESSAGE, 0.005)
+    printer.printt(PrintUtils.INSTALL_WELCOME_MESSAGE)
     api_key = getpass.getpass(
-        prompt=Style.BRIGHT
-        + Fore.LIGHTBLUE_EX
-        + "Please enter your OpenAI API key:\n"
-        + Style.RESET_ALL
+        prompt=f"{Style.RESET_ALL}{Style.BRIGHT}Please enter your OpenAI API key:\n{Style.RESET_ALL}"
     )
 
-    encryption_key = encryption.get_encryption_key(config.KEY_PATH)
-    # api_key string to bytes
-    encrypted_secret = encryption.encrypt(api_key.encode(), encryption_key)
+    printer.printt(f"{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
+    time.sleep(0.5)
+
+    models = list(config.MODELS.keys())
+    printer.printt(
+        f"{Style.BRIGHT}Please choose one of the models below to be your default model:"
+    )
+
+    for model, token_limit in config.MODELS.items():
+        printer.printt(
+            f"{Style.BRIGHT} - Model: {Style.RESET_ALL}{model}"
+            f"{Style.BRIGHT}    tokens-limit: {Style.RESET_ALL}{int(int(token_limit)/1000)}k"
+        )
+
+    model = prompt(
+        "\nType the desired model:\n",
+        completer=WordCompleter(models, ignore_case=True),
+        style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+    )
+
+    printer.printt(f"\n{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
+    time.sleep(0.5)
+
+    printing_styles = ["markdown", "plain"]
+    for style in printing_styles:
+        printer.printt(
+            f"{Style.BRIGHT}Please choose one of the printing styles below to be your default printing style:"
+        )
+        printer.printt(f"{Style.BRIGHT} - Style: {Style.RESET_ALL}{style}")
+
+    printing_style = prompt(
+        "\n Choose a printing style ('markdown' is recommended):\n",
+        completer=WordCompleter(printing_styles, ignore_case=True),
+        style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+        default=printing_styles[0],
+    )
+
+    encryption_key = enc_manager.set_encryption_key()
+    encrypted_secret = enc_manager.encrypt(api_key.encode(), encryption_key)
 
     if not os.path.exists(os.path.dirname(config.SECRET_PATH)):
         os.makedirs(os.path.dirname(config.SECRET_PATH))
@@ -81,9 +133,13 @@ def install():
     with open(config.SECRET_PATH, "wb") as file:
         file.write(encrypted_secret)
 
-    print_utils.print_slowly(print_utils.INSTALL_SUCCESS_MESSAGE, 0.005)
-    print_utils.print_slowly(print_utils.INSTALL_ART, 0.002)
-    print_utils.print_slowly(print_utils.INSTALL_SMALL_PRINTS, 0.007)
+    # Save the default config to a file
+    with open(config.DEFAULTS_PATH, "w", encoding="utf-8") as file:
+        json.dump({"model": model, "style": printing_style}, file)
+
+    printer.printt(PrintUtils.INSTALL_SUCCESS_MESSAGE)
+    printer.printt(PrintUtils.INSTALL_ART)
+    printer.printt(PrintUtils.INSTALL_SMALL_PRINTS)
 
 
 @cli.command(help="Start a new conversation.")
@@ -91,21 +147,22 @@ def install():
 def new(ctx):
     """Start a new conversation."""
 
-    chat_utils.set_api_key()
+    enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
+    chat_manager: ChatManager = ctx.obj["CHAT"]
+    printer: Printer = ctx.obj["PRINTER"]
+    enc_manager.set_api_key()
 
-    messages = [
-        config.INIT_SYSTEM_MESSAGE,
-    ]
-
-    chat_utils.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
-
-    chat_utils.chat_loop(
-        token_limit=ctx.obj["TOKEN_LIMIT"],
-        session=ctx.obj["SESSION"],
-        messages=messages,
-        model=ctx.obj["MODEL"],
-        plain=ctx.obj["PLAIN"],
+    token_limit = int(config.MODELS[ctx.obj["MODEL"]] / 1000)
+    printer.printt(
+        f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']} "
+        f"{Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k "
+        f"{Style.RESET_ALL}{Style.BRIGHT}Style: {Style.RESET_ALL}{ctx.obj['STYLE']}"
     )
+
+    messages = [config.INIT_SYSTEM_MESSAGE]
+    chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
+    chat_manager.messages = messages
+    chat_manager.chat_loop()
 
 
 @cli.command(help="One shot question answer.")
@@ -118,23 +175,21 @@ def new(ctx):
 def one_shot(ctx, question):
     """One shot question answer."""
 
-    chat_utils.set_api_key()
+    chat_manager: ChatManager = ctx.obj["CHAT"]
+    enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
+    printer: Printer = ctx.obj["PRINTER"]
 
-    messages = [
-        config.INIT_SYSTEM_MESSAGE,
-    ]
+    enc_manager.set_api_key()
+
+    messages = [config.INIT_SYSTEM_MESSAGE]
 
     messages.append({"role": "user", "content": question})
 
-    print()
-    answer = chat_utils.get_user_answer(
-        messages=messages,
-        model=ctx.obj["MODEL"],
-    )
+    printer.printt("")
+    answer = chat_manager.get_user_answer(messages=messages)
     message = answer["choices"][0]["message"]["content"]
-    print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL, end=" ", flush=True)
 
-    print_utils.print_assistance_message(message, ctx.obj["PLAIN"])
+    printer.print_assistant_message(message)
 
 
 @cli.command(help="Choose a previous conversation to load.")
@@ -142,11 +197,16 @@ def one_shot(ctx, question):
 def load(ctx):
     """Load a previous conversation."""
 
+    printer: Printer = PrinterFactory.get_printer("plain")
+    chat_manager: ChatManager = ctx.obj["CHAT"]
+    enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
+    conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
+
     messages = []
-    chat_utils.set_api_key()
+    enc_manager.set_api_key()
 
     # get conversations list
-    conversations = conv.get_conversations()
+    conversations = conv_manager.get_conversations()
 
     msg = (
         Style.BRIGHT
@@ -155,16 +215,16 @@ def load(ctx):
         + Style.RESET_ALL
     )
 
-    if conv.is_conversations_empty(files=conversations, message=msg):
+    if conv_manager.is_conversations_empty(files=conversations, message=msg):
         return
 
     # setup file names auto-completion
     completer = WordCompleter(conversations, ignore_case=True)
-    print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
+    printer.printt(PrintUtils.CONVERSATIONS_INIT_MESSAGE)
 
     # print conversations list
     for conversation in conversations:
-        print_utils.print_slowly(Style.BRIGHT + "- " + conversation)
+        printer.printt(Style.BRIGHT + "- " + conversation)
 
     # prompt user to choose a conversation and load it into messages
     conversation = prompt(
@@ -175,7 +235,7 @@ def load(ctx):
 
     # if conversation not found, return
     if conversation not in conversations:
-        print_utils.print_slowly(
+        printer.printt(
             Style.BRIGHT
             + Fore.RED
             + "\n** Conversation not found! **"
@@ -184,73 +244,112 @@ def load(ctx):
         return
 
     # load conversation
+    conv_manager.conversation_name = conversation
     while not messages:
-        messages = conv.load_conversation(conversation)
+        messages = conv_manager.load_conversation()
 
-    print_utils.print_slowly(
+    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
+    chat_manager.messages = messages
+    chat_manager.total_usage = chat_manager.num_tokens_from_messages()
+
+    printer.printt(
+        Style.BRIGHT
+        + "\nConversation details and settings:"
+        + Style.RESET_ALL
+        + f"""
+    Name: {conversation}
+    Model: {ctx.obj["MODEL"]}
+    Token Limit: {config.MODELS[ctx.obj["MODEL"]]}
+    Current Token length: {chat_manager.total_usage}
+    """
+    )
+
+    if chat_manager.exceeding_token_limit():
+        printer.printt(
+            Style.BRIGHT
+            + Fore.RED
+            + "Warning:\n"
+            + Style.RESET_ALL
+            + "The token length of this conversation is exceeding the token limit (+ some buffer) for the current model.\n"
+            "We are about to reduce the token length by removing the oldest messages from the conversation.\n"
+        )
+        user_approval = prompt(
+            "Should we continue? (y/n)  ",
+            style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+        )
+
+        if user_approval.lower() != "y":
+            printer.printt(
+                Style.BRIGHT
+                + Fore.LIGHTBLUE_EX
+                + "\n** Conversation loading aborted! **\n"
+                + Style.RESET_ALL
+            )
+            return
+
+        printer.printt(
+            "\nReducing token length by removing the oldest messages from the conversation...\n"
+        )
+        chat_manager.reduce_tokens()
+        printer.printt(
+            f"{Style.BRIGHT}{Fore.GREEN}Token length reduced successfully!{Style.RESET_ALL}"
+        )
+
+    printer.printt(
         Style.BRIGHT
         + Fore.LIGHTBLUE_EX
         + "\n** Conversation "
         + Fore.WHITE
         + conversation
         + Fore.LIGHTBLUE_EX
-        + " Loaded! **\n"
+        + " is loaded! **\n"
         + "- - - - - - - - - - - - - - - - - - - - - - - - -"
         + Style.RESET_ALL
     )
+    token_limit = int(config.MODELS[ctx.obj["MODEL"]] / 1000)
+    printer.printt(
+        f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']} "
+        f"{Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k "
+        f"{Style.RESET_ALL}{Style.BRIGHT}Style: {Style.RESET_ALL}{ctx.obj['STYLE']}"
+    )
 
-    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
-    total_usage = chat_utils.num_tokens_from_messages(messages)
-
-    token_limit = ctx.obj["TOKEN_LIMIT"]
-
-    if chat_utils.exceeding_token_limit(total_usage, token_limit):
-        messages, total_usage = chat_utils.reduce_tokens(
-            messages=messages,
-            total_usage=total_usage,
-            token_limit=token_limit,
-        )
-
-    chat_utils.welcome_message(messages=messages)
+    chat_manager.welcome_message(messages=messages)
     messages.pop()
 
-    chat_utils.chat_loop(
-        token_limit=token_limit,
-        session=ctx.obj["SESSION"],
-        messages=messages,
-        conversation_name=conversation,
-        model=ctx.obj["MODEL"],
-        plain=ctx.obj["PLAIN"],
-    )
+    chat_manager.messages = messages
+    chat_manager.chat_loop()
 
 
-@click.command(help="Choose a previous conversation to load.")
-def delete():
+@click.command(help="Choose a previous conversation to delete.")
+@click.pass_context
+def delete(ctx):
     """Delete previous conversations."""
 
-    # get conversations list
-    conversations = conv.get_conversations()
+    printer: Printer = PrinterFactory.get_printer("plain")
+    conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
+    printer.printt(PrintUtils.CONVERSATIONS_INIT_MESSAGE)
 
-    msg = (
-        Style.BRIGHT
-        + Fore.RED
-        + "\n** There are no conversations to delete! **"
-        + Style.RESET_ALL
-    )
-
-    if conv.is_conversations_empty(files=conversations, message=msg):
-        return
-
-    # setup file names auto completion
-    completer = WordCompleter(conversations, ignore_case=True)
-    print_utils.print_slowly(print_utils.CONVERSATIONS_INIT_MESSAGE)
-
-    # print conversations list
-    for conversation in conversations:
-        print_utils.print_slowly("- " + conversation)
-
-    # prompt user to choose a conversation and delete it
     while True:
+        conversations = conv_manager.get_conversations()
+
+        msg = (
+            Style.BRIGHT
+            + Fore.RED
+            + "\n** There are no conversations to delete! **"
+            + Style.RESET_ALL
+        )
+
+        if conv_manager.is_conversations_empty(files=conversations, message=msg):
+            return
+
+        # setup file names auto completion
+        completer = WordCompleter(conversations, ignore_case=True)
+
+        # print conversations list
+        printer.printt(Style.BRIGHT + "Conversations list:" + Style.RESET_ALL)
+        for conversation in conversations:
+            printer.printt("- " + conversation)
+
         conversation = prompt(
             "\nChoose a conversation to delete:\n",
             completer=completer,
@@ -259,16 +358,16 @@ def delete():
 
         # delete conversation file
         if conversation in conversations:
-            conv.delete_conversation(conversation)
+            conv_manager.delete_conversation(conversation)
 
-            print_utils.print_slowly(
+            printer.printt(
                 Style.BRIGHT
                 + Fore.LIGHTBLUE_EX
                 + "\n** Conversation "
                 + Fore.WHITE
                 + conversation
                 + Fore.LIGHTBLUE_EX
-                + " deleted! **"
+                + " deleted! **\n"
                 + Style.RESET_ALL
             )
 
@@ -276,7 +375,7 @@ def delete():
             conversations.remove(conversation)
             completer = WordCompleter(conversations, ignore_case=True)
         else:
-            print_utils.print_slowly(
+            printer.printt(
                 Style.BRIGHT
                 + Fore.RED
                 + "\n** Conversation not found! **"
@@ -289,7 +388,7 @@ def delete():
             + "\n** No more conversations to delete! **"
             + Style.RESET_ALL
         )
-        if conv.is_conversations_empty(files=conversations, message=msg):
+        if conv_manager.is_conversations_empty(files=conversations, message=msg):
             return
 
 

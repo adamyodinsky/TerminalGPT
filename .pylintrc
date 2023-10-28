@@ -1,0 +1,8 @@
+[MASTER]
+disable=missing-module-docstring,
+        missing-class-docstring,
+        missing-function-docstring,
+        line-too-long,
+        broad-exception-caught,
+        too-few-public-methods,
+        too-many-instance-attributes

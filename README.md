@@ -34,12 +34,6 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
    1. Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
    2. Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
 
-**Notes:** OpenAI FREE API trial expired on 01-04-2023. You can still use the API, but you will need to set up a payment method.
-
-- To set up a payment method [click here](https://platform.openai.com/account/billing/payment-methods).
-- To check your usage [click here](https://platform.openai.com/account/usage).
-- To check pricing [click here](https://openai.com/pricing#language-models).
-
 ## Installation
 
 1. Install the latest TerminalGPT with pip install.
@@ -56,7 +50,12 @@ terminalgpt install
 
 3. Enter your OpenAI API key when prompted and press enter.
 
+4. Choose one of the models below as the default model. it can be overridden with the `-m --model` flag later.
+
+5.  Choose a printing style ('markdown' is recommended)
+
 That's it! You're ready to use TerminalGPT!
+You can now start a new conversation with `terminalgpt new` or load a previous conversation with `terminalgpt load`. Also you can reinstall with `terminalgpt install` or delete previous conversations with `terminalgpt delete`.
 
 ---
 
@@ -65,20 +64,19 @@ That's it! You're ready to use TerminalGPT!
 ### TL;DR
 
 ```sh
-Usage: main.py [OPTIONS] COMMAND [ARGS]...
+Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
   *~ TerminalGPT - Your Personal Terminal Assistant ~*
 
 Options:
   --version                       Show the version and exit.
-  -m, --model [gpt-3.5-turbo|gpt-4]
-                                  Choose a model to use.  [default:
-                                  gpt-3.5-turbo]
-  -p, --plain                     Plain text output.
+  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k]
+                                  Choose a model to use. [default:gpt-3.5-turbo]
+  -s, --style [markdown|plain]    Output style. [default: markdown]
   --help                          Show this message and exit.
 
 Commands:
-  delete    Choose a previous conversation to load.
+  delete    Choose a previous conversation to delete.
   install   Creating a secret api key for the chatbot.
   load      Choose a previous conversation to load.
   new       Start a new conversation.
@@ -119,15 +117,6 @@ terminalgpt delete
 
 ---
 
-## Future Plans
-
-1. Support optional Vim input mode.
-2. Auto-completion for all commands.
-3. Support local models
-
----
-
 [![Star History Chart](https://api.star-history.com/svg?repos=adamyodinsky/TerminalGPT&type=Date)](https://star-history.com/#bytebase/star-history&Date)
 
 ---
-

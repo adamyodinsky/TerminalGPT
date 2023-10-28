@@ -1,21 +1,26 @@
 """TerminalGPT configuration file."""
 
+import json
 import platform
 from os import path
 
-# def shell_version():
-#     """Get the current shell version."""
+APP_NAME = "terminalgpt"
+DEFAULT_API_TOKEN_LIMIT = 4096
 
-#     shell = os.environ.get("SHELL")
-#     result = None
+BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
+DEFAULTS_PATH = f"{BASE_PATH}/defaults.json"
+CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
+SECRET_PATH = f"{BASE_PATH}/{APP_NAME}.encrypted"
+KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
 
-#     if platform.system() == "Windows":
-#         result = subprocess.run(["ver"], stdout=subprocess.PIPE, check=True)
-#     else:
-#         result = subprocess.run(
-#             [shell, "--version"], stdout=subprocess.PIPE, check=False
-#         )
-#     return result.stdout.decode("utf-8").strip()
+ENCODING_MODEL = "cl100k_base"
+
+MODELS = {
+    "gpt-3.5-turbo": 4097,
+    "gpt-3.5-turbo-16k": 16385,
+    "gpt-4": 8192,
+    "gpt-4-32k": 32768,
+}
 
 
 def machine_info():
@@ -24,18 +29,14 @@ def machine_info():
     return platform.platform()
 
 
-APP_NAME = "terminalgpt"
-DEFAULT_API_TOKEN_LIMIT = 4096
+def get_default_config() -> dict:
+    """Get the default configuration from the config file."""
+    try:
+        with open(DEFAULTS_PATH, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {"model": "gpt-3.5-turbo", "style": "markdown"}
 
-BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
-CONVERSATIONS_PATH = f"{BASE_PATH}/conversations"
-SECRET_PATH = f"{BASE_PATH}/{APP_NAME}.encrypted"
-KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
-
-DEFAULT_MODEL = "gpt-3.5-turbo"
-ENCODING_MODEL = "cl100k_base"
-
-MODELS = {"gpt-3.5-turbo": 4096, "gpt-4": 8092}
 
 INIT_SYSTEM_MESSAGE = {
     "role": "system",

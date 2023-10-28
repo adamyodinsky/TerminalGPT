@@ -1,9 +1,23 @@
 [tool.poetry]
 name = "terminalgpt"
 version = "1.1.0"
-description = "AI chat asistent in your terminal powered by OpenAI GPT-3.5"
+description = "AI chat asistent in your terminal powered by OpenAI ChatGPT models."
 authors = ["Adam Yodinsky <27074934+adamyodinsky@users.noreply.github.com>"]
-keywords=["ai", "chat", "terminal", "openai", "gpt3", "chatGPT", "assistant", "gpt3.5", "terminalGPT", "gpt-3.5-turbo"]
+keywords = [
+  "ai",
+  "chat",
+  "terminal",
+  "openai",
+  "gpt-3",
+  "gpt-4",
+  "gpt4",
+  "gpt3",
+  "chatGPT",
+  "assistant",
+  "gpt-3.5",
+  "gpt-3.5-turbo",
+  "terminalGPT",
+]
 readme = "README.md"
 
 [tool.poetry.dependencies]

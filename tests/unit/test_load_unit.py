@@ -6,9 +6,6 @@ from click.testing import CliRunner
 
 from terminalgpt.main import cli
 
-# from terminalgpt import conversations as conv
-# from terminalgpt import print_utils
-
 
 class TestLoadCommand(unittest.TestCase):
     def setUp(self):
@@ -24,7 +21,8 @@ class TestLoadCommand(unittest.TestCase):
 
     def test_load_command_no_conversations(self):
         with patch(
-            "terminalgpt.conversations.get_conversations", MagicMock(return_value=[])
+            "terminalgpt.conversations.ConversationManager.get_conversations",
+            MagicMock(return_value=[]),
         ):
             result = self.runner.invoke(cli, ["load"])
             self.assertIn("There are no conversations to load!", result.output)

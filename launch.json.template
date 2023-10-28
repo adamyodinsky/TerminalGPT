@@ -1,0 +1,79 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
+    },
+    {
+      "name": "install",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["install"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
+    },
+    {
+      "name": "load",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["load"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
+    },
+    {
+      "name": "delete",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["delete"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
+    },
+    {
+      "name": "new",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["new"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
+    },
+    {
+      "name": "one-shot",
+      "type": "python",
+      "request": "launch",
+      "program": "terminalgpt/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["one-shot", "hello"],
+      "env": {
+        "LOG_LEVEL": "DEBUG"
+      }
+    }
+  ]
+}
