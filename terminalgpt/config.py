@@ -1,7 +1,6 @@
 """TerminalGPT configuration file."""
 
 import json
-import logging
 import platform
 from os import path
 
@@ -36,7 +35,7 @@ def get_default_config() -> dict:
         with open(DEFAULTS_PATH, "r", encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
-        return {"model": "gpt-3.5-turbo"}
+        return {"model": "gpt-3.5-turbo", "style": "markdown"}
 
 
 INIT_SYSTEM_MESSAGE = {

@@ -30,14 +30,15 @@ from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
 )
 # option to choose rich text output
 @click.option(
-    "--plain",
-    "-p",
-    is_flag=True,
-    default=False,
-    help="Plain text output.",
+    "--style",
+    "-s",
+    type=click.Choice(["markdown", "plain"]),
+    default=config.get_default_config().get("style", "markdown"),
+    show_default=True,
+    help="Output style.",
 )
 @click.pass_context
-def cli(ctx, model, plain: bool):
+def cli(ctx, model, style: str):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
     token_limit = config.MODELS[model]
@@ -45,7 +46,8 @@ def cli(ctx, model, plain: bool):
 
     ctx.ensure_object(dict)
 
-    ctx.obj["PRINTER"] = PrinterFactory.get_printer(plain)
+    ctx.obj["STYLE"] = style
+    ctx.obj["PRINTER"] = PrinterFactory.get_printer(style)
     ctx.obj["MODEL"] = model
     ctx.obj["ENC_MNGR"] = EncryptionManager()
     ctx.obj["CONV_MANAGER"] = ConversationManager(ctx.obj["PRINTER"])
@@ -72,7 +74,7 @@ def cli(ctx, model, plain: bool):
 def install():
     """Install the terminalgpt openai api key and create app directories."""
 
-    printer: Printer = PrinterFactory.get_printer(plain=True)
+    printer: Printer = PrinterFactory.get_printer(style="plain")
     enc_manager: EncryptionManager = EncryptionManager()
 
     # Get API key from user
@@ -85,7 +87,6 @@ def install():
     time.sleep(0.5)
 
     models = list(config.MODELS.keys())
-    completer = WordCompleter(models, ignore_case=True)
     printer.printt(
         f"{Style.BRIGHT}Please choose one of the models below to be your default model:"
     )
@@ -98,8 +99,25 @@ def install():
 
     model = prompt(
         "\nType the desired model:\n",
-        completer=completer,
+        completer=WordCompleter(models, ignore_case=True),
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+    )
+
+    printer.printt(f"{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
+    time.sleep(0.5)
+
+    printing_styles = ["markdown", "plain"]
+    for style in printing_styles:
+        printer.printt(
+            f"{Style.BRIGHT}Please choose one of the printing styles below to be your default printing style:"
+        )
+        printer.printt(f"{Style.BRIGHT} - Style: {Style.RESET_ALL}{style}")
+
+    printing_style = prompt(
+        "\n Choose a printing style ('markdown' is recommended):\n",
+        completer=WordCompleter(printing_styles, ignore_case=True),
+        style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+        default=printing_styles[0],
     )
 
     encryption_key = enc_manager.set_encryption_key()
@@ -117,7 +135,7 @@ def install():
 
     # Save the default config to a file
     with open(config.DEFAULTS_PATH, "w", encoding="utf-8") as file:
-        json.dump({"model": model}, file)
+        json.dump({"model": model, "style": printing_style}, file)
 
     printer.printt(PrintUtils.INSTALL_SUCCESS_MESSAGE)
     printer.printt(PrintUtils.INSTALL_ART)
@@ -136,7 +154,9 @@ def new(ctx):
 
     token_limit = int(config.MODELS[ctx.obj["MODEL"]] / 1000)
     printer.printt(
-        f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']}     {Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k"
+        f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']} "
+        f"{Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k "
+        f"{Style.RESET_ALL}{Style.BRIGHT}Style: {Style.RESET_ALL}{ctx.obj['STYLE']}"
     )
 
     messages = [config.INIT_SYSTEM_MESSAGE]
@@ -177,7 +197,7 @@ def one_shot(ctx, question):
 def load(ctx):
     """Load a previous conversation."""
 
-    printer: Printer = PrinterFactory.get_printer(plain=True)
+    printer: Printer = PrinterFactory.get_printer("plain")
     chat_manager: ChatManager = ctx.obj["CHAT"]
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
     conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
@@ -272,8 +292,7 @@ def load(ctx):
         )
         chat_manager.reduce_tokens()
         printer.printt(
-            "Token length reduced successfully!\n"
-            f"Current token length: {chat_manager.num_tokens_from_messages()}\n"
+            f"{Style.BRIGHT}{Fore.GREEN}Token length reduced successfully!{Style.RESET_ALL}"
         )
 
     printer.printt(
@@ -286,6 +305,12 @@ def load(ctx):
         + " is loaded! **\n"
         + "- - - - - - - - - - - - - - - - - - - - - - - - -"
         + Style.RESET_ALL
+    )
+    token_limit = int(config.MODELS[ctx.obj["MODEL"]] / 1000)
+    printer.printt(
+        f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']} "
+        f"{Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k "
+        f"{Style.RESET_ALL}{Style.BRIGHT}Style: {Style.RESET_ALL}{ctx.obj['STYLE']}"
     )
 
     chat_manager.welcome_message(messages=messages)
@@ -300,7 +325,7 @@ def load(ctx):
 def delete(ctx):
     """Delete previous conversations."""
 
-    printer: Printer = PrinterFactory.get_printer(plain=True)
+    printer: Printer = PrinterFactory.get_printer("plain")
     conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
     printer.printt(PrintUtils.CONVERSATIONS_INIT_MESSAGE)
 

@@ -93,10 +93,13 @@ class MarkdownPrinter(Printer):
 
 class PrinterFactory:
     @staticmethod
-    def get_printer(plain: bool) -> Printer:
-        if plain:
+    def get_printer(style: str) -> Printer:
+        if style == "plain":
             return PlainPrinter()
-        return MarkdownPrinter()
+        elif style == "markdown":
+            return MarkdownPrinter()
+        else:
+            raise ValueError(f"Invalid style: {style}")
 
 
 class PrintUtils:
