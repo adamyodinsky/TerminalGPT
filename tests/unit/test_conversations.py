@@ -137,14 +137,12 @@ class TestConversations(unittest.TestCase):
         cm = self.create_conversation_manager()
         messages = [{"role": "user", "content": "Test message"}]
 
-        with patch("openai.ChatCompletion.create") as mock_openai_create:
+        with patch("OpenAI.chat.completion.create") as mock_openai_create:
             mock_openai_create.return_value = {
                 "choices": [{"message": {"content": "Test response"}}]
             }
             result = cm.get_system_answer(messages)
-            self.assertEqual(
-                result["choices"][0]["message"]["content"], "Test response"
-            )
+            self.assertEqual(result.choices[0].message.content, "Test response")
 
     def test_is_conversations_empty(self):
         cm = self.create_conversation_manager()

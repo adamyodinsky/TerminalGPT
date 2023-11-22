@@ -3,7 +3,6 @@
 import os
 import sys
 
-import openai
 from colorama import Fore, Style
 from cryptography.fernet import Fernet
 
@@ -41,7 +40,7 @@ class EncryptionManager:
 
         return key
 
-    def get_encryption_key(self):
+    def __get_encryption_key(self):
         """Generates a key and save it into a file"""
 
         key = ""
@@ -72,7 +71,7 @@ class EncryptionManager:
         # Encrypt the secret
         return cipher.encrypt(secret)
 
-    def decrypt(self, file_path, key):
+    def __decrypt(self, file_path, key):
         """Decrypts a secret using Fernet encryption."""
 
         # Read the encrypted secret from the file
@@ -85,7 +84,7 @@ class EncryptionManager:
         # Decrypt the secret
         return cipher.decrypt(encrypted_secret).decode()
 
-    def check_api_key(self):
+    def __check_api_key(self):
         """Checks if the API key is installed."""
 
         message = f"""
@@ -100,11 +99,14 @@ class EncryptionManager:
             print(Style.BRIGHT + Fore.RED + message + Style.RESET_ALL)
             sys.exit(1)
 
-    def set_api_key(self):
+    def get_api_key(self):
         """Sets the API key for OpenAI API."""
-        if os.environ.get("OPENAI_API_KEY"):
-            openai.api_key = os.environ.get("OPENAI_API_KEY")
-        else:
-            self.check_api_key()
-            key = self.get_encryption_key()
-            openai.api_key = self.decrypt(config.SECRET_PATH, key)
+
+        self.__check_api_key()
+
+        if "OPENAI_API_KEY" in os.environ:
+            return os.environ["OPENAI_API_KEY"]
+
+        enc_key = self.__get_encryption_key()
+        api_key = self.__decrypt(config.SECRET_PATH, enc_key)
+        return api_key

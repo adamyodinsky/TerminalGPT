@@ -5,7 +5,6 @@ import platform
 from os import path
 
 APP_NAME = "terminalgpt"
-DEFAULT_API_TOKEN_LIMIT = 4096
 
 BASE_PATH = f"~/.{APP_NAME}".replace("~", path.expanduser("~"))
 DEFAULTS_PATH = f"{BASE_PATH}/defaults.json"
@@ -20,6 +19,7 @@ MODELS = {
     "gpt-3.5-turbo-16k": 16385,
     "gpt-4": 8192,
     "gpt-4-32k": 32768,
+    "gpt-4-1106-preview": 128000,
 }
 
 
@@ -35,7 +35,7 @@ def get_default_config() -> dict:
         with open(DEFAULTS_PATH, "r", encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
-        return {"model": "gpt-3.5-turbo", "style": "markdown"}
+        return {"model": "gpt-3.5-turbo", "style": "markdown", "models": MODELS}
 
 
 INIT_SYSTEM_MESSAGE = {
