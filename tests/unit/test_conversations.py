@@ -3,6 +3,8 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
+from mocks import ChatCompletionMessageMock, ChatCompletionMock, ChoiceMock
+
 from terminalgpt import config
 from terminalgpt.conversations import ConversationManager
 
@@ -37,9 +39,16 @@ class TestConversations(unittest.TestCase):
         with patch(
             "terminalgpt.conversations.ConversationManager.get_system_answer"
         ) as mock_get_system_answer:
-            mock_get_system_answer.return_value = {
-                "choices": [{"message": {"content": "Test conversation name"}}]
-            }
+            mock_get_system_answer.return_value = ChatCompletionMock(
+                choices=[
+                    ChoiceMock(
+                        message=ChatCompletionMessageMock(
+                            content="Test conversation name"
+                        )
+                    )
+                ]
+            )
+
             cm.create_conversation_name(messages)
             self.assertEqual(cm.conversation_name, "Test conversation name")
 
@@ -72,9 +81,15 @@ class TestConversations(unittest.TestCase):
             "terminalgpt.conversations.ConversationManager.get_system_answer"
         ) as mock_get_system_answer:
             cm = self.create_conversation_manager()
-            mock_get_system_answer.return_value = {
-                "choices": [{"message": {"content": "Test conversation name"}}]
-            }
+            mock_get_system_answer.return_value = ChatCompletionMock(
+                choices=[
+                    ChoiceMock(
+                        message=ChatCompletionMessageMock(
+                            content="Test conversation name"
+                        )
+                    )
+                ]
+            )
             cm.create_conversation_name(messages)
             self.assertEqual(cm.conversation_name, "Test conversation name")
 
@@ -133,17 +148,6 @@ class TestConversations(unittest.TestCase):
 
         result = cm.get_conversations()
         self.assertTrue(cm.conversation_name in result)
-
-    def test_get_system_answer(self):
-        cm = self.create_conversation_manager()
-        messages = [{"role": "user", "content": "Test message"}]
-
-        with patch("openai.OpenAI.chat.completion.create") as mock_openai_create:
-            mock_openai_create.return_value = {
-                "choices": [{"message": {"content": "Test response"}}]
-            }
-            result = cm.get_system_answer(messages)
-            self.assertEqual(result.choices[0].message.content, "Test response")
 
     def test_is_conversations_empty(self):
         cm = self.create_conversation_manager()

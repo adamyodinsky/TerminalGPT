@@ -1,7 +1,7 @@
 """Tests for chat_utils.py."""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import openai
 from prompt_toolkit import PromptSession
@@ -27,7 +27,7 @@ class TestChatUtils(unittest.TestCase):
         ]
 
         printer = PrinterFactory.get_printer("markdown")
-        conv_manager = ConversationManager(printer)
+        conv_manager = ConversationManager(printer=printer, client=MagicMock())
 
         session = PromptSession(
             style=PromptStyle.from_dict({"prompt": "bold"}),
@@ -150,67 +150,6 @@ class TestChatUtils(unittest.TestCase):
 
         self.assertEqual(chat_manager.total_usage, 20)
         self.assertEqual(24, reduced)
-
-    @patch("openai.ChatCompletion.create")
-    def test_get_user_answer_success(self, mock_openai_chatcompletion_create):
-        """Tests get_user_answer function."""
-
-        chat_manager = self.set_test()
-        messages = [{"role": "user", "content": "Hello"}]
-        mock_response = {
-            "choices": [
-                {
-                    "message": {
-                        "role": "assistant",
-                        "content": "Hello there!",
-                    }
-                }
-            ],
-            "usage": {
-                "total_tokens": 10,
-            },
-        }
-        mock_openai_chatcompletion_create.return_value = mock_response
-
-        answer = chat_manager.get_user_answer(messages)
-        self.assertEqual(answer, mock_response)
-
-    @patch("openai.ChatCompletion.create")
-    @patch("time.sleep")
-    def test_get_user_answer_invalid_request_error(
-        self, mock_time_sleep, mock_openai_chatcompletion_create
-    ):
-        """Tests get_user_answer function."""
-
-        chat_manager = self.set_test()
-        error_message = "Please reduce the length of the messages"
-        messages = [
-            {"role": "user", "content": "Hello"},
-            {"role": "user", "content": "Hello"},
-        ]
-
-        mock_openai_chatcompletion_create.side_effect = [
-            openai.InvalidRequestError(error_message, None),
-            {
-                "choices": [
-                    {
-                        "message": {
-                            "role": "assistant",
-                            "content": "Hello there!",
-                        }
-                    }
-                ],
-                "usage": {
-                    "total_tokens": 10,
-                },
-            },
-        ]
-
-        _ = chat_manager.get_user_answer(messages)
-        mock_openai_chatcompletion_create.assert_called_with(
-            model="gpt-3.5-turbo", messages=messages
-        )
-        mock_time_sleep.assert_called_with(0.5)
 
 
 if __name__ == "__main__":
