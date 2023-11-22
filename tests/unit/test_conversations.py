@@ -23,6 +23,7 @@ class TestConversations(unittest.TestCase):
         cm = ConversationManager(
             conversation_name=self.test_conversation_name,
             printer=MagicMock(),
+            __client=MagicMock(),
         )
         cm.__base_path = self.test_conversation_path
         cm.conversation_name = self.test_conversation_name
@@ -137,7 +138,7 @@ class TestConversations(unittest.TestCase):
         cm = self.create_conversation_manager()
         messages = [{"role": "user", "content": "Test message"}]
 
-        with patch("OpenAI.chat.completion.create") as mock_openai_create:
+        with patch("openai.OpenAI.chat.completion.create") as mock_openai_create:
             mock_openai_create.return_value = {
                 "choices": [{"message": {"content": "Test response"}}]
             }

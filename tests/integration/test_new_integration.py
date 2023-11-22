@@ -13,10 +13,9 @@ from pexpect import TIMEOUT
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style as PromptStyle
 
-from terminalgpt import chat, printer
 from terminalgpt.chat import ChatManager
 from terminalgpt.conversations import ConversationManager
-from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
+from terminalgpt.printer import PrinterFactory, PrintUtils
 
 
 class TestNewCommandIntegration(unittest.TestCase):
@@ -33,7 +32,7 @@ class TestNewCommandIntegration(unittest.TestCase):
         ]
 
         printer = PrinterFactory.get_printer("markdown")
-        conv_manager = ConversationManager(printer)
+        conv_manager = ConversationManager(printer=printer, __client=MagicMock())
 
         session = PromptSession(
             style=PromptStyle.from_dict({"prompt": "bold"}),
@@ -47,28 +46,13 @@ class TestNewCommandIntegration(unittest.TestCase):
             messages=messages,
             model="gpt-3.5-turbo",
             printer=printer,
+            client=MagicMock(),
         )
 
         return chat_manager, printer, messages
 
-    @patch("openai.ChatCompletion.create")
-    def test_chat_loop_e2e_mock(self, mock_openai_chatcompletion_create):
+    def test_chat_loop_e2e_mock(self):
         """Tests the chat loop end-to-end."""
-
-        mock_response = {
-            "choices": [
-                {
-                    "message": {
-                        "role": "assistant",
-                        "content": "Hello there!",
-                    }
-                }
-            ],
-            "usage": {
-                "total_tokens": 10,
-            },
-        }
-        mock_openai_chatcompletion_create.return_value = mock_response
 
         # Set the executable path to your script containing the chat_loop function
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -156,7 +140,9 @@ class TestNewCommandIntegration(unittest.TestCase):
 
         # Mock get_user_answer to raise APIError
         get_user_answer_mock = MagicMock(
-            side_effect=openai.error.APIError("Test API error")
+            side_effect=openai.APIError(
+                message="Test API error", request=MagicMock(), body={}
+            )
         )
         printt_mock = MagicMock()
 
@@ -169,7 +155,7 @@ class TestNewCommandIntegration(unittest.TestCase):
 
             try:
                 _ = cm.get_user_answer(messages)
-            except openai.error.APIError as error:
+            except openai.APIError as error:
                 pm.printt(Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL)
                 self.assertTrue(printt_mock.called)
 
@@ -182,8 +168,8 @@ class TestNewCommandIntegration(unittest.TestCase):
 
         # Mock get_user_answer to raise InvalidRequestError
         get_user_answer_mock = MagicMock(
-            side_effect=openai.error.InvalidRequestError(
-                "Test InvalidRequest error", None
+            side_effect=openai.BadRequestError(
+                message="Test InvalidRequest error", body={}, response=MagicMock()
             )
         )
         get_user_answer_mock = MagicMock()
@@ -197,7 +183,7 @@ class TestNewCommandIntegration(unittest.TestCase):
 
             try:
                 _ = cm.get_user_answer(messages)
-            except openai.error.InvalidRequestError:
+            except openai.BadRequestError:
                 self.assertTrue(get_user_answer_mock.called)
 
             # Restore stdout
@@ -209,7 +195,9 @@ class TestNewCommandIntegration(unittest.TestCase):
 
         # Mock get_user_answer to raise OpenAIError
         get_user_answer_mock = MagicMock(
-            side_effect=openai.error.OpenAIError("Test OpenAI error")
+            side_effect=openai.APIError(
+                message="Test API error", request=MagicMock(), body={}
+            )
         )
         printt_mock = MagicMock()
 
@@ -222,7 +210,7 @@ class TestNewCommandIntegration(unittest.TestCase):
 
             try:
                 _ = cm.get_user_answer(messages)
-            except openai.error.OpenAIError as error:
+            except openai.OpenAIError as error:
                 print(Style.BRIGHT + "Assistant:" + Style.RESET_ALL)
                 pm.printt(Back.RED + Style.BRIGHT + str(error) + Style.RESET_ALL)
                 self.assertTrue(printt_mock.called)
