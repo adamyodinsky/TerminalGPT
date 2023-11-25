@@ -14,9 +14,9 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.styles import Style as PromptStyle
 
 from terminalgpt import config
-from terminalgpt.api_key import EncryptionManager
 from terminalgpt.chat import ChatManager
 from terminalgpt.conversations import ConversationManager
+from terminalgpt.encryption import EncryptionManager
 from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
 
 
