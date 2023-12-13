@@ -31,8 +31,8 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 
 - Python 3.6 or higher
 - An OpenAI Account and API key.
-   1. Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
-   2. Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
+  1.  Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
+  2.  Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
 
 ## Installation
 
@@ -52,7 +52,7 @@ terminalgpt install
 
 4. Choose one of the models below as the default model. it can be overridden with the `-m --model` flag later.
 
-5.  Choose a printing style ('markdown' is recommended)
+5. Choose a printing style ('markdown' is recommended and suggested by default)
 
 That's it! You're ready to use TerminalGPT!
 You can now start a new conversation with `terminalgpt new` or load a previous conversation with `terminalgpt load`. Also you can reinstall with `terminalgpt install` or delete previous conversations with `terminalgpt delete`.
@@ -63,24 +63,27 @@ You can now start a new conversation with `terminalgpt new` or load a previous c
 
 ### TL;DR
 
-```sh
-Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
+```
+Usage: main.py [OPTIONS] COMMAND [ARGS]...
 
   *~ TerminalGPT - Your Personal Terminal Assistant ~*
 
 Options:
   --version                       Show the version and exit.
-  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k]
-                                  Choose a model to use. [default:gpt-3.5-turbo]
-  -s, --style [markdown|plain]    Output style. [default: markdown]
+  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k|gpt-4-1106-preview]
+                                  Choose a model to use.  [default: gpt-4]
+  -s, --style [markdown|plain]    Output style.  [default: markdown]
+  -t, --token-limit INTEGER       Set the token limit. this will override the
+                                  default token limit for the chosen model.
   --help                          Show this message and exit.
 
 Commands:
   delete    Choose a previous conversation to delete.
-  install   Creating a secret api key for the chatbot.
+  install   Installing the OpenAI API key and setup some default settings.
   load      Choose a previous conversation to load.
   new       Start a new conversation.
   one-shot  One shot question answer.
+
 ```
 
 ### New
