@@ -64,7 +64,7 @@ You can now start a new conversation with `terminalgpt new` or load a previous c
 ### TL;DR
 
 ```
-Usage: main.py [OPTIONS] COMMAND [ARGS]...
+Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
   *~ TerminalGPT - Your Personal Terminal Assistant ~*
 
