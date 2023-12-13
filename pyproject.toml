@@ -8,21 +8,24 @@ keywords = [
   "chat",
   "terminal",
   "openai",
-  "gpt-3",
-  "gpt-4",
-  "gpt4",
-  "gpt3",
   "chatGPT",
+  "terminalGPT",
   "assistant",
+  "devops",
+  "tool",
+  "cli",
+  "gpt",
   "gpt-3.5",
   "gpt-3.5-turbo",
-  "terminalGPT",
+  "gpt-3.5-turbo-16k",
+  "gpt-4",
+  "gpt-4-32k",
 ]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-openai = "^0.27.6"
+openai = "^1.2.0"
 tiktoken = ">=0.2,<0.6"
 colorama = "^0.4.6"
 cryptography = ">=40.0.2,<42.0.0"

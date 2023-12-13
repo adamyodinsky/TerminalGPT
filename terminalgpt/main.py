@@ -3,10 +3,12 @@
 import getpass
 import json
 import os
+import sys
 import time
 
 import click
 from colorama import Fore, Style
+from openai import OpenAI
 from prompt_toolkit import PromptSession, prompt
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.styles import Style as PromptStyle
@@ -37,20 +39,67 @@ from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
     show_default=True,
     help="Output style.",
 )
+@click.option(
+    "--token-limit",
+    "-t",
+    type=int,
+    default=0,
+    help="Set the token limit. this will override the default token limit for the chosen model.",
+)
 @click.pass_context
-def cli(ctx, model, style: str):
+def cli(ctx, model, style: str, token_limit: int = 0):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
-    token_limit = config.MODELS[model]
-    safety_buffer = token_limit * 0.25
+    max_token_limit = (
+        config.get_default_config().get("models", config.MODELS).get(model)
+    )
+    printer: Printer = PrinterFactory.get_printer("plain")
 
+    if token_limit == 0:
+        token_limit = max_token_limit
+    elif token_limit > max_token_limit:
+        printer.printt(
+            Style.BRIGHT
+            + Fore.RED
+            + "\nWarning: The token limit you set is exceeding the maximum token limit for the chosen model!"
+        )
+        printer.printt(
+            f"Model: {model} "
+            f"Default Token Limit: {int(max_token_limit/1000)}k "
+            f"Your Token Limit: {int(token_limit/1000)}k "
+        )
+
+        printer.printt(
+            "Please set a token limit that is less than or equal to the maximum token limit for the selected model."
+            + "\n** TerminalGPT aborted! **\n"
+            + Style.RESET_ALL
+        )
+        sys.exit(1)
+    elif token_limit < 1000:
+        printer.printt(
+            Style.BRIGHT
+            + Fore.RED
+            + "\nWarning: The token limit you set is less than the minimum token limit of 1000 tokens!"
+        )
+
+        printer.printt(
+            "Please set a token limit that is greater than the minimum token limit."
+            + "\n** TerminalGPT aborted! **\n"
+            + Style.RESET_ALL
+        )
+        sys.exit(1)
+
+    safety_buffer = token_limit * 0.25
     ctx.ensure_object(dict)
 
+    ctx.obj["TOKEN_LIMIT"] = token_limit
     ctx.obj["STYLE"] = style
     ctx.obj["PRINTER"] = PrinterFactory.get_printer(style)
     ctx.obj["MODEL"] = model
     ctx.obj["ENC_MNGR"] = EncryptionManager()
-    ctx.obj["CONV_MANAGER"] = ConversationManager(ctx.obj["PRINTER"])
+    ctx.obj["CONV_MANAGER"] = ConversationManager(
+        printer=ctx.obj["PRINTER"],
+    )
 
     ctx.obj["SESSION"] = PromptSession(
         style=PromptStyle.from_dict({"prompt": "bold"}),
@@ -107,10 +156,10 @@ def install():
     time.sleep(0.5)
 
     printing_styles = ["markdown", "plain"]
+    printer.printt(
+        f"{Style.BRIGHT}Please choose one of the printing styles below to be your default printing style:"
+    )
     for style in printing_styles:
-        printer.printt(
-            f"{Style.BRIGHT}Please choose one of the printing styles below to be your default printing style:"
-        )
         printer.printt(f"{Style.BRIGHT} - Style: {Style.RESET_ALL}{style}")
 
     printing_style = prompt(
@@ -135,7 +184,9 @@ def install():
 
     # Save the default config to a file
     with open(config.DEFAULTS_PATH, "w", encoding="utf-8") as file:
-        json.dump({"model": model, "style": printing_style}, file)
+        json.dump(
+            {"model": model, "style": printing_style, "models": config.MODELS}, file
+        )
 
     printer.printt(PrintUtils.INSTALL_SUCCESS_MESSAGE)
     printer.printt(PrintUtils.INSTALL_ART)
@@ -149,10 +200,14 @@ def new(ctx):
 
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
     chat_manager: ChatManager = ctx.obj["CHAT"]
+    conversation_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
     printer: Printer = ctx.obj["PRINTER"]
-    enc_manager.set_api_key()
+    client = OpenAI(api_key=enc_manager.get_api_key())
 
-    token_limit = int(config.MODELS[ctx.obj["MODEL"]] / 1000)
+    chat_manager.client = client
+    conversation_manager.client = client
+
+    token_limit = int(ctx.obj["TOKEN_LIMIT"] / 1000)
     printer.printt(
         f"{Style.RESET_ALL}{Style.BRIGHT}Model: {Style.RESET_ALL}{ctx.obj['MODEL']} "
         f"{Style.BRIGHT}Token Limit: {Style.RESET_ALL}{token_limit}k "
@@ -178,8 +233,12 @@ def one_shot(ctx, question):
     chat_manager: ChatManager = ctx.obj["CHAT"]
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
     printer: Printer = ctx.obj["PRINTER"]
+    conversation_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
 
-    enc_manager.set_api_key()
+    client = OpenAI(api_key=enc_manager.get_api_key())
+
+    chat_manager.client = client
+    conversation_manager.client = client
 
     messages = [config.INIT_SYSTEM_MESSAGE]
 
@@ -187,7 +246,7 @@ def one_shot(ctx, question):
 
     printer.printt("")
     answer = chat_manager.get_user_answer(messages=messages)
-    message = answer["choices"][0]["message"]["content"]
+    message = answer.choices[0].message.content
 
     printer.print_assistant_message(message)
 
@@ -200,13 +259,16 @@ def load(ctx):
     printer: Printer = PrinterFactory.get_printer("plain")
     chat_manager: ChatManager = ctx.obj["CHAT"]
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
-    conv_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
+    conversation_manager: ConversationManager = ctx.obj["CONV_MANAGER"]
 
     messages = []
-    enc_manager.set_api_key()
+    client = OpenAI(api_key=enc_manager.get_api_key())
+
+    chat_manager.client = client
+    conversation_manager.client = client
 
     # get conversations list
-    conversations = conv_manager.get_conversations()
+    conversations = conversation_manager.get_conversations()
 
     msg = (
         Style.BRIGHT
@@ -215,7 +277,7 @@ def load(ctx):
         + Style.RESET_ALL
     )
 
-    if conv_manager.is_conversations_empty(files=conversations, message=msg):
+    if conversation_manager.is_conversations_empty(files=conversations, message=msg):
         return
 
     # setup file names auto-completion
@@ -244,9 +306,9 @@ def load(ctx):
         return
 
     # load conversation
-    conv_manager.conversation_name = conversation
+    conversation_manager.conversation_name = conversation
     while not messages:
-        messages = conv_manager.load_conversation()
+        messages = conversation_manager.load_conversation()
 
     messages.append(config.INIT_WELCOME_BACK_MESSAGE)
     chat_manager.messages = messages

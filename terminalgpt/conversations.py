@@ -6,6 +6,7 @@ import time
 
 import openai
 from colorama import Back, Style
+from openai import OpenAI
 
 from terminalgpt import config
 from terminalgpt.printer import Printer
@@ -14,10 +15,11 @@ from terminalgpt.printer import Printer
 class ConversationManager:
     """Manages conversations."""
 
-    def __init__(self, printer: Printer, conversation_name: str = ""):
+    def __init__(self, **kwargs):
         self.__base_path = config.CONVERSATIONS_PATH
-        self.__conversation_name = conversation_name
-        self.__printer = printer
+        self.__conversation_name = kwargs.get("conversation_name", "")
+        self.__printer: Printer = kwargs["printer"]
+        self.__client: OpenAI = kwargs.get("client", None)
 
     @property
     def conversation_name(self):
@@ -27,12 +29,20 @@ class ConversationManager:
     def conversation_name(self, conversation_name: str):
         self.__conversation_name = conversation_name
 
+    @property
+    def client(self):
+        return self.__client
+
+    @client.setter
+    def client(self, client: OpenAI):
+        self.__client = client
+
     def get_system_answer(self, messages):
         """Returns the answer from OpenAI API."""
 
         while True:
             try:
-                answer = openai.ChatCompletion.create(
+                answer = self.__client.chat.completions.create(
                     model=config.get_default_config()["model"], messages=messages
                 )
                 return answer
@@ -51,9 +61,9 @@ class ConversationManager:
         }
 
         answer = self.get_system_answer(messages + [title_message])
-        context_file_name = answer["choices"][0]["message"]["content"]
+        context_file_name = answer.choices[0].message.content
 
-        self.conversation_name = context_file_name
+        self.conversation_name = context_file_name or ""
 
     def save_context(self, messages: list, total_usage: int, token_limit: int):
         # Save context or wait for some context

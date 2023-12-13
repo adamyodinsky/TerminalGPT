@@ -5,6 +5,7 @@ import time
 import openai
 import tiktoken
 from colorama import Back, Fore, Style
+from openai import OpenAI
 from prompt_toolkit import PromptSession
 from tiktoken.core import Encoding
 from yaspin import yaspin
@@ -24,6 +25,7 @@ class ChatManager:
         self.__model = kwargs["model"]
         self.__printer: Printer = kwargs["printer"]
         self.__token_limit: int = kwargs["token_limit"]
+        self.__client: OpenAI = kwargs.get("client", None)
         self.__total_usage = 0
 
     @property
@@ -49,6 +51,14 @@ class ChatManager:
     @total_usage.setter
     def total_usage(self, total_usage: int):
         self.__total_usage = total_usage
+
+    @property
+    def client(self):
+        return self.__client
+
+    @client.setter
+    def client(self, client: OpenAI):
+        self.__client = client
 
     def __print_usage(self):
         """Prints the total usage"""
@@ -99,8 +109,9 @@ class ChatManager:
                 continue
 
             # Parse total_usage and message from answer
-            self.__total_usage = answer["usage"]["total_tokens"]
-            message = answer["choices"][0]["message"]["content"]
+            self.__total_usage = answer.usage.total_tokens
+
+            message = answer.choices[0].message.content
 
             # Append to messages list for next iteration keeping context
             self.__messages.append({"role": "assistant", "content": message})
@@ -130,15 +141,12 @@ class ChatManager:
                     color="blue",
                     side="right",
                 ):
-                    return openai.ChatCompletion.create(
+                    return self.__client.chat.completions.create(
                         model=self.__model, messages=messages
                     )
-            except openai.InvalidRequestError as error:
-                if "Please reduce the length of the messages" in str(error):
-                    self.__messages.pop(1)
-                    time.sleep(0.5)
-                else:
-                    raise error
+            except openai.RateLimitError:
+                self.__messages.pop(1)
+                time.sleep(0.5)
 
     def exceeding_token_limit(self):
         """Returns True if the total_usage is greater than the token limit with some safe buffer."""
@@ -193,7 +201,7 @@ class ChatManager:
         try:
             welcome_message = self.get_user_answer(messages)
             self.__printer.print_assistant_message(
-                welcome_message["choices"][0]["message"]["content"]
+                welcome_message.choices[0].message.content
             )
         except KeyboardInterrupt:
             self.__printer.print_assistant_message(
