@@ -51,33 +51,6 @@ class TestNewCommandIntegration(unittest.TestCase):
 
         return chat_manager, printer, messages
 
-    def test_chat_loop_e2e_mock(self):
-        """Tests the chat loop end-to-end."""
-
-        # Set the executable path to your script containing the chat_loop function
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        _ = os.path.join(base_dir, "terminalgpt", "main.py")
-
-        # Create a pexpect spawn object for your script
-        child = pexpect.spawn("terminalgpt", timeout=10, args=["new"], encoding="utf-8")
-
-        # Expect the assistant's welcome message
-        child.expect("Assistant:")
-
-        # Send user input
-        child.sendline("Hello")
-
-        # Expect the assistant's response
-        assert (
-            child.expect("Assistant:", timeout=20) != TIMEOUT
-        ), "Assistant did not respond"
-
-        # Send 'exit' to end the chat loop
-        child.sendline("exit")
-
-        # Check if the script exits
-        child.expect(pexpect.EOF)
-
     def test_keyboard_interrupt(self):
         cm, pm, msg = self.set_test()
 

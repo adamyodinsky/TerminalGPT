@@ -50,7 +50,9 @@ from terminalgpt.printer import Printer, PrinterFactory, PrintUtils
 def cli(ctx, model, style: str, token_limit: int = 0):
     """*~ TerminalGPT - Your Personal Terminal Assistant ~*"""
 
-    max_token_limit = config.get_default_config()["models"][model]
+    max_token_limit = (
+        config.get_default_config().get("models", config.MODELS).get(model)
+    )
     printer: Printer = PrinterFactory.get_printer("plain")
 
     if token_limit == 0:
@@ -154,10 +156,10 @@ def install():
     time.sleep(0.5)
 
     printing_styles = ["markdown", "plain"]
+    printer.printt(
+        f"{Style.BRIGHT}Please choose one of the printing styles below to be your default printing style:"
+    )
     for style in printing_styles:
-        printer.printt(
-            f"{Style.BRIGHT}Please choose one of the printing styles below to be your default printing style:"
-        )
         printer.printt(f"{Style.BRIGHT} - Style: {Style.RESET_ALL}{style}")
 
     printing_style = prompt(
