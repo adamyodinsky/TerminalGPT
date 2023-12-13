@@ -116,10 +116,7 @@ def cli(ctx, model, style: str, token_limit: int = 0):
     )
 
 
-@click.command(
-    help="Creating a secret api key for the chatbot."
-    + " You will be asked to enter your OpenAI API key."
-)
+@click.command(help="Installing the OpenAI API key and setup some default settings.")
 def install():
     """Install the terminalgpt openai api key and create app directories."""
 
