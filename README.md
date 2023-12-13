@@ -41,6 +41,11 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 ```sh
 pip install terminalgpt -U --user
 ```
+or
+
+```sh
+pip3 install terminalgpt -U --user
+```
 
 2. Now you have `terminalgpt` command available in your terminal. Run the following install command to configure the app.
 
@@ -71,8 +76,8 @@ Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 Options:
   --version                       Show the version and exit.
   -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k|gpt-4-1106-preview]
-                                  Choose a model to use.  [default: gpt-4]
-  -s, --style [markdown|plain]    Output style.  [default: markdown]
+                                  Choose a model to use.
+  -s, --style [markdown|plain]    Output style.
   -t, --token-limit INTEGER       Set the token limit. this will override the
                                   default token limit for the chosen model.
   --help                          Show this message and exit.
