@@ -13,7 +13,7 @@ from terminalgpt import config
 
 
 class Printer(ABC):
-    PRINT_DELAY = 0.004
+    PRINT_DELAY = 0.006
 
     @abstractmethod
     def printt(self, text: str = ""):
@@ -53,7 +53,7 @@ class MarkdownPrinter(Printer):
                 self.__console.print(text_markdown, style=style)
             text_markdown = capture.get()
             if txt.startswith("```"):
-                delay = self.PRINT_DELAY / 10
+                delay = self.PRINT_DELAY / 14
             else:
                 delay = self.PRINT_DELAY
             self._print_with_delay(text_markdown, delay)
