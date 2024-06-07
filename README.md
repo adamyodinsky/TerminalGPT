@@ -39,6 +39,7 @@ Some advantages of using TerminalGPT over the chatGPT browser-based app:
 ```sh
 pip install terminalgpt -U --user
 ```
+
 or
 
 ```sh
@@ -73,9 +74,10 @@ Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --version                       Show the version and exit.
-  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k|gpt-4-1106-preview]
-                                  Choose a model to use.
-  -s, --style [markdown|plain]    Output style.
+  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k|gpt-4-turbo|gpt-4o]
+                                  Choose a model to use.  [default:
+                                  gpt-3.5-turbo]
+  -s, --style [markdown|plain]    Output style.  [default: markdown]
   -t, --token-limit INTEGER       Set the token limit. this will override the
                                   default token limit for the chosen model.
   --help                          Show this message and exit.
@@ -86,7 +88,6 @@ Commands:
   load      Choose a previous conversation to load.
   new       Start a new conversation.
   one-shot  One shot question answer.
-
 ```
 
 ### New
