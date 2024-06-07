@@ -15,7 +15,7 @@ KEY_PATH = f"{BASE_PATH}/{APP_NAME}.key"
 ENCODING_MODEL = "cl100k_base"
 
 MODELS = {
-    "gpt-3.5-turbo": 4097,
+    "gpt-3.5-turbo": 16385,
     "gpt-3.5-turbo-16k": 16385,
     "gpt-4": 8192,
     "gpt-4-32k": 32768,
