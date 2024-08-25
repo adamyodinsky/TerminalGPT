@@ -13,7 +13,7 @@ from terminalgpt import config
 
 
 class Printer(ABC):
-    PRINT_DELAY = 0.006
+    PRINT_DELAY = 0.002
 
     @abstractmethod
     def printt(self, text: str = ""):
