@@ -34,7 +34,7 @@ def get_default_config() -> dict:
         with open(DEFAULTS_PATH, "r", encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
-        return {"model": "gpt-4o-mini", "style": "markdown", "models": MODELS}
+        return {"model": "gpt-4o-mini", "style": "plain", "models": MODELS}
 
 
 INIT_SYSTEM_MESSAGE = {

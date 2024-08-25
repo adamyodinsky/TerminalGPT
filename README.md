@@ -56,7 +56,7 @@ terminalgpt install
 
 4. Choose one of the models below as the default model. it can be overridden with the `-m --model` flag later.
 
-5. Choose a printing style ('markdown' is recommended and suggested by default)
+5. Choose a printing style
 
 That's it! You're ready to use TerminalGPT!
 You can now start a new conversation with `terminalgpt new` or load a previous conversation with `terminalgpt load`. Also you can reinstall with `terminalgpt install` or delete previous conversations with `terminalgpt delete`.

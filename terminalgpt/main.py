@@ -144,7 +144,7 @@ def install():
         )
 
     model = prompt(
-        "\nType the desired model:\n",
+        "\nType the desired model (type gpt to see suggestions):\n",
         completer=WordCompleter(models, ignore_case=True),
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
     )
@@ -160,7 +160,7 @@ def install():
         printer.printt(f"{Style.BRIGHT} - Style: {Style.RESET_ALL}{style}")
 
     printing_style = prompt(
-        "\n Choose a printing style ('markdown' is recommended):\n",
+        "\n Choose a printing style (plain/markdown):\n",
         completer=WordCompleter(printing_styles, ignore_case=True),
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
         default=printing_styles[0],
