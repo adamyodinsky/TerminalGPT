@@ -163,7 +163,7 @@ def install():
         "\n Choose a printing style (plain/markdown):\n",
         completer=WordCompleter(printing_styles, ignore_case=True),
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
-        default=printing_styles[0],
+        default=printing_styles[1],
     )
 
     encryption_key = enc_manager.set_encryption_key()
