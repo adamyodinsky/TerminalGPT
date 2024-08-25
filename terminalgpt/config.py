@@ -16,12 +16,9 @@ ENCODING_MODEL = "cl100k_base"
 
 MODELS = {
     "gpt-3.5-turbo": 16385,
-    "gpt-3.5-turbo-16k": 16385,
-    "gpt-4": 8192,
-    "gpt-4-32k": 32768,
-    "gpt-4-turbo": 128000,
-    "gpt-4o": 128000,
-    "gpt-4o-mini": 128000,
+    "gpt-4-turbo": 16385,  # can be 120000
+    "gpt-4o": 16385,  # can be 120000
+    "gpt-4o-mini": 16385,  # can be 120000
 }
 
 
