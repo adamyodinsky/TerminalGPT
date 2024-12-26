@@ -7,11 +7,16 @@ With terminalGPT, you can easily interact with the OpenAI GPT-3.5 and GPT-4 lang
 
 Whether you need help with a quick question or want to explore a complex topic, TerminalGPT is here to assist you. Simply enter your query and TerminalGPT will provide you with the best answer possible based on its extensive knowledge base.
 
----
-
 <img width="910" alt="image" src="https://user-images.githubusercontent.com/27074934/229319537-f332923d-f92e-4d91-8d5e-d26d8997341e.png">
 
----
+### Supported Models
+
+- gpt-3.5-turbo
+- gpt-4-turbo
+- gpt-4o
+- gpt-4o-mini
+- o1
+- o1-mini
 
 ## Why?
 
@@ -74,10 +79,10 @@ Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --version                       Show the version and exit.
-  -m, --model [gpt-3.5-turbo|gpt-3.5-turbo-16k|gpt-4|gpt-4-32k|gpt-4-turbo|gpt-4o]
+  -m, --model [gpt-3.5-turbo|gpt-4-turbo|gpt-4o|gpt-4o-mini|o1|o1-mini]
                                   Choose a model to use.  [default:
-                                  gpt-3.5-turbo]
-  -s, --style [markdown|plain]    Output style.  [default: markdown]
+                                  gpt-4o-mini]
+  -s, --style [markdown|plain]    Output style.  [default: plain]
   -t, --token-limit INTEGER       Set the token limit. this will override the
                                   default token limit for the chosen model.
   --help                          Show this message and exit.
@@ -98,13 +103,15 @@ Start a new conversation:
 terminalgpt new
 ```
 
-### One-Shot
+### One-Shot (I love this feature)
 
 One shot question to get a fast answer in the terminal.
 
 ```sh
 terminalgpt one-shot "What is the meaning of life?"
 ```
+
+**Note:** I recommend to make an alias, see at [Recommended aliases](#recommended-aliases).
 
 ### Load
 
@@ -122,7 +129,23 @@ Delete previous conversations:
 terminalgpt delete
 ```
 
----
+## Recommended aliases
+
+### Zsh
+
+```sh
+echo alias gpto="terminalgpt one-shot" >> ~/.zshrc
+echo alias gptn="terminalgpt new" >> ~/.zshrc
+```
+
+### Bash
+
+```sh
+echo alias gpto="terminalgpt one-shot" >> ~/.zshrc
+echo alias gptn="terminalgpt new" >> ~/.zshrc
+```
+
+## export
 
 [![Star History Chart](https://api.star-history.com/svg?repos=adamyodinsky/TerminalGPT&type=Date)](https://star-history.com/#bytebase/star-history&Date)
 

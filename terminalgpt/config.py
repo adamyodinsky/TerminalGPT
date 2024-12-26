@@ -19,6 +19,8 @@ MODELS = {
     "gpt-4-turbo": 16385,  # can be 120000
     "gpt-4o": 16385,  # can be 120000
     "gpt-4o-mini": 16385,  # can be 120000
+    "o1": 16385,
+    "o1-mini": 16385,
 }
 
 
