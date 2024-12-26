@@ -141,8 +141,8 @@ echo alias gptn="terminalgpt new" >> ~/.zshrc
 ### Bash
 
 ```sh
-echo alias gpto="terminalgpt one-shot" >> ~/.zshrc
-echo alias gptn="terminalgpt new" >> ~/.zshrc
+echo alias gpto="terminalgpt one-shot" >> ~/.bashrc
+echo alias gptn="terminalgpt new" >> ~/.bashrc
 ```
 
 ## export
