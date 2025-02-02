@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import time
+import importlib.metadata as MetaInfo
 
 import click
 from colorama import Fore, Style
@@ -451,10 +452,86 @@ def delete(ctx):
             return
 
 
+@click.command(help="Information about the TerminalGPT")
+@click.pass_context
+def info(ctx):
+    """
+    Display information about the TerminalGPT application.
+
+    This function retrieves and prints various pieces of information about the
+    TerminalGPT application, including the author, version, model, token limit,
+    and style. It uses the provided context object to access necessary managers
+    and printers.
+
+    Args:
+        ctx (click.Context): The Click context object containing necessary
+                             objects and configurations.
+
+    Raises:
+        MetaInfo.PackageNotFoundError: If the metadata for the package is not found.
+
+    """
+
+    enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
+    printer: Printer = ctx.obj["PRINTER"]
+    enc_manager.get_api_key()
+
+    try:
+        metadata = MetaInfo.metadata("terminalgpt")
+        meta_style = Fore.WHITE
+    except MetaInfo.PackageNotFoundError:
+        metadata = dict(author="Not Available", version="Not Available")
+        meta_style = Fore.RED + Style.BRIGHT
+
+    printer.printt(
+        Style.BRIGHT
+        + Fore.YELLOW
+        + "Author: "
+        + meta_style
+        + metadata.get("author", "")
+        + Style.RESET_ALL
+    )
+    printer.printt(
+        Style.BRIGHT
+        + Fore.YELLOW
+        + "Version: "
+        + meta_style
+        + metadata.get("version", "")
+        + Style.RESET_ALL
+    )
+    printer.printt(
+        Style.BRIGHT
+        + Fore.YELLOW
+        + "Model: "
+        + Fore.WHITE
+        + ctx.obj["MODEL"]
+        + Style.RESET_ALL
+    )
+    printer.printt(
+        Style.BRIGHT
+        + Fore.YELLOW
+        + "Token Limit: "
+        + Fore.WHITE
+        + str(ctx.obj["TOKEN_LIMIT"])
+        + Style.RESET_ALL
+    )
+    printer.printt(
+        Style.BRIGHT
+        + Fore.YELLOW
+        + "Style: "
+        + Fore.WHITE
+        + str(ctx.obj["STYLE"])
+        + Style.RESET_ALL
+    )
+
+    return
+
+
 cli.add_command(install)
 cli.add_command(new)
 cli.add_command(load)
 cli.add_command(delete)
+cli.add_command(info)
 
 # pylint: disable=no-value-for-parameter
 if __name__ == "__main__":
