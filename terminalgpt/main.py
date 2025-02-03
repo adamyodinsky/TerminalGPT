@@ -463,13 +463,6 @@ def info(ctx):
     and style. It uses the provided context object to access necessary managers
     and printers.
 
-    Args:
-        ctx (click.Context): The Click context object containing necessary
-                             objects and configurations.
-
-    Raises:
-        MetaInfo.PackageNotFoundError: If the metadata for the package is not found.
-
     """
 
     enc_manager: EncryptionManager = ctx.obj["ENC_MNGR"]
