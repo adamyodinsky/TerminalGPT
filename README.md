@@ -67,7 +67,7 @@ rm "$package_location"
 2. install with pipx
 
 ```sh
-pipx install terminalgpt==2.2.6 --force
+pipx install terminalgpt==2.2.7 --force
 ```
 
 ### Setup
