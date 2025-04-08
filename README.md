@@ -20,7 +20,7 @@ Whether you need help with a quick question or want to explore a complex topic, 
 
 ## Why?
 
-Some advantages of using TerminalGPT over the chatGPT browser-based app:
+Some advantages of using TerminalGPT:
 
 - TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture.
 - Doesn't use your conversation data for training the model.
