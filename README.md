@@ -25,7 +25,7 @@ Some advantages of using TerminalGPT:
 - TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture.
 - Doesn't use your conversation data for training the model.
 - Your conversations are stored locally on your machine, so only you can access them.
-- Efficient context management for super cheap api usage. 
+- Efficient context management for super cheap api usage.
 - It's highly available and can be used whenever you need it.
 - You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
 - Fast, reliable, lightweight.
@@ -40,6 +40,8 @@ Some advantages of using TerminalGPT:
 
 ## Installation
 
+### Using pip
+
 1. Install the latest TerminalGPT with pip install.
 
 ```sh
@@ -52,17 +54,35 @@ or
 pip3 install terminalgpt -U --user
 ```
 
-2. Now you have `terminalgpt` command available in your terminal. Run the following install command to configure the app.
+### Using pipx
+
+1. remove old installation that was installed with pip <br/>
+   (do this only if you are migrating from a version that was installed with pip)
+
+```sh
+package_location=$(which terminalgpt)
+rm "$package_location"
+```
+
+2. install with pipx
+
+```sh
+pipx install terminalgpt==2.2.6 --force
+```
+
+### Setup
+
+1. Now you have `terminalgpt` command available in your terminal. Run the following install command to configure the app.
 
 ```sh
 terminalgpt install
 ```
 
-3. Enter your OpenAI API key when prompted and press enter.
+2. Enter your OpenAI API key when prompted and press enter.
 
-4. Choose one of the models below as the default model. it can be overridden with the `-m --model` flag later.
+3. Choose one of the models below as the default model. it can be overridden with the `-m --model` flag later.
 
-5. Choose a printing style
+4. Choose a printing style
 
 That's it! You're ready to use TerminalGPT!
 You can now start a new conversation with `terminalgpt new` or load a previous conversation with `terminalgpt load`. Also you can reinstall with `terminalgpt install` or delete previous conversations with `terminalgpt delete`.
@@ -135,18 +155,20 @@ terminalgpt delete
 ### Zsh
 
 ```sh
-echo alias gpto="terminalgpt one-shot" >> ~/.zshrc
-echo alias gptn="terminalgpt new" >> ~/.zshrc
+echo alias tgpt="terminalgpt one-shot" >> ~/.zshrc
+echo alias tgpto="terminalgpt one-shot" >> ~/.zshrc
+echo alias tgptn="terminalgpt new" >> ~/.zshrc
 ```
 
 ### Bash
 
 ```sh
-echo alias gpto="terminalgpt one-shot" >> ~/.bashrc
-echo alias gptn="terminalgpt new" >> ~/.bashrc
+echo alias tgpt="terminalgpt one-shot" >> ~/.bashrc
+echo alias tgpto="terminalgpt one-shot" >> ~/.bashrc
+echo alias tgptn="terminalgpt new" >> ~/.bashrc
 ```
 
-## export
+---
 
 [![Star History Chart](https://api.star-history.com/svg?repos=adamyodinsky/TerminalGPT&type=Date)](https://star-history.com/#bytebase/star-history&Date)
 

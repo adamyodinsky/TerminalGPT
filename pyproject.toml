@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "terminalgpt"
-version = "2.2.3"
+version = "2.2.6"
 description = "AI chat assistant in your terminal powered by OpenAI ChatGPT models."
 authors = ["Adam Yodinsky <27074934+adamyodinsky@users.noreply.github.com>"]
 keywords = [
@@ -26,7 +26,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 openai = "^1.2.0"
-tiktoken = ">=0.2,<0.6"
+tiktoken = ">=0.8,<1.0"
 colorama = "^0.4.6"
 cryptography = ">=40.0.2,<43.0.0"
 click = "^8.1.3"
