@@ -30,6 +30,12 @@ test-e2e:
 publish: build test-unit test-inte
 	poetry publish
 
+version-prerelease:
+	poetry version patch
+
+version-patch:
+	poetry version patch
+
 run-install:
 	LOG_LEVEL=DEBUG poetry run terminalgpt install
 

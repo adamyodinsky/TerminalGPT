@@ -25,7 +25,7 @@ Some advantages of using TerminalGPT:
 - TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture.
 - Doesn't use your conversation data for training the model.
 - Your conversations are stored locally on your machine, so only you can access them.
-- Efficient context management for super cheap api usage. 
+- Efficient context management for super cheap api usage.
 - It's highly available and can be used whenever you need it.
 - You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
 - Fast, reliable, lightweight.
@@ -39,6 +39,24 @@ Some advantages of using TerminalGPT:
   2.  Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
 
 ## Installation
+
+### Using pipx
+
+1. remove old installation install with pip <br/>
+   (do this only if you are migrating from a version that was installed with pip)
+
+```sh
+package_location=$(which terminalgpt)
+rm "$package_location"
+```
+
+2. install with pipx
+
+```sh
+pipx install terminalgpt==2.2.5 --force
+```
+
+### Using pip
 
 1. Install the latest TerminalGPT with pip install.
 

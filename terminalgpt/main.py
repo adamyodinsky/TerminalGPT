@@ -147,6 +147,7 @@ def install():
         "\nType the desired model (type gpt to see suggestions):\n",
         completer=WordCompleter(models, ignore_case=True),
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
+        default="gpt-4o-mini",
     )
 
     printer.printt(f"\n{Style.BRIGHT}{Fore.GREEN}Great!{Style.RESET_ALL}\n")
@@ -163,7 +164,7 @@ def install():
         "\n Choose a printing style (plain/markdown):\n",
         completer=WordCompleter(printing_styles, ignore_case=True),
         style=PromptStyle.from_dict({"prompt": "bold lightblue"}),
-        default=printing_styles[1],
+        default=printing_styles[0],
     )
 
     encryption_key = enc_manager.set_encryption_key()
