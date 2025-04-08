@@ -25,6 +25,7 @@ Some advantages of using TerminalGPT:
 - TerminalGPT's answers are tailored to your machine's operating system, distribution, and chip-set architecture.
 - Doesn't use your conversation data for training the model.
 - Your conversations are stored locally on your machine, so only you can access them.
+- Efficient context management for super cheap api usage. 
 - It's highly available and can be used whenever you need it.
 - You can use TerminalGPT with your IDE terminal, which means you won't have to constantly switch between your browser and your IDE when you have questions.
 - Fast, reliable, lightweight.
