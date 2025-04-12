@@ -212,8 +212,12 @@ def new(ctx):
         f"{Style.RESET_ALL}{Style.BRIGHT}Style: {Style.RESET_ALL}{ctx.obj['STYLE']}"
     )
 
-    messages = [config.INIT_SYSTEM_MESSAGE]
-    chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
+    if ctx.obj['MODEL'].startswith('o1'):
+        messages = [config.INIT_SYSTEM_MESSAGE_O1]
+        chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE_O1])
+    else:
+        messages = [config.INIT_SYSTEM_MESSAGE]
+        chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
     chat_manager.messages = messages
     chat_manager.chat_loop()
 
@@ -238,7 +242,10 @@ def one_shot(ctx, question):
     chat_manager.client = client
     conversation_manager.client = client
 
-    messages = [config.INIT_SYSTEM_MESSAGE]
+    if ctx.obj["MODEL"].startswith("o1"):
+        messages = [config.INIT_SYSTEM_MESSAGE_O1]
+    else:
+        messages = [config.INIT_SYSTEM_MESSAGE]
 
     messages.append({"role": "user", "content": question})
 
