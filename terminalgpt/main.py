@@ -315,7 +315,10 @@ def load(ctx):
     while not messages:
         messages = conversation_manager.load_conversation()
 
-    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
+    if ctx.obj["MODEL"].startswith('o1'):
+        messages.append(config.INIT_WELCOME_BACK_MESSAGE_O1)
+    else:
+        messages.append(config.INIT_WELCOME_BACK_MESSAGE)
     chat_manager.messages = messages
     chat_manager.total_usage = chat_manager.num_tokens_from_messages()
 
