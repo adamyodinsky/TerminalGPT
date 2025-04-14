@@ -155,7 +155,7 @@ terminalgpt delete
 ### Zsh
 
 ```sh
-echo alias tgpt="terminalgpt one-shot" >> ~/.zshrc
+echo alias tgpt="terminalgpt" >> ~/.zshrc
 echo alias tgpto="terminalgpt one-shot" >> ~/.zshrc
 echo alias tgptn="terminalgpt new" >> ~/.zshrc
 ```
@@ -163,7 +163,7 @@ echo alias tgptn="terminalgpt new" >> ~/.zshrc
 ### Bash
 
 ```sh
-echo alias tgpt="terminalgpt one-shot" >> ~/.bashrc
+echo alias tgpt="terminalgpt" >> ~/.bashrc
 echo alias tgpto="terminalgpt one-shot" >> ~/.bashrc
 echo alias tgptn="terminalgpt new" >> ~/.bashrc
 ```
