@@ -170,6 +170,6 @@ echo alias tgptn="terminalgpt new" >> ~/.bashrc
 
 ---
 
-[![Star History Chart](https://api.star-history.com/svg?repos=adamyodinsky/TerminalGPT&type=Date)](https://star-history.com/#bytebase/star-history&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=adamyodinsky/TerminalGPT&type=Date)](https://www.star-history.com/#adamyodinsky/TerminalGPT&Date)
 
 ---
