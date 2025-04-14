@@ -50,17 +50,6 @@ INIT_SYSTEM_MESSAGE = {
 """,
 }
 
-INIT_SYSTEM_MESSAGE_O1 = {
-    "role": "user",
-    "content": f"""
-- Your name is "TerminalGPT".
-- You are a helpful personal assistant for programers.
-- You are running on {machine_info()} machine.
-- Please note that your answers will be displayed on the terminal.
-- So keep answers short as possible and use a suitable format for printing on a terminal.
-""",
-}
-
 
 INIT_WELCOME_MESSAGE = {
     "role": "system",
@@ -71,31 +60,8 @@ INIT_WELCOME_MESSAGE = {
 """,
 }
 
-INIT_WELCOME_MESSAGE_O1 = {
-    "role": "user",
-    "content": """
-- Please start the conversation with a random and short greeting message starts with 'Welcome to terminalGPT'.
-- Add a ton of self humor.
-- Keep it short as possible, one line.
-""",
-}
-
 INIT_WELCOME_BACK_MESSAGE = {
     "role": "system",
-    "content": """
-The conversation you remember was a while ago, now we are continuing it.
-Please start the conversation with a random and short welcome back message.
-- Start with 'Welcome back to terminalGPT'.
-- Add a ton of self humor.
-- Keep it short as possible, one line.
-
-After the welcome back message, please summarize the last conversation. (e.g. "Last time we talked about ...")
-- End with a something that invites the user to continue the conversation.
-""",
-}
-
-INIT_WELCOME_BACK_MESSAGE_O1 = {
-    "role": "user",
     "content": """
 The conversation you remember was a while ago, now we are continuing it.
 Please start the conversation with a random and short welcome back message.

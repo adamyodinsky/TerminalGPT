@@ -212,12 +212,12 @@ def new(ctx):
         f"{Style.RESET_ALL}{Style.BRIGHT}Style: {Style.RESET_ALL}{ctx.obj['STYLE']}"
     )
 
-    if ctx.obj['MODEL'].startswith('o1'):
-        messages = [config.INIT_SYSTEM_MESSAGE_O1]
-        chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE_O1])
-    else:
-        messages = [config.INIT_SYSTEM_MESSAGE]
-        chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
+    messages = [config.INIT_SYSTEM_MESSAGE]
+    init_welcome = config.INIT_WELCOME_MESSAGE
+    if ctx.obj['MODEL'] == ('o1-mini'):
+        messages[0]["role"] = "user"
+        init_welcome["role"] = "user"
+    chat_manager.welcome_message(messages + [init_welcome])    
     chat_manager.messages = messages
     chat_manager.chat_loop()
 
@@ -242,10 +242,9 @@ def one_shot(ctx, question):
     chat_manager.client = client
     conversation_manager.client = client
 
-    if ctx.obj["MODEL"].startswith("o1"):
-        messages = [config.INIT_SYSTEM_MESSAGE_O1]
-    else:
-        messages = [config.INIT_SYSTEM_MESSAGE]
+    messages = [config.INIT_SYSTEM_MESSAGE]
+    if ctx.obj['MODEL'] == ('o1-mini'):
+        messages[0]["role"] = "user"
 
     messages.append({"role": "user", "content": question})
 
@@ -315,10 +314,10 @@ def load(ctx):
     while not messages:
         messages = conversation_manager.load_conversation()
 
-    if ctx.obj["MODEL"].startswith('o1'):
-        messages.append(config.INIT_WELCOME_BACK_MESSAGE_O1)
-    else:
-        messages.append(config.INIT_WELCOME_BACK_MESSAGE)
+    messages = [config.INIT_WELCOME_BACK_MESSAGE]
+    if ctx.obj['MODEL'] == ('o1-mini'):
+        messages[0]["role"] = "user"
+
     chat_manager.messages = messages
     chat_manager.total_usage = chat_manager.num_tokens_from_messages()
 
