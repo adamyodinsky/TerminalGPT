@@ -115,6 +115,10 @@ def cli(ctx, model, style: str, token_limit: int = 0):
         printer=ctx.obj["PRINTER"],
     )
 
+    if ctx.obj['MODEL'] == ('o1-mini'):
+        config.INIT_SYSTEM_MESSAGE["role"] = "user"
+        config.INIT_WELCOME_MESSAGE["role"] = "user"
+        config.INIT_WELCOME_BACK_MESSAGE["role"] = "user"
 
 @click.command(help="Installing the OpenAI API key and setup some default settings.")
 def install():
@@ -213,11 +217,7 @@ def new(ctx):
     )
 
     messages = [config.INIT_SYSTEM_MESSAGE]
-    init_welcome = config.INIT_WELCOME_MESSAGE
-    if ctx.obj['MODEL'] == ('o1-mini'):
-        messages[0]["role"] = "user"
-        init_welcome["role"] = "user"
-    chat_manager.welcome_message(messages + [init_welcome])    
+    chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])    
     chat_manager.messages = messages
     chat_manager.chat_loop()
 
@@ -243,8 +243,6 @@ def one_shot(ctx, question):
     conversation_manager.client = client
 
     messages = [config.INIT_SYSTEM_MESSAGE]
-    if ctx.obj['MODEL'] == ('o1-mini'):
-        messages[0]["role"] = "user"
 
     messages.append({"role": "user", "content": question})
 
