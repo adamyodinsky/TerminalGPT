@@ -70,6 +70,22 @@ rm "$package_location"
 pipx install terminalgpt==2.2.7 --force
 ```
 
+### Using Docker
+
+1. Pull the image.
+
+```sh
+docker pull adamyodinsky/terminalgpt
+```
+
+2. Use the image, mounting the configuration directory as a volume.
+
+```sh
+docker run --rm -it -v $HOME/.terminalgpt:/root/.terminalgpt adamyodinsky/terminalgpt terminalgpt install
+```
+
+See [Recommended aliases](#recommended-aliases) for shell aliases that make the Docker commands shorter.
+
 ### Setup
 
 1. Now you have `terminalgpt` command available in your terminal. Run the following install command to configure the app.
@@ -166,6 +182,16 @@ echo alias tgptn="terminalgpt new" >> ~/.zshrc
 echo alias tgpt="terminalgpt" >> ~/.bashrc
 echo alias tgpto="terminalgpt one-shot" >> ~/.bashrc
 echo alias tgptn="terminalgpt new" >> ~/.bashrc
+```
+
+### Docker
+
+Here's an example of Bash aliases for using the Docker image:
+
+```sh
+echo alias tgpt="docker run --rm -it -v $HOME/.terminalgpt:/root/.terminalgpt adamyodinsky/terminalgpt" >> ~/.bashrc
+echo alias tgpto="docker run --rm -it -v $HOME/.terminalgpt:/root/.terminalgpt adamyodinsky/terminalgpt one-shot" >> ~/.bashrc
+echo alias tgptn="docker run --rm -it -v $HOME/.terminalgpt:/root/.terminalgpt adamyodinsky/terminalgpt new" >> ~/.bashrc
 ```
 
 ---
