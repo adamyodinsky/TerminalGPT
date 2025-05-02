@@ -35,8 +35,8 @@ Some advantages of using TerminalGPT:
 
 - Python 3.6 or higher
 - An OpenAI Account and API key.
-  1.  Sign up at <https://beta.openai.com/signup> using email or Google/Microsoft account.
-  2.  Go to <https://beta.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
+  1.  Sign up at <https://platform.openai.com/signup> using email or Google/Microsoft account.
+  2.  Go to <https://platform.openai.com/account/api-keys> or click on "View API keys" in the menu to get your API key.
 
 ## Installation
 

@@ -112,8 +112,8 @@ class PrintUtils:
         + Style.RESET_ALL
         + """
 Please note that you need to have an OpenAI account and an API key to use TerminalGPT.
-If you don't have an OpenAI account, please create one at https://beta.openai.com/signup.
-If you don't have an API key, please create one at https://beta.openai.com/account/api-keys.
+If you don't have an OpenAI account, please create one at https://platform.openai.com/signup.
+If you don't have an API key, please create one at https://platform.openai.com/api-keys.
 """
         + Style.BRIGHT
         + Fore.LIGHTBLUE_EX
