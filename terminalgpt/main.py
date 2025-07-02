@@ -115,6 +115,10 @@ def cli(ctx, model, style: str, token_limit: int = 0):
         printer=ctx.obj["PRINTER"],
     )
 
+    if ctx.obj['MODEL'] == ('o1-mini'):
+        config.INIT_SYSTEM_MESSAGE["role"] = "user"
+        config.INIT_WELCOME_MESSAGE["role"] = "user"
+        config.INIT_WELCOME_BACK_MESSAGE["role"] = "user"
 
 @click.command(help="Installing the OpenAI API key and setup some default settings.")
 def install():
@@ -213,7 +217,7 @@ def new(ctx):
     )
 
     messages = [config.INIT_SYSTEM_MESSAGE]
-    chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])
+    chat_manager.welcome_message(messages + [config.INIT_WELCOME_MESSAGE])    
     chat_manager.messages = messages
     chat_manager.chat_loop()
 
@@ -308,7 +312,10 @@ def load(ctx):
     while not messages:
         messages = conversation_manager.load_conversation()
 
-    messages.append(config.INIT_WELCOME_BACK_MESSAGE)
+    messages = [config.INIT_WELCOME_BACK_MESSAGE]
+    if ctx.obj['MODEL'] == ('o1-mini'):
+        messages[0]["role"] = "user"
+
     chat_manager.messages = messages
     chat_manager.total_usage = chat_manager.num_tokens_from_messages()
 
