@@ -5,7 +5,7 @@
 ![PyPI](https://img.shields.io/pypi/v/terminalgpt) ![PyPI - Downloads](https://img.shields.io/pypi/dm/terminalgpt) ![commits-since](https://img.shields.io/github/commits-since/adamyodinsky/TerminalGPT/latest) ![GitHub last commit](https://img.shields.io/github/last-commit/adamyodinsky/terminalgpt)
 
 Welcome to terminalGPT, the terminal-based ChatGPT personal assistant app!
-With terminalGPT, you can easily interact with the OpenAI GPT-3.5 and GPT-4 language models.
+With terminalGPT, you can easily interact with the OpenAI GPT-3.5, GPT-4, and GPT-5 language models.
 
 Whether you need help with a quick question or want to explore a complex topic, TerminalGPT is here to assist you. Simply enter your query and TerminalGPT will provide you with the best answer possible based on its extensive knowledge base.
 
@@ -19,6 +19,7 @@ Whether you need help with a quick question or want to explore a complex topic, 
 - gpt-4o-mini
 - o1
 - o1-mini
+- gpt-5-mini
 
 ## Why?
 
@@ -102,7 +103,7 @@ Usage: terminalgpt [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --version                       Show the version and exit.
-  -m, --model [gpt-3.5-turbo|gpt-4-turbo|gpt-4o|gpt-4o-mini|o1|o1-mini]
+  -m, --model [gpt-3.5-turbo|gpt-4-turbo|gpt-4o|gpt-4o-mini|o1|o1-mini|gpt-5-mini]
                                   Choose a model to use.  [default:
                                   gpt-4o-mini]
   -s, --style [markdown|plain]    Output style.  [default: plain]
